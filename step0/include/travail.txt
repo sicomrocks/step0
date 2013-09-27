@@ -1,0 +1,26 @@
+			RÉPARTITION DU TRAVAIL
+
+LIVRABLE 1 :
+
+jeux de tests
+	à faire avec les fonctions
+	aussi sur l'implatation de la mémoire
+
+mise en place de l'interpréteur
+	on verra s'il reste du temps pour améliorer le début fourni 	par les profs
+
+implantation de la mémoire et des registres
+	= définir les différentes structures
+
+implantation des commandes de la page 20
+	on se partage les fonctions
+
+gestion des erreurs
+
+génération des traces
+
+
+Pour vérifier les paramètres des fonctions, il faut être capable de reconnaître :
+	des chaînes de caractères (noms de fichiers, noms de registres)
+	des entiers unsigned int (nombres d'octets, nombres d'instructions)
+	des valeurs hexadécimales (adresses, valeurs d'octets, valeurs hexa sur 32 bits)

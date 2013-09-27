@@ -1,0 +1,33 @@
+github
+
+1) s'inscrire
+
+Initialisation de git:
+git config --global user.name "mon nom"
+git config --global user.email "mon adresse mail"
+git config --global core.editor MonEditeurDeTexte
+
+2) rejoindre mon dépôt (forking)
+	trouver mon dépôt : https://github.com/Zeenoth/step0.git
+	cliquer sur le bouton "fork" en haut à droite
+	cloner le dépôt sur ton ordi (dossier où se trouve le terminal) : git clone https://github.com/Zeenoth/step0.git
+	cd step0
+	git remote add upstream https://github.com/tonPseudo/step0.git
+	git fetch upstream
+
+
+3) modifier les fichiers du projet
+	ajouter un fichier au projet : git add nomDuFichier (marche aussi pour des dossiers entiers)
+
+	retirer un fichier git rm nomFichier
+
+	modifier un fichier, puis l'enregistrer
+	git add <nom du fichier que tu viens de modifier>
+	quand il est bon à être partagé : git commit -m "message d'info sur la nouvelle version que tu viens de faire"
+	enfin, tout mettre dans le dépôt sur le serveur : git push origin master
+
+4) récupérer des modifications que j'ai faites
+	git fetch upstream
+ou
+	git pull upstream
+	fusionner ce que tu viens de récupérer avec ce qui était déjà sur ton ordi : git merge upstream/master

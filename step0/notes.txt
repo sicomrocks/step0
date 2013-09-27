@@ -1,0 +1,34 @@
+		NOTES POUR LE PROJET D'INFO
+
+
+Pour chaque commande assembleur qui devra être interprétable par notre simulateur, il faut écrire deux commandes C :
+
+parse_and_execute_cmd_<nomdecommande>(char*)
+	récupère le nom de la commande et les paramètres
+execute_cmd_<nomdecommande>(bla bla)
+	exécute la commande
+
+Les deux fonctions principales du simulateur sont :
+parse_and_execute_cmd_string(char *)
+	parse la commande et l'exécute en appelant la bonne fonction C
+acquire_line(FILE *, char*)
+	récupère une ligne dans le flux
+
+void* memset(void* s, int c, size_t n)
+	on met la constante c (codée sur un octet) dans les n premiers octets de la zone mémoire pointée par s. Retourne un pointeur vers la zone mémoire s.
+
+stdin : flux entrant
+	fp=stdin;
+	char input[MAX_STR];
+	acquire_line(fp, input);
+
+.simcmd : code à exécuter
+.out la sortie
+.info "ce test est censé ne pas être en échec"
+	on dit si le test est censé provoquer une erreur ou passer
+	
+strdup(char* s) renvoir un pointeur vers une copie de s
+strtok(texte, délimiteur) renvoie le premier mot de la chaîne de caractères texte au sens du délimiteur (pour nous c'est des espaces)
+strtok(NULL, délimiteur) renvoie le deuxième mot de texte
+
+sscanf(
