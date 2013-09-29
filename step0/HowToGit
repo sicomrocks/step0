@@ -1,0 +1,47 @@
+Notes sur l'utilisation de gedit
+SITE ULTIME : http://git-scm.com/book/fr/
+
+git config --list
+git init crée un répertoire .git
+git clone clone les fichiers depuis un depot existant dans un repertoire local qu'il crée
+	UTILE : use the command "git clone [url] [shortname]" to associate shortname to the url address and avoid writing the whole 		thing a thousand times
+
+git status indique le status du repertoire/groupe de fichiers :
+	- les fichiers non modifiés, suivis;
+	- les fichiers non suivis (nouvellement crées, absents dans l'ancien instantané);
+	- les fichiers modifiés, non indexés ou indexés.
+	=> Il montre ce qui est à indexer et à valider (avec commit).
+
+git add [fichier]  ajoute un fichier non suivi. il devient suivi.
+	ET PERMET AUSSI d'indexer un fichier modifié.
+
+git diff affiche la différence entre le repertoire de travail et la zone d'index
+
+Une fois tous les fichiers indexés, on valide avec la commande "git commit"
+
+
+git remote -v permet de voir les "origin" "fetch"
+
+git fetch origin tire tous les fichiers d'adresse origin (en clonant, on ajoute l'adresse en origin automatiquement)
+	=> NE FUSIONNE PAS
+git pull FUSIONNE
+
+
+git push origin master  /  git push [nom_distant] [branche]  permet de partager son dosser de travail, une fois celui-ci PRET.
+	-> Personne ne doit avoir pushé dans l'intervalle de temps entre le dernier clonage et ce push, sinon :
+	il faut tirer le dernier instantané et le fusionner avec son propre travail.
+
+		Dans ce cas-la, je sais pas encore comment faire. Il faudrait lire la section sur les branches apparemment,
+		mais on doit peut-etre s'en sortir avec des git pull. A voir.
+
+
+A voir aussi :
+	ETIQUETTES : utiles pour un suivi des versions :
+	git tag -a [nom_etiquette] -m [message] pour créer l'étiquette
+	git tag pour afficher la liste des étiquettes
+	git show pour afficher la liste des étiquettes et des détails : quand qui ?
+	LES ETIQUETTES DOIVENT ETRE PRECISEES DANS LE PUSH : git push origin v1.5
+
+
+ 
+ 
