@@ -35,6 +35,8 @@ afficher les registres :
 * nom : valeur (valeur écrite en 8 chiffres hexadécimaux
 */
 int parse_and_execute_cmd_dr(char* paramsStr);
+/*l'argument est optionnel ; s'il y a un argument ce doit être le nom du registre à afficher (char*) , sinon on les affiche tous*/
+
 
 /*
 modifier une valeur dans un registre :
