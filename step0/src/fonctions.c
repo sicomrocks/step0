@@ -13,7 +13,7 @@ int isregister(char* param) {
 		return 0;
 	}
 	
-	if (param[0]==36) {	//commence par "$"	}
+	if (param[0]==36) {	//commence par "$"
 		//regarder le numéro du registre demandé
 	
 		char x[1];
