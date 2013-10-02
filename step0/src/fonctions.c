@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 int isregister(char* param) {
 	//DEBUG_MSG("entrée dans la fonction isregister");
 	/*il y a deux types de noms de registres : 
