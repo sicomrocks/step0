@@ -27,17 +27,17 @@ on ne connaît que la taille de .bss, pas son contenu
 
 #define taille_nom 4
 
-struct SECTION {
+typedef struct {
 	unsigned int adresse_debut;
 	unsigned int taille; 		//en octets, lue dans le programme au moment où on le charge
 	char nom[taille_nom];
 	int* donnees;
-	};
+	}SECTION;
 
-struct ENTREE{ 					//c'est le fichier ELF que l'on veut charger, composé des trois sections :
-	struct SECTION text;
-	struct SECTION data;
-	struct SECTION bss;
+struct ENTREE { 			//c'est le fichier ELF que l'on veut charger, composé des trois sections :
+	SECTION text;
+	SECTION data;
+	SECTION bss;
 	};
 
 /*si on a l'instruction suivante dans le programme : 

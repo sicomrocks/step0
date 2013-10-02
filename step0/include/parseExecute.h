@@ -6,7 +6,8 @@
 #include <readline/history.h>
 
 #include "notify.h"
-#include "memoire.h"
+//#include "memoire.h"
+#include "fonctions.h"
 
 int execute_cmd_testcmd(int hexValue);
 

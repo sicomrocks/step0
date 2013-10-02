@@ -1,4 +1,4 @@
-#include "../include/parseExecute.h"
+#include "parseExecute.h"
 #include "notify.h"
 
 #define CMD_OK_RETURN_VALUE 0
@@ -53,7 +53,17 @@ int parse_and_execute_cmd_exit(char * paramsStr) {
 }
 
 int parse_and_execute_cmd_lp(char* paramsStr) {
-	return 8;
+	DEBUG_MSG("Parametres : %s", paramsStr);
+	
+	//un paramètre : nom de fichier
+	//vérifier que le fichier appelé existe
+	
+	FILE* fichier=NULL;
+	fichier=fopen(paramsStr, "r");
+	if (fichier==NULL) {
+		ERROR_MSG("Impossible d'ouvrir %s", paramsStr);	
+	}
+	return 2;
 }
 
 int parse_and_execute_cmd_dr(char* paramsStr) {
@@ -110,6 +120,35 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 }
 
 int parse_and_execute_cmd_lr(char* paramsStr) {
-	return 8;
+	DEBUG_MSG("Parametres : %s", paramsStr);
+	
+	/*deux paramètres : un nom de registre valide
+	 * 		    une valeur hexa de 1 à 8 chiffres hexa
+	*/
+	
+	char* token;
+	char* separateur = { " " };
+	char* buffer;
+	
+	buffer = strdup ( paramsStr );
+
+	// premier appel, pour vérifier s'il y a des paramètres
+	token = strtok( buffer, separateur  );
+	if (token == NULL) {		// cas où il n'y a pas de paramètres
+		WARNING_MSG("Invalid param : register and hexadecimal value awaited in %s", token);
+	}
+	else if (isregister(token) == 0) {
+		WARNING_MSG("Invalid param : register name awaited in %s", token);
+	}
+	else if (isregister(token) == 1) {
+		//tester si le 2è param est de la bonne forme
+		char* token2=NULL;
+		token2=strtok( NULL, separateur  );
+		if (token2==NULL) {
+			WARNING_MSG("Invalid param : 32 bits hexadecimal value missing after %s", token);
+		}
+	}
+	
+	return 2;
 }
 
