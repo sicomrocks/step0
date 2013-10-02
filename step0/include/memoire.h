@@ -32,12 +32,12 @@ typedef struct {
 	unsigned int taille; 		//en octets, lue dans le programme au moment où on le charge
 	char nom[taille_nom];
 	int* donnees;
-	}SECTION;
+	}SECTION ;
 
 struct ENTREE { 			//c'est le fichier ELF que l'on veut charger, composé des trois sections :
-	SECTION text;
-	SECTION data;
-	SECTION bss;
+	struct SECTION text;
+	struct SECTION data;
+	struct SECTION bss;
 	};
 
 /*si on a l'instruction suivante dans le programme : 
