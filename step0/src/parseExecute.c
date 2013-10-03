@@ -58,12 +58,35 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 	//un paramètre : nom de fichier
 	//vérifier que le fichier appelé existe
 	
-	FILE* fichier=NULL;
-	fichier=fopen(paramsStr, "r");
-	if (fichier==NULL) {
-		ERROR_MSG("Impossible d'ouvrir %s", paramsStr);	
+	char* token;
+	char* token2;
+	char* separateur = { " " };
+	char* buffer;
+	
+	buffer = strdup(paramsStr);
+
+	// premier appel, pour vérifier s'il y a des paramètres
+	token = strtok( buffer, separateur  );
+	if (token == NULL) {		// cas où il n'y a pas de paramètres
+		WARNING_MSG("Invalid param : file name awaited");
 	}
-	return 2;
+	else {
+		//on regarde s'il y a d'autres paramètres
+		token2=strtok(NULL, separateur);
+		if (token2!=NULL) {
+			WARNING_MSG("Un seul paramètre est attendu ; l'exécution de lp va se poursuivre sans tenir compte des suivants");
+		}
+		FILE* fichier=NULL;
+		fichier=fopen(token, "r");
+		if (fichier==NULL) {
+			WARNING_MSG("Impossible d'ouvrir %s", token);
+			//return 2;
+		}
+		else {
+			DEBUG_MSG("Ouverture réussie de %s", token);
+		}
+		return 2;
+	}
 }
 
 int parse_and_execute_cmd_dr(char* paramsStr) {
