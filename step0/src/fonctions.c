@@ -11,7 +11,7 @@ int isregister(char* param) {
 		$x avec 0<=x<=31 ; si x=4 : $04
 	*/
 	if (strlen(param)<2 || strlen(param)>3) {
-		return 0;
+		return -1;
 	}
 	
 	if (param[0]==36) {	//commence par "$"
@@ -36,18 +36,19 @@ int isregister(char* param) {
 	
 		//vérifier qu'il est dans le bon intervalle
 		if (numero<0 || numero >31) {
-			return 0;
+			return -1;
 		}
+		else return numero;
 	}
 	
 	else {
-		if (param[0]==80 && param[1]==67) return 1;	//PC
-		if (param[0]==83 && param[1]==82) return 1;	//SR
-		if (param[0]==72 && param[1]==73) return 1;	//HI
-		if (param[0]==76 && param[1]==79) return 1;	//LO
-		return 0;
+		if (param[0]==80 && param[1]==67) return 32;	//PC
+		if (param[0]==83 && param[1]==82) return 33;	//SR
+		if (param[0]==72 && param[1]==73) return 34;	//HI
+		if (param[0]==76 && param[1]==79) return 35;	//LO
+		return -1;
 	}
 	
-	return 1;
+	//return 1;
 }
 	

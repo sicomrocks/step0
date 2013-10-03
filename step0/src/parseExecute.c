@@ -108,17 +108,17 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 	token = strtok( buffer, separateur  );
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		DEBUG_MSG("Affichage de tous les registres");
-		//return execute_cmd_dr_tous(token);
+		return execute_cmd_dr_tous();
 	}
 	else {
 		DEBUG_MSG ("paramètre numéro %d : %s",nb_param, token);
 		c=isregister(token);
-		if (c==0) {
+		if (c<0) {
 			WARNING_MSG("Invalid param : HI LO PC SR or $x awaited in %s", token);
 		}
-		if (c==1) {
+		if (c>-1) {
 			DEBUG_MSG("le paramètre est bien un registre");
-			//return execute_cmd_dr_un(token);
+			execute_cmd_dr_un(c);
 		}
 	}
 	    
@@ -129,17 +129,25 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 			nb_param++; // incrément du nombre de paramètres	
 			DEBUG_MSG ("paramètre numéro %d : %s",nb_param, token);
 			c=isregister(token);
-			if (c==0) {
+			if (c<0) {
 				WARNING_MSG("Invalid param : HI LO PC SR or $x awaited in %s", token);
 			}
-			if (c==1) {
+			if (c>-1) {
 				DEBUG_MSG("le paramètre est bien un registre");
-				//return execute_cmd_dr_un(token);
+				execute_cmd_dr_un(c);
 			}
 		}
 	}
-	
+
 	return 2;
+}
+
+int execute_cmd_dr_un(int num_registre) {
+	return CMD_OK_RETURN_VALUE;
+}
+
+int execute_cmd_dr_tous() {
+	return CMD_OK_RETURN_VALUE;
 }
 
 int parse_and_execute_cmd_lr(char* paramsStr) {

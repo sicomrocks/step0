@@ -37,7 +37,8 @@ afficher les registres :
 */
 int parse_and_execute_cmd_dr(char* paramsStr);
 /*l'argument est optionnel ; s'il y a un argument ce doit être le nom du registre à afficher (char*) , sinon on les affiche tous*/
-
+int execute_cmd_dr_un(int num_registre);
+int execute_cmd_dr_tous();
 
 /*
 modifier une valeur dans un registre :
