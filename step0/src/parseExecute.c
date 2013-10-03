@@ -40,8 +40,6 @@ int parse_and_execute_cmd_testcmd(char * paramsStr) {
     return execute_cmd_testcmd(hexValue);
 }
 
-
-/***************/
 int execute_cmd_exit() {
     INFO_MSG("Bye bye !");
     return CMD_EXIT_RETURN_VALUE;
@@ -107,7 +105,7 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 	// premier appel, pour vérifier s'il y a des paramètres
 	token = strtok( buffer, separateur  );
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
-		DEBUG_MSG("Affichage de tous les registres");
+		WARNING_MSG("Affichage de tous les registres");
 		return execute_cmd_dr_tous();
 	}
 	else {
@@ -168,16 +166,33 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : register and hexadecimal value awaited in %s", token);
 	}
-	else if (isregister(token) == 0) {
+	else if (isregister(token) < 0) {
 		WARNING_MSG("Invalid param : register name awaited in %s", token);
 	}
-	else if (isregister(token) == 1) {
+	else if (isregister(token) > -1) {
+		DEBUG_MSG("%s est bien un registre", token);
 		//tester si le 2è param est de la bonne forme
 		char* token2=NULL;
 		token2=strtok( NULL, separateur  );
 		if (token2==NULL) {
 			WARNING_MSG("Invalid param : 32 bits hexadecimal value missing after %s", token);
 		}
+		else {
+			DEBUG_MSG("Deuxième paramètre : %s", token2);
+			if (automate(token2)!=3 || strlen(token2)>10) {
+				WARNING_MSG("Invalid param : 8 digit hexadecimal value awaited in %s", token2);
+			}
+			else {
+				//on va regarder s'il y a trop de paramètres
+				char* token3;
+				token3=strtok(NULL, separateur);
+				if (token3!=NULL) {
+					WARNING_MSG("Seuls deux paramètres sont attendus dans dr, la fonction ne tient pas compte des suivants");
+				}
+				//exécution de la fonction lr
+			}
+		}
+		
 	}
 	
 	return 2;

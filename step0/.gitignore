@@ -11,3 +11,4 @@ foo.txt
 *.o
 simMips
 *~
+*.dbg

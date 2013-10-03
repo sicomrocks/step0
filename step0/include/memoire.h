@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "automateF.h"
 
 //		DÉFINITION DES STRUCTURES MODÉLISANT LA MÉMOIRE ET LES REGISTRES DU MIPS
 
