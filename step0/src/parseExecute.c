@@ -1,5 +1,6 @@
 #include "parseExecute.h"
 #include "notify.h"
+#include "reg.h"
 
 #define CMD_OK_RETURN_VALUE 0
 #define CMD_EXIT_RETURN_VALUE -1
@@ -83,8 +84,9 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 		else {
 			DEBUG_MSG("Ouverture réussie de %s", token);
 		}
-		return 2;
+		
 	}
+	return 2;
 }
 
 int parse_and_execute_cmd_dr(char* paramsStr) {
@@ -115,7 +117,7 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 			WARNING_MSG("Invalid param : HI LO PC SR or $x awaited in %s", token);
 		}
 		if (c>-1) {
-			DEBUG_MSG("le paramètre est bien un registre");
+			DEBUG_MSG("le paramètre est le registre %d", c);
 			execute_cmd_dr_un(c);
 		}
 	}
@@ -131,7 +133,7 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 				WARNING_MSG("Invalid param : HI LO PC SR or $x awaited in %s", token);
 			}
 			if (c>-1) {
-				DEBUG_MSG("le paramètre est bien un registre");
+				DEBUG_MSG("le paramètre est le registre %d", c);
 				execute_cmd_dr_un(c);
 			}
 		}
@@ -170,7 +172,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 		WARNING_MSG("Invalid param : register name awaited in %s", token);
 	}
 	else if (isregister(token) > -1) {
-		DEBUG_MSG("%s est bien un registre", token);
+		DEBUG_MSG("%s est le registre %d", token, isregister(token));
 		//tester si le 2è param est de la bonne forme
 		char* token2=NULL;
 		token2=strtok( NULL, separateur  );

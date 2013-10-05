@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "memoire.h"
 
 /* la librairie readline */
 #include <readline/readline.h>
@@ -165,6 +166,13 @@ int main ( int argc, char *argv[] ) {
     INFO_MSG("Un message INFO_MSG : Debut du programme %s", argv[0]); /* macro INFO_MSG */
     WARNING_MSG("Un message WARNING_MSG !"); /* macro INFO_MSG */
     DEBUG_MSG("Un message DEBUG_MSG !"); /* macro DEBUG_MSG : uniquement si compil en mode DEBUG_MSG */
+    
+    //initialisation des registres
+    init_reg(registres);
+    //int i;
+    //for (i=0 ; i<36 ; i++) {
+    //	DEBUG_MSG("%d", registres[i].numero);
+    //}
 
     FILE *fp = NULL; /* le flux dans lequel les commandes seront lues : stdin (mode shell) ou un fichier */
 
