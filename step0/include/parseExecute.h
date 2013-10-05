@@ -4,10 +4,11 @@
 
 #include <readline/readline.h>
 #include <readline/history.h>
-
+#include "fonctions.h"
+#include "automateF.h"
 #include "notify.h"
 //#include "memoire.h"
-#include "fonctions.h"
+
 
 int execute_cmd_testcmd(int hexValue);
 

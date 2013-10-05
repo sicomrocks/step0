@@ -1,5 +1,5 @@
 #include <string.h>
-#include "memoire.h"
+
 #include "notify.h"
 
 /*fonction pour regarder si le paramètre est bien un nom de registre.
