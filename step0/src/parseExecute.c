@@ -1,6 +1,7 @@
 #include "parseExecute.h"
 #include "notify.h"
 #include "reg.h"
+#include <stdio.h>
 
 #define CMD_OK_RETURN_VALUE 0
 #define CMD_EXIT_RETURN_VALUE -1
@@ -147,14 +148,16 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 }
 
 int execute_cmd_dr_un(int num_registre) {
-	printf("CMD TEST RESULT %d\n", num_registre);
+	fprintf(stdout, "registre %d valeur 0x%x\n", registres[num_registre].numero, registres[num_registre].valeur);
+	//fprintf(stdout, "CMD TEST RESULT %d\n", num_registre);
 	return CMD_OK_RETURN_VALUE;
 }
 
 int execute_cmd_dr_tous() {
 	int i;
 	for (i=0 ; i<36 ; i++) {
-		printf("CMD TEST RETURN RESULT %d\n", i);
+		execute_cmd_dr_un(i);
+		//fprintf(stdout, "CMD TEST RETURN RESULT %d\n", i);
 	}
 	return CMD_OK_RETURN_VALUE;
 }
@@ -181,6 +184,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 		int c=isregister(token);
 		if (c < 0) {
 			WARNING_MSG("Invalid param : register name awaited in %s", token);
+			return 2;
 		}
 		else if (c > -1) {
 			DEBUG_MSG("%s est le registre %d", token, c);
@@ -192,6 +196,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 			}
 			else {
 				DEBUG_MSG("Deuxième paramètre : %s", token2);
+				int S=automate(token2);
 				if (automate(token2)!=3 || strlen(token2)>10) {
 					WARNING_MSG("Invalid param : 8 digit hexadecimal value awaited in %s", token2);
 				}
@@ -216,7 +221,8 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 }
 
 int execute_cmd_lr(int num_reg, int value) {
-	FILE* output=fopen("test/10_lr.out", "w");
-	fprintf(output, "CMD TEST RESULT %d %d\n", num_reg, value);
+	//FILE* output=fopen("test/10_lr.out", "w");
+	registres[num_reg].valeur=value;
+	fprintf(stdout, "CMD TEST RESULT %d 0x%x\n", registres[num_reg].numero, registres[num_reg].valeur);
 	return CMD_OK_RETURN_VALUE;
 }

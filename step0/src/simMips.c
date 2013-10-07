@@ -146,6 +146,9 @@ int  acquire_line(FILE *fp, char * input) {
         if(ret == NULL) {
             return 1;
         }
+    if(strlen(ret) >0 && ret[strlen(ret) -1] == '\n') {
+	ret[strlen(ret)-1] = '\0';
+    }
     }
     DEBUG_MSG("Ligne acquise '%s'\n", input); /* macro DEBUG_MSG : uniquement si compil en mode DEBUG_MSG */
     return 0;
@@ -203,6 +206,9 @@ int main ( int argc, char *argv[] ) {
             /* Une nouvelle ligne a ete acquise dans le flux fp*/
             int res = parse_and_execute_cmd_string(input); /* execution de la commande */
             switch(res) {
+	    //case 2: //il y a eu une erreur
+		//fprintf(stdout, "CMD TEST RESULT ERROR\n");
+		//break;
             case CMD_OK_RETURN_VALUE: /* tout s'est bien passé */
                 break;
             case CMD_EMPTY_RETURN_VALUE: /* commande vide */

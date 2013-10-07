@@ -11,8 +11,6 @@ il y a 32 registres d'usage général, de taille 32 bits.
 les registres PC SR HI et LO font eux aussi 32 bits.
 */
 
-//typedef int REGISTRE; //32 bits est la taille d'un int
-
 //REGISTRE PC; //compteur programme : contient l'adresse de la prochaine instruction
 
 //REGISTRE SR; 
