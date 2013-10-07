@@ -30,6 +30,7 @@ recopier chacune de ces sections dans la mémoire, les octets dans chaque sectio
 s'il y a des sections de relocation .rel.text .rel.data, mettre à jour les adresses relatives
 */
 int parse_and_execute_cmd_lp(char* paramsStr);
+int execute_cmd_lp(char* token);
 
 /*
 afficher les registres :
@@ -46,3 +47,5 @@ modifier une valeur dans un registre :
 écrit, dans le registre dont le nom est passé en paramètre, la valeur passée en 2è paramètre
 */
 int parse_and_execute_cmd_lr(char* paramsStr);
+int execute_cmd_lr(int num_reg, int value);
+

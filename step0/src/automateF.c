@@ -43,7 +43,7 @@ int automate(char* nombre ) {
 		if ( c == 'x' || c == 'X' ) S=HEXA;
 		else if ( isdigit(c) && c<'8' ) S=OCTAL; // c ' est un octal
 		else if ( c==EOF || isspace (c) ) { S=INIT ;
-		printf ( "la chaine est sous forme decimale\n" ) ;
+		//printf ( "la chaine est sous forme decimale\n" ) ;
                                                 }
 		//else return erreur_caractere ( string,i,c ) ;
 		else {
@@ -69,7 +69,7 @@ int automate(char* nombre ) {
 		}
 		else if ( c==EOF || isspace(c)) { 
 			S=INIT ;
-			printf ( " la chaine est sous forme hexadecimale\n") ;
+			//printf ( " la chaine est sous forme hexadecimale\n") ;
 		}
 		//else return erreur_caractere ( string,i,c ) ;
 		else {
@@ -84,7 +84,7 @@ int automate(char* nombre ) {
 		}
 		else if ( c==EOF || isspace(c)) { 
 			S=INIT ;
-			printf ( " la chaine est sous forme decimale\n");
+			//printf ( " la chaine est sous forme decimale\n");
 		}
 		//else return erreur_caractere ( string,i,c ) ;
 		else {
@@ -99,7 +99,7 @@ int automate(char* nombre ) {
 		}
 		else if ( c==EOF || isspace(c)) { 
 			S=INIT ;
-			printf ( " la chaine est sous forme octale \n" ) ;
+			//printf ( " la chaine est sous forme octale \n" ) ;
 		}
 		//else return erreur_caractere (string,i,c ) ;
 		else {

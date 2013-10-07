@@ -1,5 +1,7 @@
-#test des paramètres de la fonction dr
+#test des paramètres de la fonction dr ; fonctionnement correct
 
-#dr hi
 #dr HI
-dr $45
+#dr $12
+#dr $v1
+#dr PC $2 $at
+#dr

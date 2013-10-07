@@ -20,7 +20,7 @@ int isregister(char* param) {
 	}
 	
 	if (param[0]==36) {	//si ça commence par "$"
-		DEBUG_MSG("param commence par $");
+		//DEBUG_MSG("param commence par $");
 		//regarder si c'est un numero ou un mnemo
 		//les chiffres ont un code ascii entre 48 et 57
 		char x[1];
@@ -28,19 +28,19 @@ int isregister(char* param) {
 		//DEBUG_MSG("premier caractère %d", atoi(x));
 		
 		if (x[0]>47 && x[0]<58) {	//cas où c'est le numero du registre qui est appelé
-			DEBUG_MSG("cherche le numero");
+			//DEBUG_MSG("cherche le numero");
 			int nombre=0; 
 			nombre=atoi(x); 
-			DEBUG_MSG("premier chiffre %d", nombre); 
+			//DEBUG_MSG("premier chiffre %d", nombre); 
 	
 			char y[1];
 			y[0]=param[2];
 			//DEBUG_MSG("code ascii du deuxième chiffre = %d", y[0]);
 			int nbe=0;
 			nbe=atoi(y);
-			DEBUG_MSG("deuxième chiffre %d", nbe);
+			//DEBUG_MSG("deuxième chiffre %d", nbe);
 			int numero=10*nombre+nbe;
-			DEBUG_MSG("numéro du registre demandé %d", numero);
+			//DEBUG_MSG("numéro du registre demandé %d", numero);
 			//vérifier qu'il est dans le bon intervalle
 			if (numero<0 || numero >35) {
 				return -1;
@@ -49,15 +49,15 @@ int isregister(char* param) {
 		}
 		
 		else {		//cas où c'est le mnemo qui est appelé
-			DEBUG_MSG("cherche le nom");
-			DEBUG_MSG("%d %d", param[1], param[2]);
+			//DEBUG_MSG("cherche le nom");
+			//DEBUG_MSG("%d %d", param[1], param[2]);
 			char mot[2];
 			mot[0]=param[1];
 			mot[1]=param[2];
 			mot[2]='\0';
 			
 			//strcat(mot, atoi(lettre2));
-			DEBUG_MSG("%s", mot);
+			//DEBUG_MSG("%s", mot);
 			//int b=strcmp(mot,"az");
 		
 			//DEBUG_MSG("ici on a b= %d",b);

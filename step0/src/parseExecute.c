@@ -83,10 +83,14 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 		}
 		else {
 			DEBUG_MSG("Ouverture réussie de %s", token);
+			return execute_cmd_lp(token);
 		}
 		
 	}
 	return 2;
+}
+int execute_cmd_lp(char* token) {
+	return CMD_OK_RETURN_VALUE;
 }
 
 int parse_and_execute_cmd_dr(char* paramsStr) {
@@ -143,10 +147,15 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 }
 
 int execute_cmd_dr_un(int num_registre) {
+	printf("CMD TEST RESULT %d\n", num_registre);
 	return CMD_OK_RETURN_VALUE;
 }
 
 int execute_cmd_dr_tous() {
+	int i;
+	for (i=0 ; i<36 ; i++) {
+		printf("CMD TEST RETURN RESULT %d\n", i);
+	}
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -168,35 +177,46 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : register and hexadecimal value awaited in %s", token);
 	}
-	else if (isregister(token) < 0) {
-		WARNING_MSG("Invalid param : register name awaited in %s", token);
-	}
-	else if (isregister(token) > -1) {
-		DEBUG_MSG("%s est le registre %d", token, isregister(token));
-		//tester si le 2è param est de la bonne forme
-		char* token2=NULL;
-		token2=strtok( NULL, separateur  );
-		if (token2==NULL) {
-			WARNING_MSG("Invalid param : 32 bits hexadecimal value missing after %s", token);
+	else {
+		int c=isregister(token);
+		if (c < 0) {
+			WARNING_MSG("Invalid param : register name awaited in %s", token);
 		}
-		else {
-			DEBUG_MSG("Deuxième paramètre : %s", token2);
-			if (automate(token2)!=3 || strlen(token2)>10) {
-				WARNING_MSG("Invalid param : 8 digit hexadecimal value awaited in %s", token2);
+		else if (c > -1) {
+			DEBUG_MSG("%s est le registre %d", token, c);
+			//tester si le 2è param est de la bonne forme
+			char* token2=NULL;
+			token2=strtok( NULL, separateur  );
+			if (token2==NULL) {
+				WARNING_MSG("Invalid param : 32 bits hexadecimal value missing after %s", token);
 			}
 			else {
-				//on va regarder s'il y a trop de paramètres
-				char* token3;
-				token3=strtok(NULL, separateur);
-				if (token3!=NULL) {
-					WARNING_MSG("Seuls deux paramètres sont attendus dans dr, la fonction ne tient pas compte des suivants");
+				DEBUG_MSG("Deuxième paramètre : %s", token2);
+				if (automate(token2)!=3 || strlen(token2)>10) {
+					WARNING_MSG("Invalid param : 8 digit hexadecimal value awaited in %s", token2);
 				}
-				//exécution de la fonction lr
+				else {
+					//on va regarder s'il y a trop de paramètres
+					char* token3;
+					token3=strtok(NULL, separateur);
+					if (token3!=NULL) {
+						WARNING_MSG("Seuls deux paramètres sont attendus dans lr, la fonction ne tient pas compte des suivants");
+					}
+					//conversion de token2 en it :
+					int value = (int)strtol(token2, NULL, 0);
+					DEBUG_MSG("valeur à écrire %d", value);
+				
+					return execute_cmd_lr(c,value);
+				}
 			}
-		}
 		
+		}
 	}
-	
 	return 2;
 }
 
+int execute_cmd_lr(int num_reg, int value) {
+	FILE* output=fopen("test/10_lr.out", "w");
+	fprintf(output, "CMD TEST RESULT %d %d\n", num_reg, value);
+	return CMD_OK_RETURN_VALUE;
+}

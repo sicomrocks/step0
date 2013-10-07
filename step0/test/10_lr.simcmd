@@ -1,0 +1,5 @@
+#Test fonction lr ; foctionnement normal
+
+lr HI 0xa45
+lr $at 0x23
+lr $16 0x9f4
