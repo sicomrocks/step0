@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "automateF.h"
 #include "notify.h"
 #include "reg.h"
 

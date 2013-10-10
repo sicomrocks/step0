@@ -5,11 +5,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "fonctions.h"
-#include "automateF.h"
 #include "notify.h"
 //#include "memoire.h"
-
-
 int execute_cmd_testcmd(int hexValue);
 
 int parse_and_execute_cmd_testcmd(char * paramsStr);
@@ -17,10 +14,8 @@ int parse_and_execute_cmd_testcmd(char * paramsStr);
 int execute_cmd_exit();
 
 int parse_and_execute_cmd_exit(char * paramsStr);
-
-
 /*
-charger un programme : 
+charger un programme :
 vérifier que le fichier est au format ELF relogeable
 vérifier que les sections .txt .data et .bss ne sont pas vides
 recopier chacune de ces sections dans la mémoire, les octets dans chaque section étant copiés les uns à la suite des autres
@@ -49,3 +44,21 @@ modifier une valeur dans un registre :
 int parse_and_execute_cmd_lr(char* paramsStr);
 int execute_cmd_lr(int num_reg, int value);
 
+int execute_cmd_da(char* adresse, int* nb_instructions);
+int parse_and_execute_cmd_da(char* paramsStr);
+/*
+
+*/
+
+int execute_cmd_lm(char* adresse,char* valeur);
+int parse_and_execute_cmd_lm(char* paramsStr);
+/*
+La commande écrit à l'adresse (hexa) donnée en premier paramètre la valeur (hexa d'octet) donnée en deuxième paramètre, ces paramètres séparés par un espace.
+La valeur entière peut être sur 1 à 8 chiffres hexadécimaux
+*/
+
+int execute_cmd_dm(char* Adress);
+int parse_and_execute_cmd_dm(char* paramsStr);
+/*
+
+*/

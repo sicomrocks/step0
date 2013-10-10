@@ -86,29 +86,29 @@ int parse_and_execute_cmd_string(char *input) {
     /*parsing et execution des commandes !*/
     if(strcmp(cmdStr, "testcmd") == 0) {
         return parse_and_execute_cmd_testcmd(input + strlen(cmdStr) );
-    } 
+    }
     else if(strcmp(cmdStr, "exit") == 0) {
         return parse_and_execute_cmd_exit(input + strlen(cmdStr) );
     }
     else if(strcmp(cmdStr, "lp") == 0) {
         return parse_and_execute_cmd_lp(input + strlen(cmdStr) );
     }
-    /*else if(strcmp(cmdStr, "dm") == 0) {
+    else if(strcmp(cmdStr, "dm") == 0) {
         return parse_and_execute_cmd_dm(input + strlen(cmdStr) );
     }
     else if(strcmp(cmdStr, "da") == 0) {
         return parse_and_execute_cmd_da(input + strlen(cmdStr) );
-    }*/
+    }
     else if(strcmp(cmdStr, "dr") == 0) {
         return parse_and_execute_cmd_dr(input + strlen(cmdStr) );
     }
-    /*else if(strcmp(cmdStr, "lm") == 0) {
+    else if(strcmp(cmdStr, "lm") == 0) {
         return parse_and_execute_cmd_lm(input + strlen(cmdStr) );
-    }*/
+    }
     else if(strcmp(cmdStr, "lr") == 0) {
         return parse_and_execute_cmd_lr(input + strlen(cmdStr) );
     }
-    
+
     WARNING_MSG("Unknown Command : '%s'\n", cmdStr);
     return CMD_UNKOWN_RETURN_VALUE;
 }
@@ -169,7 +169,7 @@ int main ( int argc, char *argv[] ) {
     INFO_MSG("Un message INFO_MSG : Debut du programme %s", argv[0]); /* macro INFO_MSG */
     WARNING_MSG("Un message WARNING_MSG !"); /* macro INFO_MSG */
     DEBUG_MSG("Un message DEBUG_MSG !"); /* macro DEBUG_MSG : uniquement si compil en mode DEBUG_MSG */
-    
+
     //initialisation des registres
     init_reg(registres);
     //int i;
