@@ -206,7 +206,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 					if (token3!=NULL) {
 						WARNING_MSG("Seuls deux paramètres sont attendus dans lr, la fonction ne tient pas compte des suivants");
 					}
-					//conversion de token2 en it :
+					//conversion de token2 en int :
 					int value = (int)strtol(token2, NULL, 0);
 					DEBUG_MSG("valeur à écrire %d", value);
 
@@ -230,7 +230,7 @@ int execute_cmd_lr(int num_reg, int value) {
 int execute_cmd_da(char* adresse, int* nb_instructions) {
 	int A=(int)strtol(adresse, NULL, 0);
 	int N=(int)strtol(nb_instructions, NULL, 0);
-	fprintf(stdout, "adresse de départ 0x%.8x, nbe instructions %d\n", A, N);
+	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -270,8 +270,13 @@ int parse_and_execute_cmd_da(char* paramsStr)
 	return 2;
 }
 
-int execute_cmd_lm(char* adresse,char* valeur)
-{return 2;}
+int execute_cmd_lm(char* adresse,char* valeur) {
+	DEBUG_MSG("%s %s", adresse, valeur);
+	int A=(int)strtol(adresse, NULL, 0);
+	int val=(int)strtol(valeur, NULL, 0);
+	fprintf(stdout, "adresse 0x%.8x valeur 0x%.8x\n", A, val);
+	return CMD_OK_RETURN_VALUE;
+}
 
 int parse_and_execute_cmd_lm(char* paramsStr)
 {
@@ -312,7 +317,7 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 
 		do
 		{
-            if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) )
+            if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) || strlen(token2)>10)
             {	WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
                 return 2;
             }
@@ -329,11 +334,12 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 		valeur = strtok( NULL, ".");
 		DEBUG_MSG("adresse = %s\nvaleur = %s",adresse,valeur);
 	}
-	return CMD_OK_RETURN_VALUE;
+	return execute_cmd_lm(adresse, valeur);
 }
 
-int execute_cmd_dm(char* Adress)
-{return 2;}
+int execute_cmd_dm(char* Adress) {
+	return CMD_OK_RETURN_VALUE;
+}
 
 int parse_and_execute_cmd_dm(char* paramsStr)
 {
@@ -342,10 +348,12 @@ char* buffer0;
 char* token0;
 buffer0=strdup(paramsStr);
 token0=strtok(buffer0," ");
-if (token0==NULL){ return 2;}
+if (token0==NULL){ 
+	return 2;
+}
 
-else
-{	// Déterminer le nombre de barres verticales (donc d'adresses)
+else {
+	// Déterminer le nombre de barres verticales (donc d'adresses)
 	char* bufferbarre;
 	bufferbarre = strdup (paramsStr);
 	char* tokenbarre;
@@ -405,7 +413,10 @@ else
 		int n;
 		while (m<nb_barres+1)
 		{n = adressType(adresses[m]);
-		if (n==1) {WARNING_MSG("adresse numero %d invalide\n",m+1);return 2;} 
+		if (n==1) {
+			WARNING_MSG("adresse numero %d invalide\n",m+1);
+			return 2;
+		} 
 							// Si l'adresse est fausse, on sort du programme
 							// Sinon, on poursuit jusqu'à commande OK
 		m++;
