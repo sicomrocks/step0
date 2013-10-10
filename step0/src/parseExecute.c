@@ -17,7 +17,7 @@ int execute_cmd_testcmd(int hexValue) {
     }
 
     /* ecriture du resultat de la commande dans la sortie standard */
-    fprintf(stdout, "CMD TEST RESULT 0x%x\n", hexValue + 1);
+    fprintf(stdout, "CMD TEST RESULT 0x%.8x\n", hexValue + 1);
 
     /* Notez que c'est le SEUL fprintf(stdout ...) (donc le seul "printf") de tout le programme ! */
 
@@ -148,7 +148,7 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 }
 
 int execute_cmd_dr_un(int num_registre) {
-	fprintf(stdout, "registre %d valeur 0x%x\n", registres[num_registre].numero, registres[num_registre].valeur);
+	fprintf(stdout, "%.2d : 0x%.8x\n", registres[num_registre].numero, registres[num_registre].valeur);
 	//fprintf(stdout, "CMD TEST RESULT %d\n", num_registre);
 	return CMD_OK_RETURN_VALUE;
 }
@@ -222,12 +222,17 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 int execute_cmd_lr(int num_reg, int value) {
 	//FILE* output=fopen("test/10_lr.out", "w");
 	registres[num_reg].valeur=value;
-	fprintf(stdout, "CMD TEST RESULT %d 0x%x\n", registres[num_reg].numero, registres[num_reg].valeur);
+	//fprintf(stdout, "CMD TEST RESULT %d 0x%x\n", registres[num_reg].numero, registres[num_reg].valeur);
+	execute_cmd_dr_un(num_reg);
 	return CMD_OK_RETURN_VALUE;
 }
 
-int execute_cmd_da(char* adresse, int* nb_instructions)
-{return 0;}
+int execute_cmd_da(char* adresse, int* nb_instructions) {
+	int A=(int)strtol(adresse, NULL, 0);
+	int N=(int)strtol(nb_instructions, NULL, 0);
+	fprintf(stdout, "adresse de départ 0x%.8x, nbe instructions %d\n", A, N);
+	return CMD_OK_RETURN_VALUE;
+}
 
 int parse_and_execute_cmd_da(char* paramsStr)
 {
@@ -246,20 +251,21 @@ int parse_and_execute_cmd_da(char* paramsStr)
 
 	// premier appel, pour vérifier s'il y a des paramètres
 	token = strtok( buffer, separateur  );
-	if (token == NULL) // cas où il n'y a pas de paramètres
-	{	WARNING_MSG("Invalid param : adress and value awaited");
+	if (token == NULL) /* cas où il n'y a pas de paramètres*/ {	
+		WARNING_MSG("Invalid param : address and value awaited");
 	}
-	else if (isadress(token) == 0)
-	{	WARNING_MSG("Invalid param : valid adress awaited in first parameter");
+	else if (isadress(token) == 0) {	
+		WARNING_MSG("Invalid param : valid address awaited in first parameter");
 	}
-	else if (isadress(token) == 1) //tester si le 2è param est de la bonne forme
-	{	char* token2=NULL;
+	else if (isadress(token) == 1) /*tester si le 2è param est de la bonne forme*/ {
+		char* token2=NULL;
 		token2=strtok( NULL, separateur  );
-		if (token2==NULL || automate(token2)!=4) // automate = 4 si DECIMAL
-		{	WARNING_MSG("Nombre entier attendu après %s", token);
+		if (token2==NULL || automate(token2)!=4) /* automate = 4 si DECIMAL*/{
+			WARNING_MSG("Nombre entier attendu après %s", token);
 		}
-		else
-		{return CMD_OK_RETURN_VALUE;}
+		else {
+			return execute_cmd_da(token, token2);
+		}
 	}
 	return 2;
 }
@@ -291,11 +297,11 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 	// premier appel, pour vérifier s'il y a des paramètres
 	token = strtok( buffer, separateur);
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
-		WARNING_MSG("Invalid param : adress and hexadecimal value awaited in %s", token);
+		WARNING_MSG("Invalid param : address and hexadecimal value awaited in %s", token);
 	}
 
     else if (isadress(token)==0)
-    WARNING_MSG("Invalid param : hexadecimal adress expected in first parameter");
+    WARNING_MSG("Invalid param : hexadecimal address expected in first parameter");
 
 	else if (isadress(token)==1)
 	{   adresse=token; // utile pour la fin
@@ -374,11 +380,11 @@ else
 	token = strtok(buffer,separateur);
 
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
-		WARNING_MSG("Invalid param : Adress(es) expected\n");
+		WARNING_MSG("Invalid param : Address(es) expected\n");
 		return 2;
 	}
 	if (adressType(token)==1)	// cas où la première adresse est incorrect
-	{WARNING_MSG("First adress invalid\n");
+	{WARNING_MSG("First address invalid\n");
 	return 2;
 	}
 	else
