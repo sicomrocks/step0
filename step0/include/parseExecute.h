@@ -6,7 +6,7 @@
 #include <readline/history.h>
 #include "fonctions.h"
 #include "notify.h"
-//#include "memoire.h"
+
 int execute_cmd_testcmd(int hexValue);
 
 int parse_and_execute_cmd_testcmd(char * paramsStr);

@@ -109,7 +109,7 @@ int parse_and_execute_cmd_string(char *input) {
         return parse_and_execute_cmd_lr(input + strlen(cmdStr) );
     }
 
-    WARNING_MSG("Unknown Command : '%s'\n", cmdStr);
+    WARNING_MSG("Unknown Command : '%s'", cmdStr);
     return CMD_UNKOWN_RETURN_VALUE;
 }
 
@@ -150,7 +150,7 @@ int  acquire_line(FILE *fp, char * input) {
 	ret[strlen(ret)-1] = '\0';
     }
     }
-    DEBUG_MSG("Ligne acquise '%s'\n", input); /* macro DEBUG_MSG : uniquement si compil en mode DEBUG_MSG */
+    DEBUG_MSG("Ligne acquise '%s'", input); /* macro DEBUG_MSG : uniquement si compil en mode DEBUG_MSG */
     return 0;
 }
 
