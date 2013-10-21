@@ -84,10 +84,12 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 		}
 		else {
 			DEBUG_MSG("Ouverture réussie de %s", token);
+			free(buffer);
 			return execute_cmd_lp(token);
 		}
 
 	}
+	free(buffer);
 	return 2;
 }
 int execute_cmd_lp(char* token) {
@@ -113,6 +115,7 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 	token = strtok( buffer, separateur  );
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Affichage de tous les registres");
+		free(buffer);
 		return execute_cmd_dr_tous();
 	}
 	else {
@@ -123,7 +126,8 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 		}
 		if (c>-1) {
 			DEBUG_MSG("le paramètre est le registre %d", c);
-			execute_cmd_dr_un(c);
+			free(buffer);
+			return execute_cmd_dr_un(c);
 		}
 	}
 
@@ -148,8 +152,23 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 }
 
 int execute_cmd_dr_un(int num_registre) {
-	fprintf(stdout, "%.2d : 0x%.8x\n", registres[num_registre].numero, registres[num_registre].valeur);
-	//fprintf(stdout, "CMD TEST RESULT %d\n", num_registre);
+	switch(num_registre) {
+		case 32:
+			fprintf(stdout, "PC : 0x%.8x\n", registres[num_registre].valeur);
+			break;
+		case 33:
+			fprintf(stdout, "SR : 0x%.8x\n", registres[num_registre].valeur);
+			break;
+		case 34:
+			fprintf(stdout, "HI : 0x%.8x\n", registres[num_registre].valeur);
+			break;
+		case 35:
+			fprintf(stdout, "LO : 0x%.8x\n", registres[num_registre].valeur);
+			break;
+		default:
+			fprintf(stdout, "%.2d : 0x%.8x\n", registres[num_registre].numero, registres[num_registre].valeur);
+			//fprintf(stdout, "CMD TEST RESULT %d\n", num_registre);
+	}	
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -184,10 +203,16 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 		int c=isregister(token);
 		if (c < 0) {
 			WARNING_MSG("Invalid param : register name awaited in %s", token);
+			free(buffer);
 			return 2;
 		}
 		else if (c > -1) {
 			DEBUG_MSG("%s est le registre %d", token, c);
+			if (c==0) {
+				WARNING_MSG("On ne peut pas écrire dans ce registre");
+				free(buffer);
+				return 2;
+			}
 			//tester si le 2è param est de la bonne forme
 			char* token2=NULL;
 			token2=strtok( NULL, separateur  );
@@ -208,14 +233,15 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 					}
 					//conversion de token2 en int :
 					int value = (int)strtol(token2, NULL, 0);
-					DEBUG_MSG("valeur à écrire %d", value);
-
+					DEBUG_MSG("valeur à écrire %d = 0x%.8x", value, value);
+					free(buffer);
 					return execute_cmd_lr(c,value);
 				}
 			}
 
 		}
 	}
+	free(buffer);
 	return 2;
 }
 
@@ -264,9 +290,11 @@ int parse_and_execute_cmd_da(char* paramsStr)
 			WARNING_MSG("Nombre entier attendu après %s", token);
 		}
 		else {
+			free(buffer);
 			return execute_cmd_da(token, token2);
 		}
 	}
+	free(buffer);
 	return 2;
 }
 
@@ -319,6 +347,8 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 		{
             if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) || strlen(token2)>10)
             {	WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
+                free(buffer);
+                free(buffer2);
                 return 2;
             }
             else
@@ -326,6 +356,8 @@ int parse_and_execute_cmd_lm(char* paramsStr)
                 token2=strtok( NULL,separateur);
                 if (token2!=NULL && compteur==8)
                 {   WARNING_MSG("Invalid value : too many parameters");
+                    free(buffer);
+                    free(buffer2);
                     return 2;
                 }
             }
@@ -334,6 +366,8 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 		valeur = strtok( NULL, ".");
 		DEBUG_MSG("adresse = %s\nvaleur = %s",adresse,valeur);
 	}
+	free(buffer);
+	free(buffer2);
 	return execute_cmd_lm(adresse, valeur);
 }
 
@@ -349,6 +383,7 @@ char* token0;
 buffer0=strdup(paramsStr);
 token0=strtok(buffer0," ");
 if (token0==NULL){ 
+	free(buffer0);
 	return 2;
 }
 
@@ -389,10 +424,16 @@ else {
 
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : Address(es) expected\n");
+		free(buffer);
+		free(buffer2);
+		free(bufferbarre);
 		return 2;
 	}
-	if (adressType(token)==1)	// cas où la première adresse est incorrect
-	{WARNING_MSG("First address invalid\n");
+	if (adressType(token)==1) {	// cas où la première adresse est incorrect
+	WARNING_MSG("First address invalid\n");
+	free(buffer);
+	free(buffer2);
+	free(bufferbarre);
 	return 2;
 	}
 	else
@@ -415,6 +456,9 @@ else {
 		{n = adressType(adresses[m]);
 		if (n==1) {
 			WARNING_MSG("adresse numero %d invalide\n",m+1);
+			free(buffer);
+			free(buffer2);
+			free(bufferbarre);
 			return 2;
 		} 
 							// Si l'adresse est fausse, on sort du programme
@@ -424,5 +468,8 @@ else {
 		}
 	}
 }
+/*free(buffer);
+free(bufferbarre);
+free(buffer2);*/
 return CMD_OK_RETURN_VALUE;
 }

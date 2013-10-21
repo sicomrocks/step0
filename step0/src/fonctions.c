@@ -36,6 +36,11 @@ int isregister(char* param) {
 			int nombre=0; 
 			nombre=atoi(x); 
 			//DEBUG_MSG("premier chiffre %d", nombre); 
+			
+			if (strlen(param)==2) {
+				//DEBUG_MSG("un seul chiffre");
+				return registres[nombre].numero;
+			}
 	
 			char y[1];
 			y[0]=param[2];

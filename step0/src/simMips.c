@@ -90,6 +90,12 @@ int parse_and_execute_cmd_string(char *input) {
     else if(strcmp(cmdStr, "exit") == 0) {
         return parse_and_execute_cmd_exit(input + strlen(cmdStr) );
     }
+    else if(strcmp(cmdStr, "ex") == 0) {
+        return parse_and_execute_cmd_exit(input + strlen(cmdStr) );
+    }
+    else if(strcmp(cmdStr, "quit") == 0) {
+        return parse_and_execute_cmd_exit(input + strlen(cmdStr) );
+    }
     else if(strcmp(cmdStr, "lp") == 0) {
         return parse_and_execute_cmd_lp(input + strlen(cmdStr) );
     }
