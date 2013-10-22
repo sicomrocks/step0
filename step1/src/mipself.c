@@ -5,7 +5,7 @@
  * \brief loading ELF file in memory.
  * A compiler avec "-DVERBOSE": pour trace d'execution
  *--------------------------------------------------------------------------
- * Ce fichier contient tout un ensemble de fonction pour la lecture d'un
+ * Ce fichier contient tout un ensemble de fonctions pour la lecture d'un
  * fichier au format ELF.
  * Tout ce qui peut etre utile dans les autres modules est declare dans le
  * fichier mipself.h. Le contenu de ce fichier .c

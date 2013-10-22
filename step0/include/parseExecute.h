@@ -7,13 +7,12 @@
 #include "fonctions.h"
 #include "notify.h"
 
+int parse_and_execute_cmd_testcmd(char * paramsStr);
 int execute_cmd_testcmd(int hexValue);
 
-int parse_and_execute_cmd_testcmd(char * paramsStr);
-
+int parse_and_execute_cmd_exit(char * paramsStr);
 int execute_cmd_exit();
 
-int parse_and_execute_cmd_exit(char * paramsStr);
 /*
 charger un programme :
 vérifier que le fichier est au format ELF relogeable
@@ -39,7 +38,7 @@ int execute_cmd_dr_tous();
 
 /*
 modifier une valeur dans un registre :
-écrit, dans le registre dont le nom est passé en paramètre, la valeur passée en 2è paramètre
+écrit, dans le registre dont le numéro est num_reg, la valeur value
 */
 int parse_and_execute_cmd_lr(char* paramsStr);
 int execute_cmd_lr(int num_reg, int value);
