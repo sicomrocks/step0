@@ -5,6 +5,9 @@
 
 
 void init_reg(REGISTRE* tab) {
+	
+	INFO_MSG("Initialisation des registres");
+	
 	int i;
 	for (i=0 ; i<36 ; i++) {
 		tab[i].numero=i;
@@ -52,6 +55,9 @@ void init_reg(REGISTRE* tab) {
 }
 
 void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUCTION
+
+	INFO_MSG("Initialisation du dictionnaire d'instructions");
+
 	char* mot=NULL;
 	char ligne[512];
 	const char* delim=" ";
@@ -67,40 +73,44 @@ void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUC
 		//ligne[strlen(ligne-1)-1]="\0";
 		//DEBUG_MSG("ligne n° %d : %s", i, ligne);
 	
-		//premier mot : char* nom
+		//premier mot : char* nom ÇA MARCHE
 		mot=strtok(ligne, delim);
-		DICO[i-1].nom=mot;
+		DICO[i-1].nom=strdup(mot);
+		//DICO[i-1].nom=mot;
 		//DEBUG_MSG("instr %d : %s", i, DICO[i-1].nom);
 		
-		//2è mot : char type
+		//2è mot : char* type ÇA MARCHE
 		mot=strtok(NULL, delim);
-		DICO[i-1].type=mot;
+		DICO[i-1].type=strdup(mot);
 		//mot[strlen(mot)-1]="0"; 
 		//DEBUG_MSG("type : %s", DICO[i-1].type);
 		
-		//3è mot : int nbe_op
+		//3è mot : int nbe_op ÇA MARCHE
 		mot=strtok(NULL, delim);
 		DICO[i-1].nbe_op=atoi(mot);
 		//DEBUG_MSG("nbe operandes : %d", DICO[i-1].nbe_op);
 		
-		//4èmot : char* ops[3] : tableau de char* contenant le nom des opérandes (jusqu'à trois)
+		//4èmot : char* ops[3] : tableau de char* contenant le nom des opérandes (jusqu'à trois) ÇA MARCHE
 		if (DICO[i-1].nbe_op > 0) {
 			mot=strtok(NULL, delim);
-			DICO[i-1].ops[0]=mot;
+			DICO[i-1].ops[0]=strdup(mot);
+			DICO[i-1].ops[1]=0;
+			DICO[i-1].ops[2]=0;
 			//DEBUG_MSG("%s", DICO[i-1].ops[0]);
 		}
 		if (DICO[i-1].nbe_op > 1) {
 			mot=strtok(NULL, delim);
-			DICO[i-1].ops[1]=mot;
+			DICO[i-1].ops[1]=strdup(mot);
+			DICO[i-1].ops[2]=0;
 			//DEBUG_MSG("%s", DICO[i-1].ops[1]);
 		}
 		if (DICO[i-1].nbe_op > 2) {
 			mot=strtok(NULL, delim);
-			DICO[i-1].ops[2]=mot;
+			DICO[i-1].ops[2]=strdup(mot);
 			//DEBUG_MSG("%s", DICO[i-1].ops[2]);
 		}
 		
-		//mot suivant :  int opcode
+		//mot suivant : unsigned int opcode ÇA MARCHE
 		mot=strtok(NULL, delim); //mot a pour valeur "opcode"
 		mot=strtok(NULL, delim);
 		//DEBUG_MSG("opcode lu : %s", mot);
@@ -111,14 +121,14 @@ void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUC
 			string[j]=mot[j+2];
 		}
 		//DEBUG_MSG("opcode pris : %s", string);
-		DICO[i-1].opcode=(int)strtol(string, NULL, 16);
+		DICO[i-1].opcode=(int)strtol(strdup(string), NULL, 16);
 		//DEBUG_MSG("opcode : 0x%x", DICO[i-1].opcode);
 		
 		//dernier mot : unsigned int function
 		mot=strtok(NULL, delim);
 		if (mot != NULL) {
 			mot=strtok(NULL, delim);
-			DICO[i-1].func=(unsigned int)strtol(mot, NULL, 16);
+			DICO[i-1].func=(unsigned int)strtol(strdup(mot), NULL, 16);
 			//DEBUG_MSG("function : 0x%x", DICO[i-1].func);
 		}
 		else {
@@ -126,5 +136,12 @@ void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUC
 			//DEBUG_MSG("function : 0x%x", DICO[i-1].func);
 		}
 		i++;		
+	}
+	//affichage des valeurs du dico
+	for (i=0 ; i<25 ; i++) {
+		if (DICO[i].nom == NULL) {
+			DEBUG_MSG("error");
+		}
+		//DEBUG_MSG("%d %s %s %d %s %s %s 0x%x 0x%x",i+1, DICO[i].nom, DICO[i].type, DICO[i].nbe_op, DICO[i].ops[0], DICO[i].ops[1], DICO[i].ops[2], DICO[i].opcode, DICO[i].func);
 	}
 }

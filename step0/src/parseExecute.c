@@ -473,3 +473,21 @@ free(bufferbarre);
 free(buffer2);*/
 return CMD_OK_RETURN_VALUE;
 }
+
+int parse_and_execute_cmd_inst(char* paramsStr) {
+	DEBUG_MSG("Parametres : %s", paramsStr);
+	int num=atoi(paramsStr);
+	DEBUG_MSG("instruction %d", num);
+	if (num == 0 || num > 25) {
+		WARNING_MSG("les instructions vont de 1 à 25");
+		return 2;
+	}
+	else {
+		return execute_cmd_inst(num);
+	}
+}
+
+int execute_cmd_inst(int n) {
+	fprintf(stdout,"numero: %d nom: %s type: %s nbe d'op: %d 1è op: %s 2è op: %s 3è op: %s opcode: 0x%x function: 0x%x\n", n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);
+	return CMD_OK_RETURN_VALUE;
+}

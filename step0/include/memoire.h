@@ -3,6 +3,9 @@
 #include "notify.h"
 #include "reg.h"
 
+#ifndef _MEMOIRE_H__
+#define _MEMOIRE_H_
+
 //		DÉFINITION DES STRUCTURES MODÉLISANT LA MÉMOIRE ET LES REGISTRES DU MIPS
 
 /*
@@ -63,3 +66,8 @@ INSTRUCTION DICO[25];
 /*fonction qui lit dans le fichier dico.txt toutes les instructions à prendre en compte
  * et les range dans le tableau de structures DICO*/
 void init_instr(INSTRUCTION* tab);
+
+
+
+#endif /* _MEMOIRE_H_ */
+

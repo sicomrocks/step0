@@ -6,6 +6,7 @@
 #include <readline/history.h>
 #include "fonctions.h"
 #include "notify.h"
+#include "memoire.h"
 
 int parse_and_execute_cmd_testcmd(char * paramsStr);
 int execute_cmd_testcmd(int hexValue);
@@ -61,3 +62,7 @@ int parse_and_execute_cmd_dm(char* paramsStr);
 /*
 
 */
+
+/*fonction qui affiche les caractéristiques de l'instruction voulue (donnée par le num de la ligne du dico)*/
+int parse_and_execute_cmd_inst(char* paramsStr);
+int execute_cmd_inst(int n);
