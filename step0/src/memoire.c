@@ -56,35 +56,28 @@ void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUC
 	char ligne[512];
 	const char* delim=" ";
 	
-	FILE* f=fopen("src/dico.txt", "rt");
+	FILE* f=fopen("src/test", "rt");
 	if (f==NULL) {
 		WARNING_MSG("Impossible d'ouvrir le dictionnaire");
 		exit(2);
 	}
 	
-	int i=1;
-	//while (f!=EOF) {
-		//lire une ligne
-		//fgets(ligne, 512, f);
-		
-		while (fgets(ligne, 512, f) != NULL) {
-			//ligne[strlen(ligne-1)-1]="\0";
-			DEBUG_MSG("ligne n° %d : %s", i, ligne);
-		
-			mot=strtok(ligne, delim);
+	int i=1;		
+	while (fgets(ligne, 512, f) != NULL) {
+		//ligne[strlen(ligne-1)-1]="\0";
+		DEBUG_MSG("ligne n° %d : %s", i, ligne);
+	
+		mot=strtok(ligne, delim);
+		if (mot != NULL) {
 			DEBUG_MSG("mot : %s", mot);
-			//if (mot != NULL) {
-			//	DEBUG_MSG("mot : %s", mot);
-			//}
-				while( mot != NULL ) {
-				// on parcourt toute la ligne
-					mot = strtok( NULL, delim  );
-					if (mot != NULL) {
-						DEBUG_MSG("mot : %s", mot);
-					}
-				}
-				i++;
-				//fgets(ligne, 512, f);
-			
 		}
+		while( mot != NULL ) {
+		// on parcourt toute la ligne
+			mot = strtok( NULL, delim  );
+			if (mot != NULL) {
+				DEBUG_MSG("mot : %s", mot);
+			}
+		}
+		i++;		
+	}
 }
