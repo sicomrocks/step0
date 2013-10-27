@@ -56,7 +56,7 @@ void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUC
 	char ligne[512];
 	const char* delim=" ";
 	
-	FILE* f=fopen("src/test", "rt");
+	FILE* f=fopen("src/dico.txt", "rt");
 	if (f==NULL) {
 		WARNING_MSG("Impossible d'ouvrir le dictionnaire");
 		exit(2);
@@ -65,18 +65,65 @@ void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUC
 	int i=1;		
 	while (fgets(ligne, 512, f) != NULL) {
 		//ligne[strlen(ligne-1)-1]="\0";
-		DEBUG_MSG("ligne n° %d : %s", i, ligne);
+		//DEBUG_MSG("ligne n° %d : %s", i, ligne);
 	
+		//premier mot : char* nom
 		mot=strtok(ligne, delim);
-		if (mot != NULL) {
-			DEBUG_MSG("mot : %s", mot);
+		DICO[i-1].nom=mot;
+		//DEBUG_MSG("instr %d : %s", i, DICO[i-1].nom);
+		
+		//2è mot : char type
+		mot=strtok(NULL, delim);
+		DICO[i-1].type=mot;
+		//mot[strlen(mot)-1]="0"; 
+		//DEBUG_MSG("type : %s", DICO[i-1].type);
+		
+		//3è mot : int nbe_op
+		mot=strtok(NULL, delim);
+		DICO[i-1].nbe_op=atoi(mot);
+		//DEBUG_MSG("nbe operandes : %d", DICO[i-1].nbe_op);
+		
+		//4èmot : char* ops[3] : tableau de char* contenant le nom des opérandes (jusqu'à trois)
+		if (DICO[i-1].nbe_op > 0) {
+			mot=strtok(NULL, delim);
+			DICO[i-1].ops[0]=mot;
+			//DEBUG_MSG("%s", DICO[i-1].ops[0]);
 		}
-		while( mot != NULL ) {
-		// on parcourt toute la ligne
-			mot = strtok( NULL, delim  );
-			if (mot != NULL) {
-				DEBUG_MSG("mot : %s", mot);
-			}
+		if (DICO[i-1].nbe_op > 1) {
+			mot=strtok(NULL, delim);
+			DICO[i-1].ops[1]=mot;
+			//DEBUG_MSG("%s", DICO[i-1].ops[1]);
+		}
+		if (DICO[i-1].nbe_op > 2) {
+			mot=strtok(NULL, delim);
+			DICO[i-1].ops[2]=mot;
+			//DEBUG_MSG("%s", DICO[i-1].ops[2]);
+		}
+		
+		//mot suivant :  int opcode
+		mot=strtok(NULL, delim); //mot a pour valeur "opcode"
+		mot=strtok(NULL, delim);
+		//DEBUG_MSG("opcode lu : %s", mot);
+		//il faut enlever le 0x en tête des nombres
+		char string[strlen(mot)-2];
+		int j;
+		for (j=0 ; j<strlen(mot) ; j++) {
+			string[j]=mot[j+2];
+		}
+		//DEBUG_MSG("opcode pris : %s", string);
+		DICO[i-1].opcode=(int)strtol(string, NULL, 16);
+		//DEBUG_MSG("opcode : 0x%x", DICO[i-1].opcode);
+		
+		//dernier mot : unsigned int function
+		mot=strtok(NULL, delim);
+		if (mot != NULL) {
+			mot=strtok(NULL, delim);
+			DICO[i-1].func=(unsigned int)strtol(mot, NULL, 16);
+			//DEBUG_MSG("function : 0x%x", DICO[i-1].func);
+		}
+		else {
+			DICO[i-1].func=0;
+			//DEBUG_MSG("function : 0x%x", DICO[i-1].func);
 		}
 		i++;		
 	}

@@ -50,7 +50,7 @@ au moment de charger, on réserve les 12000 octets dans la section .bss
 
 typedef struct {
 	char* nom;	//mnémonique de la fonction
-	char type;	//R I ou J
+	char* type;	//R I ou J
 	int nbe_op;	//nombre d'opérandes
 	char* ops[3];	//tableau de taille contenant les opérandes
 	unsigned int opcode;

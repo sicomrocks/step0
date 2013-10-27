@@ -3,23 +3,18 @@ ADDI I 3 $rt $rs imm opcode 0x8
 SUB R 3 $rd $rs $rt opcode 0x0 func 0x22
 MULT R 2 $rs $rt opcode 0x0 func 0x18
 DIV R 2 $rs $rt opcode 0x0 func 0x1a
-
 AND R 3 $rd $rs $rt opcode 0x0 func 0x24
 OR R 3 $rd $rs $rt opcode 0x0 func 0x25
 XOR R 3 $rd $rs $rt opcode 0x0 func 0x26
-
 ROTR R 3 $rd $rt sa opcode 0x0 func 0x2
 SLL R 3 $rd $rt sa opcode 0x0 func 0x0
 SRL R 3 $rd $rt sa opcode 0x0 func 0x2
-
 SLT R 3 $rd $rs $rt opcode 0x0 func 0x2a
-
-LW I 3 $rt offset($rs) opcode 0x23
-SW I 3 $rt offset($rs) opcode 0x2b
+LW I 3 $rt offset $rs opcode 0x23
+SW I 3 $rt offset $rs opcode 0x2b
 LUI I 2 $rt imm opcode 0xf
 MFHI R 1 $rd opcode 0x0 func 0x10
 MFLO R 1 $rd opcode 0x0 func 0x12
-
 BEQ I 3 $rs $rt offset opcode 0x4
 BNE I 3 $rs $rt offset opcode 0x5
 BGTZ I 2 $rs offset opcode 0x7
@@ -27,5 +22,4 @@ BLEZ I 2 $rs offset opcode 0x6
 J J 1 target opcode 0x2
 JAL J 1 target opcode 0x3
 JR J 1 $rs opcode 0x0 func 0x8
-
 NOP R 0 opcode 0x0 func 0x0
