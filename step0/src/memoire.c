@@ -50,3 +50,42 @@ void init_reg(REGISTRE* tab) {
 	//DEBUG_MSG("%s", tab[0].mnemo);
 	
 }
+
+void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUCTION
+	char* token=NULL;
+	char ligne[40];
+	const char* delim=" ";
+	
+	FILE* f=fopen("src/test", "rt");
+	if (f==NULL) {
+		WARNING_MSG("Impossible d'ouvrir le dictionnaire");
+		exit(2);
+	}
+	
+	int i=1;
+	//while (f!=EOF) {
+		//lire une ligne
+		fgets(ligne, 512, f);
+		if(ligne==NULL) {
+			DEBUG_MSG("Impossible de lire la ligne %d", i);
+		}
+		ligne[strlen(ligne-1)-1]="\0";
+		DEBUG_MSG("ligne n°%d : %s", i, ligne);
+		
+		//PARSE EXECUTE LIGNE 116
+		
+		//récupérer les mots
+		token=strtok(ligne, delim);
+		if (token!=NULL) {
+			DEBUG_MSG("%s", token);
+		}
+		while (token != NULL) {
+			token=strtok(NULL, delim);
+			DEBUG_MSG("%s", token);
+		}
+			
+			
+		
+		
+	//}
+}

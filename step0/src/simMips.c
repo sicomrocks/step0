@@ -178,6 +178,7 @@ int main ( int argc, char *argv[] ) {
 
     //initialisation des registres
     init_reg(registres);
+    init_instr(DICO);
     //int i;
     //for (i=0 ; i<36 ; i++) {
     //	DEBUG_MSG("%d", registres[i].numero);
