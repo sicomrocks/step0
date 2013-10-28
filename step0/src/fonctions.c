@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "reg.h"
-
+#include "memoire.h"
 
 
 
@@ -87,8 +87,7 @@ int isregister(char* param) {
 }
 	
 
-int isadress(char* param)
-{
+int isadress(char* param) {
 	char* buffer;
 	buffer=strdup(param);
     if (automate(buffer)==3 /*&& param<adresse_max*/)
@@ -99,8 +98,7 @@ int isadress(char* param)
 // Def des différents états
 enum { INIT , DECIMAL_ZERO, DEBUT_HEXA, HEXA, DECIMAL , OCTAL} ;
 // mise en oeuvre de l'automate
-int automate(char* nombre )
-{
+int automate(char* nombre ) {
 int c ;         //caractère analyse courante
 int S=INIT ;    // etat de l'automate
 FILE* pf ;
@@ -178,8 +176,7 @@ return S;
 //Definition des types d'adresse
 enum {INI,FAUX,SIMPLE,NB_OCTETS,INTERVALLE};
 //Mise en place du vérificateur
-int adressType(char* param)
-{	
+int adressType(char* param) {	
 	if (param==NULL) return 1;
 	
 	char* token0=NULL;
@@ -284,4 +281,18 @@ int adressType(char* param)
 	//printf("S = %d\n",S);
 	return S;
 	}
+}
+
+void free_memory() {
+	DEBUG_MSG("Entrée dans la fonction free_memory");
+	int i;
+	
+	//vidage du dictionnaire d'instructions
+	for (i=0 ; i<25 ; i++) {
+		DICO[i].nom=NULL;
+		DICO[i].type=NULL;
+		DICO[i].ops[0]=NULL;
+		DICO[i].ops[1]=NULL;
+		DICO[i].ops[2]=NULL;
+	}	
 }

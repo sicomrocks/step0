@@ -43,6 +43,7 @@ int parse_and_execute_cmd_testcmd(char * paramsStr) {
 }
 
 int execute_cmd_exit() {
+    free_memory();
     INFO_MSG("Bye bye !");
     return CMD_EXIT_RETURN_VALUE;
 }

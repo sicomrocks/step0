@@ -14,4 +14,8 @@ int automate(char* nombre );
 int isadress(char* param);
 int adressType(char* param);
 
+/*fonction qui vide le dictionnaire*/
+void free_memory();
+
+
 #endif
