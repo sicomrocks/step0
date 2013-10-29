@@ -441,6 +441,7 @@ char* token0;
 buffer0=strdup(paramsStr);
 token0=strtok(buffer0," ");
 if (token0==NULL){ 
+	WARNING_MSG("Missing one or more parameters");
 	free(buffer0);
 	return 2;
 }
