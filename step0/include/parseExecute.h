@@ -60,7 +60,7 @@ La commande écrit à l'adresse (hexa) donnée en premier paramètre la valeur (
 La valeur entière peut être sur 1 à 8 chiffres hexadécimaux
 */
 
-int execute_cmd_dm(char* Adress);
+int execute_cmd_dm(char** Adresses, int* type, int nb_adresses);
 int parse_and_execute_cmd_dm(char* paramsStr);
 /*
 

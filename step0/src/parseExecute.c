@@ -273,7 +273,7 @@ int execute_cmd_lr(int num_reg, int value) {
 int execute_cmd_da(char* adresse, int* nb_instructions) {
 	int A=(int)strtol(adresse, NULL, 0);
 	int N=(int)strtol(nb_instructions, NULL, 0);
-	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
+	fprintf(stdout, "CMD TEST RESULT adresse de départ 0x%.8x, %d instructions\n", A, N);
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -318,7 +318,7 @@ int execute_cmd_lm(char* adresse,char* valeur) {
 	DEBUG_MSG("%s %s", adresse, valeur);
 	int A=(int)strtol(adresse, NULL, 0);
 	int val=(int)strtol(valeur, NULL, 0);
-	fprintf(stdout, "adresse 0x%.8x valeur 0x%.8x\n", A, val);
+	fprintf(stdout, "CMD TEST RESULT adresse 0x%.8x valeur 0x%.8x\n", A, val);
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -386,7 +386,51 @@ int parse_and_execute_cmd_lm(char* paramsStr) {
 	return execute_cmd_lm(adresse, valeur);
 }
 
-int execute_cmd_dm(char* Adress) {
+int execute_cmd_dm(char** Adresses, int* type, int nb_adresses) {
+	char* buffer;
+	char* token;
+	int m=0;
+	int n=0;
+	int j=0;
+
+	int i=0;
+	//fprintf(stdout, "j=%d\n", nb_adresses);
+	while (i<nb_adresses) 
+	{	
+		//fprintf(stdout, "CMD TEST RESULT Adresse %s Type %d\n", Adresses[i], type[i]);
+		
+		switch(type[i]) {
+			case 1: // adresse simple
+				//display_one(Adresses[i]);
+				fprintf(stdout, "CMD TEST RESULT Adresse 0x%.8x\n", ((int)strtol(Adresses[i],NULL,0)));
+				break;
+			case 2: // adresse avec nombre d'instructions
+				buffer = strdup(Adresses[i]);
+				token = strtok(buffer,":");
+				m = (int)strtol(token, NULL, 0);
+				token = strtok(NULL,":");
+				n = (int)strtol(token, NULL, 0);
+				//display_inst(m,n);
+				fprintf(stdout, "CMD TEST RESULT Adresse 0x%.8x, %d Instructions\n", m,n);
+				break;
+			case 3: // intervalle d'adresse
+				buffer = strdup(Adresses[i]);
+				token = strtok(buffer,"~");
+				m = (int)strtol(token, NULL, 0);
+				token = strtok(NULL,"~");
+				n = (int)strtol(token, NULL, 0);
+				if (n<m) {int temp = m; m=n; n=temp;}
+			
+				for(j=0;j<=n-m;j++)
+				{	//display_one(m+j);
+					fprintf(stdout, "CMD TEST RESULT Adresse 0x%.8x\n", m+j);
+				}
+				break;
+			}
+		i++;
+	}
+	
+	
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -402,27 +446,28 @@ if (token0==NULL){
 }
 
 else {
-	// Déterminer le nombre de barres verticales (donc d'adresses)
-	char* bufferbarre;
-	bufferbarre = strdup (paramsStr);
-	char* tokenbarre;
+	// Déterminer le nombre d'espaces (donc d'adresses)
+	char* bufferespace;
+	bufferespace = strdup (paramsStr);
+	char* tokenespace;
 	int compteur=0;
-	int nb_barres;
+	int nb_espace;
 
-	tokenbarre = strtok(bufferbarre,"|");
-		while (tokenbarre!=NULL)
+	tokenespace = strtok(bufferespace," ");
+		while (tokenespace!=NULL)
 		{
 			compteur++;
-			nb_barres=compteur-1;
-			tokenbarre=strtok(NULL,"|");
+			nb_espace=compteur-1;
+			tokenespace=strtok(NULL,"|");
 		}
 	compteur=0;
 
 	// Definition du tableau qui recevra les Adresses à traiter par adressType
-	char* adresses[nb_barres+1];
+	char* adresses[nb_espace+1];
+	int* type[nb_espace+1];
 	int numero=0;
 	// Initialisation du tableau
-	while (numero!=nb_barres+2) {
+	while (numero!=nb_espace+2) {
 		adresses[numero]=NULL;
 		numero++;
 	}
@@ -433,7 +478,7 @@ else {
 	char* token2=NULL;
 	char* buffer=NULL;
 	char* buffer2=NULL;
-	char* separateur = {"|"};
+	char* separateur = {" "};
 
 	buffer=strdup(paramsStr);
 	buffer2=strdup(paramsStr);
@@ -443,14 +488,14 @@ else {
 		WARNING_MSG("Invalid param : Address(es) expected\n");
 		free(buffer);
 		free(buffer2);
-		free(bufferbarre);
+		free(bufferespace);
 		return 2;
 	}
 	if (adressType(token)==1) {	// cas où la première adresse est incorrect
 	WARNING_MSG("First address invalid\n");
 	free(buffer);
 	free(buffer2);
-	free(bufferbarre);
+	free(bufferespace);
 	return 2;
 	}
 	else
@@ -469,26 +514,28 @@ else {
 		// Boucle qui vérifie les types des adresses
 		int m=0;
 		int n;
-		while (m<nb_barres+1)
+		while (m<nb_espace+1)
 		{n = adressType(adresses[m]);
+		type[m]=n-1;
 		if (n==1) {
 			WARNING_MSG("adresse numero %d invalide\n",m+1);
 			free(buffer);
 			free(buffer2);
-			free(bufferbarre);
+			free(bufferespace);
 			return 2;
 		} 
-							// Si l'adresse est fausse, on sort du programme
-							// Sinon, on poursuit jusqu'à commande OK
+		// Si l'adresse est fausse, on sort du programme
+		// Sinon, on poursuit jusqu'à commande OK
 		m++;
 		
 		}
+		return execute_cmd_dm(adresses, type, m);
 	}
 }
 /*free(buffer);
 free(bufferbarre);
 free(buffer2);*/
-return CMD_OK_RETURN_VALUE;
+return 2;
 }
 
 int parse_and_execute_cmd_inst(char* paramsStr) {

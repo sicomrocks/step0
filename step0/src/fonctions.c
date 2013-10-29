@@ -101,26 +101,17 @@ enum { INIT , DECIMAL_ZERO, DEBUT_HEXA, HEXA, DECIMAL , OCTAL} ;
 int automate(char* nombre ) {
 int c ;         //caractère analyse courante
 int S=INIT ;    // etat de l'automate
-FILE* pf ;
-//int i;
+int i=0;
 
-pf=fopen ( "nombre.txt","wt");
-//fputs(nombre,pf);
-fprintf(pf,"%s",nombre);
-
-fclose(pf);
-
-pf=fopen ( "nombre.txt","rt");
-while (EOF!=(c=fgetc(pf)))
-{  //EOF = End of File
+while (i<strlen(nombre))
+{  
+	c=nombre[i];
     switch (S) {
         case INIT :
                     if(isdigit(c)){ // si c'est un chiffre
                         if (c=='0')
-                        S=DECIMAL_ZERO; else S= DECIMAL ;
-                    }
+                        S=DECIMAL_ZERO; else S= DECIMAL ;}
                     else if ( isspace(c)) S=INIT ;
-                    else if ( c==EOF) return 0 ; // fin de fichier
                     else {//perror (  "erreur caracter (etape init)"  );
 							return 0;}
         break ;
@@ -128,9 +119,6 @@ while (EOF!=(c=fgetc(pf)))
         case DECIMAL_ZERO: // reperage du prefixe de l ’ hexa
             if ( c == 'x' || c == 'X' ) S=DEBUT_HEXA;
             else if ( isdigit(c) && c<'8' ) S=OCTAL; // c ' est un octal
-            else if ( c==EOF || isspace (c) ) { S=INIT ;
-            //printf ( "la chaine est sous forme decimale\n" ) ;
-                                                }
             else {//perror (  "erreur caracter (etape DeciZero)"  ); 
 					return 2;}
 
@@ -153,23 +141,24 @@ while (EOF!=(c=fgetc(pf)))
 
         case DECIMAL : // tant que c'est un chiffre
             if ( isdigit(c)) S=DECIMAL ;
-            else if ( c==EOF || isspace(c)) { S=INIT ;
-            /*printf ( " la chaine est sous forme decimale\n");*/
-                                                }
+            else if (isspace(c)) { S=INIT ;}
+            /*printf ( " la chaine est sous forme decimale\n");*/                   
             else {//perror (  "erreur caracter (etape Decimal)"  ); 
 				return 0;}
         break ;
 
         case OCTAL: // tant que c'est un chiffre
             if( isdigit(c)&& c<'8' ) S=OCTAL;
-            else if ( c==EOF || isspace(c)) { S=INIT ;
+            else if (isspace(c)) { S=INIT ;
             /*printf ( " la chaine est sous forme octale \n" ) ;*/
                                                 }
             else {//perror (  "erreur caracter (etape Octal)"  ); 
 				return 0;}
         break ;
          }
+     i++;
 	}
+//printf("S= %d\n",S);
 return S;
 }
 
@@ -177,7 +166,8 @@ return S;
 //Definition des types d'adresse
 enum {INI,FAUX,SIMPLE,NB_OCTETS,INTERVALLE};
 //Mise en place du vérificateur
-int adressType(char* param) {	
+int adressType(char* param)
+{	
 	if (param==NULL) return 1;
 	
 	char* token0=NULL;
@@ -187,19 +177,6 @@ int adressType(char* param) {
 	token0 = strtok(buffer0," ");
 	if (token0==NULL) return 1;
 
-
-	int c ;
-	FILE* pff ;
-	c=strlen(param)+1;	//fgets second argument
-	
-	pff=fopen ( "param.txt","wt");
-	fprintf(pff,"%s",param);
-	fclose(pff);
-
-	pff=fopen ( "param.txt","rt");
-	fgets(buffer0,c,pff);
-	fclose(pff);
-	
 	char* token=NULL;
 	char* buffer=NULL;
 	int compteur = 0;
