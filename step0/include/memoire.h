@@ -1,10 +1,10 @@
+#ifndef _MEMOIRE_H__
+#define _MEMOIRE_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "notify.h"
 #include "reg.h"
-
-#ifndef _MEMOIRE_H__
-#define _MEMOIRE_H_
 
 //		DÉFINITION DES STRUCTURES MODÉLISANT LA MÉMOIRE ET LES REGISTRES DU MIPS
 

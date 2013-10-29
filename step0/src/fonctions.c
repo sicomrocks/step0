@@ -117,7 +117,8 @@ while (EOF!=(c=fgetc(pf)))
         case INIT :
                     if(isdigit(c)){ // si c'est un chiffre
                         if (c=='0')
-                        S=DECIMAL_ZERO; else S= DECIMAL ;}
+                        S=DECIMAL_ZERO; else S= DECIMAL ;
+                    }
                     else if ( isspace(c)) S=INIT ;
                     else if ( c==EOF) return 0 ; // fin de fichier
                     else {//perror (  "erreur caracter (etape init)"  );

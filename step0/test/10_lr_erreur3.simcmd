@@ -1,0 +1,5 @@
+#Test de la fonction lr : mauvaise valeur de paramètre
+
+lr $12 0xffffffff
+lr $12 0x5661bf656	#le nombre dépasse 8 digits
+lr $12 0x123

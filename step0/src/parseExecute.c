@@ -2,6 +2,7 @@
 #include "notify.h"
 #include "reg.h"
 #include <stdio.h>
+#include "memoire.h"
 
 #define CMD_OK_RETURN_VALUE 0
 #define CMD_EXIT_RETURN_VALUE -1
@@ -70,18 +71,20 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 	token = strtok( buffer, separateur  );
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : file name awaited");
+		return CMD_EXIT_RETURN_VALUE;
 	}
 	else {
 		//on regarde s'il y a d'autres paramètres
 		token2=strtok(NULL, separateur);
 		if (token2!=NULL) {
-			WARNING_MSG("Un seul paramètre est attendu ; l'exécution de lp va se poursuivre sans tenir compte des suivants");
+			WARNING_MSG("Un seul paramètre est attendu");
+			return CMD_EXIT_RETURN_VALUE;
 		}
 		FILE* fichier=NULL;
 		fichier=fopen(token, "r");
 		if (fichier==NULL) {
 			WARNING_MSG("Impossible d'ouvrir %s", token);
-			//return 2;
+			return 2;
 		}
 		else {
 			DEBUG_MSG("Ouverture réussie de %s", token);
@@ -117,18 +120,21 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Affichage de tous les registres");
 		free(buffer);
-		return execute_cmd_dr_tous();
+		execute_cmd_dr_tous();
+		return CMD_OK_RETURN_VALUE;
 	}
 	else {
 		DEBUG_MSG ("paramètre numéro %d : %s",nb_param, token);
 		c=isregister(token);
 		if (c<0) {
 			WARNING_MSG("Invalid param : HI LO PC SR or $x awaited in %s", token);
+			return 2;
 		}
 		if (c>-1) {
 			DEBUG_MSG("le paramètre est le registre %d", c);
 			free(buffer);
-			return execute_cmd_dr_un(c);
+			execute_cmd_dr_un(c);
+			return CMD_OK_RETURN_VALUE;
 		}
 	}
 
@@ -145,6 +151,7 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 			if (c>-1) {
 				DEBUG_MSG("le paramètre est le registre %d", c);
 				execute_cmd_dr_un(c);
+				return CMD_OK_RETURN_VALUE;
 			}
 		}
 	}
@@ -156,28 +163,32 @@ int execute_cmd_dr_un(int num_registre) {
 	switch(num_registre) {
 		case 32:
 			fprintf(stdout, "PC : 0x%.8x\n", registres[num_registre].valeur);
-			break;
+			return CMD_OK_RETURN_VALUE;
+			//break;
 		case 33:
 			fprintf(stdout, "SR : 0x%.8x\n", registres[num_registre].valeur);
-			break;
+			return CMD_OK_RETURN_VALUE;
+			//break;
 		case 34:
 			fprintf(stdout, "HI : 0x%.8x\n", registres[num_registre].valeur);
-			break;
+			return CMD_OK_RETURN_VALUE;
+			//break;
 		case 35:
 			fprintf(stdout, "LO : 0x%.8x\n", registres[num_registre].valeur);
-			break;
+			return CMD_OK_RETURN_VALUE;
+			//break;
 		default:
 			fprintf(stdout, "%.2d : 0x%.8x\n", registres[num_registre].numero, registres[num_registre].valeur);
+			return CMD_OK_RETURN_VALUE;
 			//fprintf(stdout, "CMD TEST RESULT %d\n", num_registre);
 	}	
-	return CMD_OK_RETURN_VALUE;
+	return 2;
 }
 
 int execute_cmd_dr_tous() {
 	int i;
 	for (i=0 ; i<36 ; i++) {
 		execute_cmd_dr_un(i);
-		//fprintf(stdout, "CMD TEST RETURN RESULT %d\n", i);
 	}
 	return CMD_OK_RETURN_VALUE;
 }
@@ -199,6 +210,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 	token = strtok( buffer, separateur  );
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : register and hexadecimal value awaited in %s", token);
+		return 2;
 	}
 	else {
 		int c=isregister(token);
@@ -207,7 +219,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 			free(buffer);
 			return 2;
 		}
-		else if (c > -1) {
+		else {
 			DEBUG_MSG("%s est le registre %d", token, c);
 			if (c==0) {
 				WARNING_MSG("On ne peut pas écrire dans ce registre");
@@ -219,24 +231,28 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 			token2=strtok( NULL, separateur  );
 			if (token2==NULL) {
 				WARNING_MSG("Invalid param : 32 bits hexadecimal value missing after %s", token);
+				return 2;
 			}
 			else {
 				DEBUG_MSG("Deuxième paramètre : %s", token2);
 				if (automate(token2)!=3 || strlen(token2)>10) {
 					WARNING_MSG("Invalid param : 8 digit hexadecimal value awaited in %s", token2);
+					return 2;
 				}
 				else {
 					//on va regarder s'il y a trop de paramètres
 					char* token3;
 					token3=strtok(NULL, separateur);
 					if (token3!=NULL) {
-						WARNING_MSG("Seuls deux paramètres sont attendus dans lr, la fonction ne tient pas compte des suivants");
+						WARNING_MSG("Seuls deux paramètres sont attendus dans lr");
+						return 2;
 					}
 					//conversion de token2 en int :
 					int value = (int)strtol(token2, NULL, 0);
 					DEBUG_MSG("valeur à écrire %d = 0x%.8x", value, value);
 					free(buffer);
-					return execute_cmd_lr(c,value);
+					execute_cmd_lr(c,value);
+					return CMD_OK_RETURN_VALUE;
 				}
 			}
 
@@ -261,8 +277,7 @@ int execute_cmd_da(char* adresse, int* nb_instructions) {
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_da(char* paramsStr)
-{
+int parse_and_execute_cmd_da(char* paramsStr) {
 	DEBUG_MSG("Parametres : %s", paramsStr);
 
 	/*deux paramètres : un numéro d'adresse
@@ -307,8 +322,7 @@ int execute_cmd_lm(char* adresse,char* valeur) {
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_lm(char* paramsStr)
-{
+int parse_and_execute_cmd_lm(char* paramsStr) {
     // Définition des sorties de la fonction
 	char* adresse=NULL;
 	char* valeur=NULL;
@@ -376,8 +390,7 @@ int execute_cmd_dm(char* Adress) {
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_dm(char* paramsStr)
-{
+int parse_and_execute_cmd_dm(char* paramsStr) {
 // Si l'entrée est nulle, msg d'erreur et on sort de la fonction
 char* buffer0;
 char* token0;
@@ -409,7 +422,10 @@ else {
 	char* adresses[nb_barres+1];
 	int numero=0;
 	// Initialisation du tableau
-	while (numero!=nb_barres+2) {adresses[numero]=NULL; numero++;}
+	while (numero!=nb_barres+2) {
+		adresses[numero]=NULL;
+		numero++;
+	}
 	numero=0;
 
 

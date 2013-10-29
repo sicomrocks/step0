@@ -1,0 +1,5 @@
+#test des paramètres de la fonction dr ; registre incorrect
+
+dr HI
+dr truc #ce registre n'existe pas
+dr LO

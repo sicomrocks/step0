@@ -1,0 +1,5 @@
+#test des paramètres de la fonction dr ; erreur
+
+dr $10
+dr $-1 #dépassement des numéros de registres
+dr $at

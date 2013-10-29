@@ -1,0 +1,5 @@
+#Test de la fonction lr : mauvaise valeur de paramètre
+
+lr $12 0x54
+lr $12 15	#le nombre n'est pas un hexa
+lr $12 0xfffe

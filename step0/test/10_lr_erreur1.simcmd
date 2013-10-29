@@ -1,4 +1,5 @@
 #Test fonction lr ; mauvais registre d'entrée
 
-lr invalid_reg 0x12a #cette commande génère une erreur
 lr HI 0x12a
+lr invalid_reg 0x12a #cette commande génère une erreur
+lr $12 0xd
