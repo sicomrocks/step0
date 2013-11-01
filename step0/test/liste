@@ -16,7 +16,7 @@ erreurs : registre invalide				DONE
 
 	lp
 syntaxe : lp <nom_fichier>
-fonctionnement normal					
+fonctionnement normal				
 erreur : fichier n'existe pas/impossible de trouver le fichier spécifié
 
 	init_reg
