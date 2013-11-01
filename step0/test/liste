@@ -17,9 +17,9 @@ erreurs : registre invalide				DONE
 	lp
 syntaxe : lp <nom_fichier>
 fonctionnement normal				
-erreur : fichier n'existe pas/impossible de trouver le fichier spécifié
+erreur : fichier n'existe pas/impossible de trouver le fichier spécifié						DONE
 
 	init_reg
 	init_inst
-	isregister
+	isregister	pas besoin car si dr passe alors c'est ok
 	free_memory
