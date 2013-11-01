@@ -1,1 +1,1 @@
-12 : 0xffffffff
+ouverture réussie

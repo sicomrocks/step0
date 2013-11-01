@@ -71,14 +71,14 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 	token = strtok( buffer, separateur  );
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : file name awaited");
-		return CMD_EXIT_RETURN_VALUE;
+		return 2;
 	}
 	else {
 		//on regarde s'il y a d'autres paramètres
 		token2=strtok(NULL, separateur);
 		if (token2!=NULL) {
 			WARNING_MSG("Un seul paramètre est attendu");
-			return CMD_EXIT_RETURN_VALUE;
+			return 2;
 		}
 		FILE* fichier=NULL;
 		fichier=fopen(token, "r");
@@ -97,6 +97,7 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 	return 2;
 }
 int execute_cmd_lp(char* token) {
+	fprintf(stdout, "ouverture réussie\n", token);
 	return CMD_OK_RETURN_VALUE;
 }
 
