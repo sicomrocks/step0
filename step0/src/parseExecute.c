@@ -97,7 +97,7 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 	return 2;
 }
 int execute_cmd_lp(char* token) {
-	fprintf(stdout, "ouverture réussie\n", token);
+	fprintf(stdout, "ouverture réussie\n");
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -133,9 +133,9 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 		}
 		if (c>-1) {
 			DEBUG_MSG("le paramètre est le registre %d", c);
-			free(buffer);
+			//free(buffer);
 			execute_cmd_dr_un(c);
-			return CMD_OK_RETURN_VALUE;
+			//return CMD_OK_RETURN_VALUE;
 		}
 	}
 
@@ -152,12 +152,12 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 			if (c>-1) {
 				DEBUG_MSG("le paramètre est le registre %d", c);
 				execute_cmd_dr_un(c);
-				return CMD_OK_RETURN_VALUE;
+				//return CMD_OK_RETURN_VALUE;
 			}
 		}
 	}
 
-	return 2;
+	return CMD_OK_RETURN_VALUE;
 }
 
 int execute_cmd_dr_un(int num_registre) {
@@ -232,12 +232,14 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 			token2=strtok( NULL, separateur  );
 			if (token2==NULL) {
 				WARNING_MSG("Invalid param : 32 bits hexadecimal value missing after %s", token);
+				free(buffer);
 				return 2;
 			}
 			else {
 				DEBUG_MSG("Deuxième paramètre : %s", token2);
 				if (automate(token2)!=3 || strlen(token2)>10) {
 					WARNING_MSG("Invalid param : 8 digit hexadecimal value awaited in %s", token2);
+					free(buffer);
 					return 2;
 				}
 				else {
@@ -246,6 +248,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 					token3=strtok(NULL, separateur);
 					if (token3!=NULL) {
 						WARNING_MSG("Seuls deux paramètres sont attendus dans lr");
+						free(buffer);
 						return 2;
 					}
 					//conversion de token2 en int :

@@ -3,4 +3,5 @@
 dr HI
 dr $12
 dr $v1
+dr LO $zero $10
 dr
