@@ -78,18 +78,21 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 		token2=strtok(NULL, separateur);
 		if (token2!=NULL) {
 			WARNING_MSG("Un seul paramètre est attendu ; l'exécution de lp va se poursuivre sans tenir compte des suivants");
+			free(buffer);
 			return 2;
 		}
 		FILE* fichier=NULL;
 		fichier=fopen(token, "r");
 		if (fichier==NULL) {
 			ERROR_MSG("Impossible d'ouvrir %s", token);
+			free(buffer);
 			return 2;
 		}
 		else {
 			DEBUG_MSG("Ouverture réussie de %s", token);
+			execute_cmd_lp(token);
 			free(buffer);
-			return execute_cmd_lp(paramsStr);
+			return CMD_OK_RETURN_VALUE;
 		}
 
 	}

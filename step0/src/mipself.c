@@ -535,9 +535,9 @@ static void relocZone(MemZone *Zone,  MemZone *EnsZones) {
 *
 */
 
-int mipsloader(const char *filename, SectionELF *textSection, SectionELF *dataSection, SectionELF *bssSection) {
-    DEBUG_MSG("entrée dans mipsloader");
-    DEBUG_MSG("%s", filename);
+int mipsloader(const char *filename, SectionELF *textSection, SectionELF *dataSection, SectionELF *bssSection)
+{
+
     // Sections qui nous interessent
     MemZone EnsZones[NUMZONE] ;
     MemZone *Text=EnsZones;
@@ -571,7 +571,7 @@ int mipsloader(const char *filename, SectionELF *textSection, SectionELF *dataSe
 	
     // Lecture du fichier ELF, ouverture/fermeture avec les fonctions bas niveau open/close (contrainte de la lib elf)
     if ((fd = open(filename, O_RDONLY)) == -1) {
-        ERROR_MSG("Fichier \"%s\" inexistant", filename);
+        ERROR_MSG("Fichier \"%s\" inexistant\n", filename);
     }
 
     elf_version(EV_CURRENT);
