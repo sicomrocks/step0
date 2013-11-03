@@ -1,0 +1,18 @@
+Prototype 3
+
+
+On peut désormais utiliser les fonctions du step1 dans notre programme.
+
+Pour fusionner STEP1 et STEP0, des changements ont dû être effectués:
+	- chacun possède un makefile, mais il en faut un unique : ce Makefile ici comporte quelques 		éléments de deux makefile : -lm -lreadline -lelf -lcurses par exemple.
+	- on ne peut plus y utiliser mips-load et mips-load-test comme avant. Voire plus du tout en 		fait, mais ce n'est pas grave.
+	- "make debug" devient "make". je pense que l'on changera ça au prochain incrément... d'autres 		choses sont plus urgentes.
+
+la fonction lp marche et affiche effectivement le elf, avec toutes les étapes machin, il a fallu en gros recopier le main de mips-load-test dans execute_cmd_lp, (le main de mipsloadtest est maintenant main2 -> 2 main sinon)
+
+Neanmoins, elle liberait les sections allouées : textsection, datasection, bsssection.
+J'ai donc mis en commentaire les free(*nomsection*) dans parseExecute.c 120.
+
+Je ne crois pas que niveau chargement en mémoire ce soit ce que l'on veut encore, mais au moins quand on fait lp ./res/exempleELF.o c'est joli.
+
+
