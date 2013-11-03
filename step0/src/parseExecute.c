@@ -89,7 +89,7 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 			return 2;
 		}
 		else {
-			DEBUG_MSG("Ouverture réussie de %s", token);
+			fprintf(stdout, "Ouverture réussie de %s", token);
 			execute_cmd_lp(token);
 			free(buffer);
 			return CMD_OK_RETURN_VALUE;
