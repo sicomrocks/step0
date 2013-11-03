@@ -77,28 +77,57 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 		//on regarde s'il y a d'autres paramètres
 		token2=strtok(NULL, separateur);
 		if (token2!=NULL) {
-			WARNING_MSG("Un seul paramètre est attendu");
+			WARNING_MSG("Un seul paramètre est attendu ; l'exécution de lp va se poursuivre sans tenir compte des suivants");
 			return 2;
 		}
 		FILE* fichier=NULL;
 		fichier=fopen(token, "r");
 		if (fichier==NULL) {
-			WARNING_MSG("Impossible d'ouvrir %s", token);
+			ERROR_MSG("Impossible d'ouvrir %s", token);
 			return 2;
 		}
 		else {
 			DEBUG_MSG("Ouverture réussie de %s", token);
 			free(buffer);
-			return execute_cmd_lp(token);
+			return execute_cmd_lp(paramsStr);
 		}
 
 	}
 	free(buffer);
 	return 2;
 }
-int execute_cmd_lp(char* token) {
-	fprintf(stdout, "ouverture réussie\n");
-	return CMD_OK_RETURN_VALUE;
+
+int execute_cmd_lp(const char* filename) {
+	
+    SectionELF *textSection;
+    SectionELF *dataSection;
+    SectionELF *bssSection;
+
+    /* Ne pas oublier d'allouer les differentes sections */
+    textSection = (SectionELF *) malloc(sizeof(SectionELF));
+    dataSection = (SectionELF *) malloc(sizeof(SectionELF));
+    bssSection  = (SectionELF *) malloc(sizeof(SectionELF));
+	
+    if (mipsloader(filename, textSection, dataSection, bssSection)) {
+        fprintf(stderr,"**** ERREUR");
+        exit(1) ;
+    }
+
+	//printf("mid lp\n");
+	/*
+     printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", filename) ;
+     printELFSection(textSection);
+     printELFSection(dataSection);
+     printELFSection(bssSection);
+	*/
+	 
+    /* Faire le ménage avant de sortir */
+   // free(textSection);
+    //free(dataSection);
+    //free(bssSection);
+
+    return 2;
+	
 }
 
 int parse_and_execute_cmd_dr(char* paramsStr) {
@@ -129,6 +158,7 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 		c=isregister(token);
 		if (c<0) {
 			WARNING_MSG("Invalid param : HI LO PC SR or $x awaited in %s", token);
+			free(buffer);
 			return 2;
 		}
 		if (c>-1) {
@@ -148,6 +178,8 @@ int parse_and_execute_cmd_dr(char* paramsStr) {
 			c=isregister(token);
 			if (c<0) {
 				WARNING_MSG("Invalid param : HI LO PC SR or $x awaited in %s", token);
+				free(buffer);
+				return 2;
 			}
 			if (c>-1) {
 				DEBUG_MSG("le paramètre est le registre %d", c);
@@ -211,6 +243,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 	token = strtok( buffer, separateur  );
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : register and hexadecimal value awaited in %s", token);
+		free(buffer);
 		return 2;
 	}
 	else {
@@ -254,8 +287,9 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 					//conversion de token2 en int :
 					int value = (int)strtol(token2, NULL, 0);
 					DEBUG_MSG("valeur à écrire %d = 0x%.8x", value, value);
-					free(buffer);
+					//free(buffer);
 					execute_cmd_lr(c,value);
+					free(buffer);
 					return CMD_OK_RETURN_VALUE;
 				}
 			}
@@ -297,7 +331,7 @@ int parse_and_execute_cmd_da(char* paramsStr) {
 
 	// premier appel, pour vérifier s'il y a des paramètres
 	token = strtok( buffer, separateur  );
-	if (token == NULL) /* cas où il n'y a pas de paramètres*/ {	
+	if (token == NULL) {/* cas où il n'y a pas de paramètres*/
 		WARNING_MSG("Invalid param : address and value awaited");
 	}
 	else if (isadress(token) == 0) {	
@@ -322,7 +356,7 @@ int execute_cmd_lm(char* adresse,char* valeur) {
 	DEBUG_MSG("%s %s", adresse, valeur);
 	int A=(int)strtol(adresse, NULL, 0);
 	int val=(int)strtol(valeur, NULL, 0);
-	fprintf(stdout, "CMD TEST RESULT adresse 0x%.8x valeur 0x%.8x\n", A, val);
+	fprintf(stdout, "adresse 0x%.8x valeur 0x%.8x\n", A, val);
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -355,31 +389,30 @@ int parse_and_execute_cmd_lm(char* paramsStr) {
     else if (isadress(token)==0)
     WARNING_MSG("Invalid param : hexadecimal address expected in first parameter");
 
-	else if (isadress(token)==1)
-	{   adresse=token; // utile pour la fin
+	else if (isadress(token)==1) {
+		adresse=token; // utile pour la fin
 
 		// Tester si le 2è paramètre est de la bonne forme
 		char* token2;
 		token2=strtok(NULL,separateur);
 
-		do
-		{
-            if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) || strlen(token2)>10)
-            {	WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
-                free(buffer);
-                free(buffer2);
-                return 2;
-            }
-            else
-            {   compteur=compteur +1;
-                token2=strtok( NULL,separateur);
-                if (token2!=NULL && compteur==8)
-                {   WARNING_MSG("Invalid value : too many parameters");
-                    free(buffer);
-                    free(buffer2);
-                    return 2;
-                }
-            }
+		do {
+			if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) || strlen(token2)>10) {
+				WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
+				free(buffer);
+				free(buffer2);
+			return 2;
+			}
+			else {
+				compteur=compteur +1;
+				token2=strtok( NULL,separateur);
+				if (token2!=NULL && compteur==8) {
+					WARNING_MSG("Invalid value : too many parameters");
+					free(buffer);
+					free(buffer2);
+					return 2;
+				}
+			}
 		} while ( token2!=NULL  && compteur < 8);
 		adresse = strtok( buffer2, separateur);
 		valeur = strtok( NULL, ".");
@@ -390,17 +423,16 @@ int parse_and_execute_cmd_lm(char* paramsStr) {
 	return execute_cmd_lm(adresse, valeur);
 }
 
-int execute_cmd_dm(char** Adresses, int* type, int nb_adresses) {
+int execute_cmd_dm(char** Adresses, int* type , int nb_adresses) {
 	char* buffer;
 	char* token;
 	int m=0;
 	int n=0;
 	int j=0;
-
-	int i=0;
-	//fprintf(stdout, "j=%d\n", nb_adresses);
-	while (i<nb_adresses) 
-	{	
+	
+	int i=0; 
+	//fprintf(stdout,"j = %d\n", nb_adresses );
+	while (i<nb_adresses) {	
 		//fprintf(stdout, "CMD TEST RESULT Adresse %s Type %d\n", Adresses[i], type[i]);
 		
 		switch(type[i]) {
@@ -430,7 +462,7 @@ int execute_cmd_dm(char** Adresses, int* type, int nb_adresses) {
 					fprintf(stdout, "CMD TEST RESULT Adresse 0x%.8x\n", m+j);
 				}
 				break;
-			}
+		}
 		i++;
 	}
 	
@@ -439,108 +471,103 @@ int execute_cmd_dm(char** Adresses, int* type, int nb_adresses) {
 }
 
 int parse_and_execute_cmd_dm(char* paramsStr) {
-// Si l'entrée est nulle, msg d'erreur et on sort de la fonction
-char* buffer0;
-char* token0;
-buffer0=strdup(paramsStr);
-token0=strtok(buffer0," ");
-if (token0==NULL){ 
-	WARNING_MSG("Missing one or more parameters");
-	free(buffer0);
-	return 2;
-}
-
-else {
-	// Déterminer le nombre d'espaces (donc d'adresses)
-	char* bufferespace;
-	bufferespace = strdup (paramsStr);
-	char* tokenespace;
-	int compteur=0;
-	int nb_espace;
-
-	tokenespace = strtok(bufferespace," ");
-		while (tokenespace!=NULL)
-		{
-			compteur++;
-			nb_espace=compteur-1;
-			tokenespace=strtok(NULL,"|");
-		}
-	compteur=0;
-
-	// Definition du tableau qui recevra les Adresses à traiter par adressType
-	char* adresses[nb_espace+1];
-	int* type[nb_espace+1];
-	int numero=0;
-	// Initialisation du tableau
-	while (numero!=nb_espace+2) {
-		adresses[numero]=NULL;
-		numero++;
-	}
-	numero=0;
-
-
-	char* token=NULL;
-	char* token2=NULL;
-	char* buffer=NULL;
-	char* buffer2=NULL;
-	char* separateur = {" "};
-
-	buffer=strdup(paramsStr);
-	buffer2=strdup(paramsStr);
-	token = strtok(buffer,separateur);
-
-	if (token == NULL) {		// cas où il n'y a pas de paramètres
-		WARNING_MSG("Invalid param : Address(es) expected\n");
-		free(buffer);
-		free(buffer2);
-		free(bufferespace);
+	// Si l'entrée est nulle, msg d'erreur et on sort de la fonction
+	char* buffer0;
+	char* token0;
+	buffer0=strdup(paramsStr);
+	token0=strtok(buffer0," ");
+	if (token0==NULL){ 
+		free(buffer0);
 		return 2;
 	}
-	if (adressType(token)==1) {	// cas où la première adresse est incorrect
-	WARNING_MSG("First address invalid\n");
-	free(buffer);
-	free(buffer2);
-	free(bufferespace);
-	return 2;
-	}
-	else
-	{	// la première adresse est correcte
-		adresses[numero]=token;
-		token2=strtok(buffer2,separateur);
 
-		//Boucle qui remplit le tableau avec les adresses
-		while(token2!=NULL)
-		{	numero++;
-			token2=strtok(NULL,separateur);
-			if (token2!=NULL) {adresses[numero]=token2;}
-		}
-		free(token2);
+	else {
+		// Déterminer le nombre d'espaces (donc d'adresses)
+		char* bufferespace;
+		bufferespace = strdup (paramsStr);
+		char* tokenespace;
+		int compteur=0;
+		int nb_espace;
 
-		// Boucle qui vérifie les types des adresses
-		int m=0;
-		int n;
-		while (m<nb_espace+1)
-		{n = adressType(adresses[m]);
-		type[m]=n-1;
-		if (n==1) {
-			WARNING_MSG("adresse numero %d invalide\n",m+1);
+		tokenespace = strtok(bufferespace," ");
+			while (tokenespace!=NULL) {
+				compteur++;
+				nb_espace=compteur-1;
+				tokenespace=strtok(NULL," ");
+			}
+		compteur=0;
+
+		// Definition du tableau qui recevra les Adresses à traiter par adressType
+		char* adresses[nb_espace+1];
+		int* type[nb_espace+1];
+		int numero=0;
+		// Initialisation du tableau
+		while (numero!=nb_espace+2) {adresses[numero]=NULL; numero++;}
+		numero=0;
+
+	
+		char* token=NULL;
+		char* token2=NULL;
+		char* buffer=NULL;
+		char* buffer2=NULL;
+		char* separateur = {" "};
+
+		buffer=strdup(paramsStr);
+		buffer2=strdup(paramsStr);
+		token = strtok(buffer,separateur);
+
+		if (token == NULL) {		// cas où il n'y a pas de paramètres
+			WARNING_MSG("Invalid param : Address(es) expected\n");
 			free(buffer);
 			free(buffer2);
 			free(bufferespace);
 			return 2;
-		} 
-		// Si l'adresse est fausse, on sort du programme
-		// Sinon, on poursuit jusqu'à commande OK
-		m++;
-		
 		}
-		return execute_cmd_dm(adresses, type, m);
+		if (adressType(token)==1) {	// cas où la première adresse est incorrecte
+		WARNING_MSG("First address invalid\n");
+		free(buffer);
+		free(buffer2);
+		free(bufferespace);
+		return 2;
+		}
+		else {
+			// la première adresse est correcte
+			adresses[numero]=token;
+			token2=strtok(buffer2,separateur);
+
+			//Boucle qui remplit le tableau avec les adresses
+			while(token2!=NULL) {
+				numero++;
+				token2=strtok(NULL,separateur);
+				if (token2!=NULL) {adresses[numero]=token2;}
+			}
+			free(token2);
+
+			// Boucle qui vérifie les types des adresses
+			int m=0;
+			int n;
+			while (m<nb_espace+1) {
+				n = adressType(adresses[m]);
+				type[m]=n-1;
+				if (n==1) {
+					WARNING_MSG("adresse numero %d invalide\n",m+1);
+				free(buffer);
+				free(buffer2);
+				free(bufferespace);
+				return 2;
+				} 
+				// Si l'adresse est fausse, on sort du programme
+				// Sinon, on poursuit jusqu'à commande OK
+				m++;
+		
+			}
+			return execute_cmd_dm(adresses,type,m);
+		}
 	}
-}
-/*free(buffer);
-free(bufferbarre);
-free(buffer2);*/
-return 2;
+	/*free(buffer);
+	free(bufferbarre);
+	free(buffer2);*/
+	return 2;
 }
 
 int parse_and_execute_cmd_inst(char* paramsStr) {

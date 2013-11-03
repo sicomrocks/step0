@@ -23,3 +23,6 @@ erreur : fichier n'existe pas/impossible de trouver le fichier spécifié						D
 	init_inst
 	isregister	pas besoin car si dr passe alors c'est ok
 	free_memory
+
+
+09_dr_param et 10_lr fonctionnent parfois mais pas toujours...

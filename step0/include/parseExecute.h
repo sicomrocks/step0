@@ -6,6 +6,10 @@
 #include <readline/history.h>
 #include "fonctions.h"
 #include "notify.h"
+#include "notify2.h"
+#include "elfimport.h"
+#include "global.h"
+#include "mipself.h"
 
 #ifndef _MEMOIRE_H_
 #define _MEMOIRE_H_
@@ -28,7 +32,7 @@ recopier chacune de ces sections dans la mémoire, les octets dans chaque sectio
 s'il y a des sections de relocation .rel.text .rel.data, mettre à jour les adresses relatives
 */
 int parse_and_execute_cmd_lp(char* paramsStr);
-int execute_cmd_lp(char* token);
+int execute_cmd_lp(const char* filename);
 
 /*
 afficher les registres :
