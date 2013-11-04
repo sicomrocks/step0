@@ -67,8 +67,8 @@ int parse_and_execute_cmd_lm(char* paramsStr);
 /*
 
 */
-void display_one(int adresse);
-void display_poly(int adresse, int nombre);
+int display_one(int adresse);
+int display_poly(int adresse, int nombre);
 
 /*
 

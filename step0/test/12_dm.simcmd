@@ -1,0 +1,7 @@
+#Test de la fonction lp : fonctionnement normal
+
+lp ./res/exempleELF.o	#Test de la fonction dm : fonctionnement normal
+#dm 0x1002		#adresse simple
+#dm 0x0~0x3		#intervalle d'adresses
+#dm 0x4:3		#adresse et nombre d'octets
+

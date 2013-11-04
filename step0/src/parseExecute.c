@@ -436,12 +436,13 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 /* @param adresse adresse à afficher 
  * @brief affiche le contenu de l'adresse
  */
-void display_one(int adresse)
+int display_one(int adresse)
 {
 	//printPartELFSection(textSection,1,adresse);
 	//printPartELFSection(dataSection,1,adresse);
 	//printPartELFSection(bssSection,1,adresse);
 	display_poly(adresse,1);
+	return CMD_OK_RETURN_VALUE;
 }
 
 /* @param adresse adresse a partir de laquelle on affiche
@@ -449,7 +450,7 @@ void display_one(int adresse)
  * @brief affiche le contenu des "nombre" octets à partir de "adresse", 
  * @brief en parcourant toutes les sections.
  */
-void display_poly(int adresse, int nombre)
+int display_poly(int adresse, int nombre)
 {
 	int a = adresse;
 	int n0 = nombre;
@@ -499,6 +500,7 @@ void display_poly(int adresse, int nombre)
 		
 			printPartELFSection(bssSection,n0,a);
 		}
+		return CMD_OK_RETURN_VALUE;
 }
 
 int execute_cmd_dm(char** Adresses, int* type , int nb_adresses) 
@@ -517,7 +519,7 @@ int execute_cmd_dm(char** Adresses, int* type , int nb_adresses)
 		switch(type[i]) {
 			case 1: // adresse simple
 				display_one((int)strtol(Adresses[i],NULL,0));
-				fprintf(stdout, "Adresse 0x%.8x\n", ((int)strtol(Adresses[i],NULL,0)));
+				//fprintf(stdout, "Adresse 0x%.8x\n", ((int)strtol(Adresses[i],NULL,0)));
 				
 				break;
 			case 2: // adresse avec nombre d'octets
@@ -527,7 +529,7 @@ int execute_cmd_dm(char** Adresses, int* type , int nb_adresses)
 				token = strtok(NULL,":");
 				n = (int)strtol(token, NULL, 0);
 				display_poly(m,n);
-				fprintf(stdout, "Adresse 0x%.8x, %d Octets\n", m,n);
+				//fprintf(stdout, "Adresse 0x%.8x, %d Octets\n", m,n);
 				
 				break;
 			case 3: // intervalle d'adresse
