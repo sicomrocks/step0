@@ -376,6 +376,58 @@ void printELFSection(SectionELF *section)
     fprintf(stderr,"\n\n");
 }
 
+/*--------------------------------------------------------------------*/
+/* @param section adresse de la section à afficher
+ * @param debut de la partie à afficher
+ * @param nombre d'octets à afficher 
+ * @brief printELFSection : affiche une certaine partie d'une Section ELF à l'écran
+ */
+void printPartELFSection(SectionELF *section, int NbOctets, int debut)
+{	
+    WORD i, address;
+    char *nom ;
+	WORD k;
+	
+	if (NbOctets<=0) {return;}
+		
+    if (!section)
+    {
+        WARNING_MSG("Pas de section a afficher! (null)");
+        return;
+    }
+
+	
+	if ( (debut<section->startAddress + section->size) 
+		&& (debut>=section->startAddress) )  
+		// adresse debut doit appartenir à la section
+	{	
+		if (NbOctets + debut - section->startAddress <= section->size) k=NbOctets;
+		else {k=section->size;}
+		
+		DEBUG_MSG("Affichage de la section %s (%d octets)", section->name, section->size);
+
+			for (i=0; i<k; i++) {
+			// adresse memoire du ieme octet de la zone
+			address = debut + i;
+
+				// Si un symbole est a cette adresse, on l'affiche avec l'adresse
+				if ((nom=getAddressName(address)) != NULL) {
+					fprintf(stderr,"\n<%s>\n %08x:\t", nom, address);
+				}
+				// Sinon, on affiche juste l'adresse, si elle est alignee sur 4 octets
+				else if (!(address%4) || (address==debut))
+					fprintf(stderr,"\n %08x:\t", address);
+
+				// Affichage du ieme octet de la zone
+				fprintf(stderr,"%02x ", section->data[address-section->startAddress]);
+			}
+		fprintf(stderr,"\n\n");
+		
+	}
+}
+
+
+
 /*--------------------------------------------------------------------------*/
 /**
  * @param Zone segment de mémoire à initialiser
@@ -435,21 +487,19 @@ static void loadZone(MemZone *Zone, WORD from) {
 
     // Lecture des donnees binaires a partir du fichier elf
     //if (Zone->exportSection->data)
-       //free(Zone->exportSection->data);
+    //	free(Zone->exportSection->data);
     Zone->exportSection->data = (BYTE *) calloc(Zone->size,sizeof(BYTE));
-	//printf("1) loadzone\n");
-    if (Zone->type==SHT_PROGBITS) {
+    if (Zone->type==SHT_PROGBITS) 
+    {
         // zone text ou data : on recopie les donnees du fichier elf
         for (i=0; i<Zone->size; i++)
-        {	//printf("1a) %d) loadzone\n",i);
-            Zone->exportSection->data[i] = * (BYTE *) ((BYTE *) data->d_buf + data->d_off + i);}
-    } else {
+        {Zone->exportSection->data[i] = * (BYTE *) ((BYTE *) data->d_buf + data->d_off + i);}
+	} 
+	else {
         // zone bss: on rempli avec des zeros! (pas forcement utile...)
-        for (i=0; i<Zone->size; i++)
-          {//printf("1b) %d) loadzone\n",i);  
-          Zone->exportSection->data[i] = 0;}
+        for (i=0; i<Zone->size; i++) 
+          Zone->exportSection->data[i] = 0;
     }
-    //printf("2) loadzone\n");
 }
 
 

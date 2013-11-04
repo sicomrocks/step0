@@ -14,9 +14,7 @@
 #include "elfimport.h"
 #include "global.h"	// Types BYTE, WORD, constantes...
 
-
 #define NUMZONE 3    /* Nombre de zones: text, data et bss  */
-
 
 /**
  * @brief Type de données SectionELF
@@ -64,8 +62,13 @@ typedef struct
     // Contient notamment les données binaires de la zone!
 } MemZone ;
 
+SectionELF *textSection;
+SectionELF *dataSection;
+SectionELF *bssSection;
 
 void printELFSection(SectionELF *section);
+
+void printPartELFSection(SectionELF *section, int NbOctets, int debut);
 
 char *relocName (unsigned char type);
 

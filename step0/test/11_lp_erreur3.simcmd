@@ -1,0 +1,4 @@
+#Test de la fonction lp : trop d'arguments
+
+lp res/exempleELF.s		#ce fichier existe mais n'est pas au format attendu
+lp res/exempleELF.o 		#cette commande ne devrait pas être exécutée

@@ -1,4 +1,4 @@
 #Test de la fonction lp : trop d'arguments
 
-lp truc autre 		#truc est un fichier qui existe
-lp truc 		#cette commande ne devrait pas être exécutée
+lp fvdscdsc 			#ce fichier n'existe pas
+lp res/exempleELF.o		#cette commande ne devrait pas être exécutée

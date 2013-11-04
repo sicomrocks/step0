@@ -97,7 +97,7 @@ int parse_and_execute_cmd_string(char *input) {
         return parse_and_execute_cmd_exit(input + strlen(cmdStr) );
     }
     else if(strcmp(cmdStr, "lp") == 0) {
-        return parse_and_execute_cmd_lp(input + strlen(cmdStr) );
+        return parse_and_execute_cmd_lp(input + strlen(cmdStr) + 1 );
     }
     else if(strcmp(cmdStr, "dm") == 0) {
         return parse_and_execute_cmd_dm(input + strlen(cmdStr) );

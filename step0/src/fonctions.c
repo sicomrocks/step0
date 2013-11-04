@@ -9,6 +9,7 @@
 
 
 
+
 int isregister(char* param) {
 	DEBUG_MSG("entrée dans la fonction isregister");
 	/*il y a deux types de noms de registres : 
@@ -87,7 +88,8 @@ int isregister(char* param) {
 }
 	
 
-int isadress(char* param) {
+int isadress(char* param)
+{
 	char* buffer;
 	buffer=strdup(param);
     if (automate(buffer)==3 /*&& param<adresse_max*/)
@@ -98,7 +100,8 @@ int isadress(char* param) {
 // Def des différents états
 enum { INIT , DECIMAL_ZERO, DEBUT_HEXA, HEXA, DECIMAL , OCTAL} ;
 // mise en oeuvre de l'automate
-int automate(char* nombre ) {
+int automate(char* nombre )
+{
 int c ;         //caractère analyse courante
 int S=INIT ;    // etat de l'automate
 int i=0;
@@ -259,8 +262,8 @@ int adressType(char* param)
 	//printf("S = %d\n",S);
 	return S;
 	}
-}
-
+	
+	
 void free_memory() {
 	DEBUG_MSG("Entrée dans la fonction free_memory");
 	int i;
@@ -274,3 +277,6 @@ void free_memory() {
 		DICO[i].ops[2]=NULL;
 	}	
 }
+}
+
+

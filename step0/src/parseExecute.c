@@ -11,6 +11,9 @@
 
 #define MAX_STR 1024
 
+
+
+
 int execute_cmd_testcmd(int hexValue) {
     if(hexValue <= 0) {
         WARNING_MSG("command %s  - invalid call. The argument should be positive.\n", "test");
@@ -44,7 +47,6 @@ int parse_and_execute_cmd_testcmd(char * paramsStr) {
 }
 
 int execute_cmd_exit() {
-    free_memory();
     INFO_MSG("Bye bye !");
     return CMD_EXIT_RETURN_VALUE;
 }
@@ -78,19 +80,17 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 		token2=strtok(NULL, separateur);
 		if (token2!=NULL) {
 			WARNING_MSG("Un seul paramètre est attendu ; l'exécution de lp va se poursuivre sans tenir compte des suivants");
-			free(buffer);
 			return 2;
 		}
 		FILE* fichier=NULL;
 		fichier=fopen(token, "r");
 		if (fichier==NULL) {
-			ERROR_MSG("Impossible d'ouvrir %s", token);
-			free(buffer);
+			WARNING_MSG("Impossible d'ouvrir %s", token);
 			return 2;
 		}
 		else {
-			fprintf(stdout, "Ouverture réussie de %s", token);
-			execute_cmd_lp(token);
+			DEBUG_MSG("Ouverture réussie de %s", token);
+			execute_cmd_lp(paramsStr);
 			free(buffer);
 			return CMD_OK_RETURN_VALUE;
 		}
@@ -99,17 +99,21 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 	free(buffer);
 	return 2;
 }
-
 int execute_cmd_lp(const char* filename) {
-	
-    SectionELF *textSection;
+/*
+	SectionELF *textSection;
     SectionELF *dataSection;
     SectionELF *bssSection;
-
+*/
+/*
+	free(textSection);
+    free(dataSection);
+    free(bssSection);
+*/
     /* Ne pas oublier d'allouer les differentes sections */
-    textSection = (SectionELF *) malloc(sizeof(SectionELF));
-    dataSection = (SectionELF *) malloc(sizeof(SectionELF));
-    bssSection  = (SectionELF *) malloc(sizeof(SectionELF));
+    textSection = (SectionELF *) calloc(1,sizeof(SectionELF));
+    dataSection = (SectionELF *) calloc(1,sizeof(SectionELF));
+    bssSection  = (SectionELF *) calloc(1,sizeof(SectionELF));
 	
     if (mipsloader(filename, textSection, dataSection, bssSection)) {
         fprintf(stderr,"**** ERREUR");
@@ -306,7 +310,7 @@ int parse_and_execute_cmd_lr(char* paramsStr) {
 int execute_cmd_lr(int num_reg, int value) {
 	//FILE* output=fopen("test/10_lr.out", "w");
 	registres[num_reg].valeur=value;
-	//fprintf(stdout, "CMD TEST RESULT %d 0x%x\n", registres[num_reg].numero, registres[num_reg].valeur);
+	//fprintf(stdout, "%d 0x%x\n", registres[num_reg].numero, registres[num_reg].valeur);
 	execute_cmd_dr_un(num_reg);
 	return CMD_OK_RETURN_VALUE;
 }
@@ -314,11 +318,12 @@ int execute_cmd_lr(int num_reg, int value) {
 int execute_cmd_da(char* adresse, int* nb_instructions) {
 	int A=(int)strtol(adresse, NULL, 0);
 	int N=(int)strtol(nb_instructions, NULL, 0);
-	fprintf(stdout, "CMD TEST RESULT adresse de départ 0x%.8x, %d instructions\n", A, N);
+	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_da(char* paramsStr) {
+int parse_and_execute_cmd_da(char* paramsStr)
+{
 	DEBUG_MSG("Parametres : %s", paramsStr);
 
 	/*deux paramètres : un numéro d'adresse
@@ -334,7 +339,7 @@ int parse_and_execute_cmd_da(char* paramsStr) {
 
 	// premier appel, pour vérifier s'il y a des paramètres
 	token = strtok( buffer, separateur  );
-	if (token == NULL) {/* cas où il n'y a pas de paramètres*/
+	if (token == NULL) /* cas où il n'y a pas de paramètres*/ {	
 		WARNING_MSG("Invalid param : address and value awaited");
 	}
 	else if (isadress(token) == 0) {	
@@ -363,7 +368,8 @@ int execute_cmd_lm(char* adresse,char* valeur) {
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_lm(char* paramsStr) {
+int parse_and_execute_cmd_lm(char* paramsStr)
+{
     // Définition des sorties de la fonction
 	char* adresse=NULL;
 	char* valeur=NULL;
@@ -392,30 +398,31 @@ int parse_and_execute_cmd_lm(char* paramsStr) {
     else if (isadress(token)==0)
     WARNING_MSG("Invalid param : hexadecimal address expected in first parameter");
 
-	else if (isadress(token)==1) {
-		adresse=token; // utile pour la fin
+	else if (isadress(token)==1)
+	{   adresse=token; // utile pour la fin
 
 		// Tester si le 2è paramètre est de la bonne forme
 		char* token2;
 		token2=strtok(NULL,separateur);
 
-		do {
-			if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) || strlen(token2)>10) {
-				WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
-				free(buffer);
-				free(buffer2);
-			return 2;
-			}
-			else {
-				compteur=compteur +1;
-				token2=strtok( NULL,separateur);
-				if (token2!=NULL && compteur==8) {
-					WARNING_MSG("Invalid value : too many parameters");
-					free(buffer);
-					free(buffer2);
-					return 2;
-				}
-			}
+		do
+		{
+            if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) || strlen(token2)>10)
+            {	WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
+                free(buffer);
+                free(buffer2);
+                return 2;
+            }
+            else
+            {   compteur=compteur +1;
+                token2=strtok( NULL,separateur);
+                if (token2!=NULL && compteur==8)
+                {   WARNING_MSG("Invalid value : too many parameters");
+                    free(buffer);
+                    free(buffer2);
+                    return 2;
+                }
+            }
 		} while ( token2!=NULL  && compteur < 8);
 		adresse = strtok( buffer2, separateur);
 		valeur = strtok( NULL, ".");
@@ -426,46 +433,181 @@ int parse_and_execute_cmd_lm(char* paramsStr) {
 	return execute_cmd_lm(adresse, valeur);
 }
 
-int execute_cmd_dm(char** Adresses, int* type , int nb_adresses) {
+/* @param adresse adresse à afficher 
+ * @brief affiche le contenu de l'adresse
+ */
+void display_one(int adresse)
+{
+	//printPartELFSection(textSection,1,adresse);
+	//printPartELFSection(dataSection,1,adresse);
+	//printPartELFSection(bssSection,1,adresse);
+	display_poly(adresse,1);
+}
+
+/* @param adresse adresse a partir de laquelle on affiche
+ * @param nombre nombre d'octets à afficher
+ * @brief affiche le contenu des "nombre" octets à partir de "adresse", 
+ * @brief en parcourant toutes les sections.
+ */
+void display_poly(int adresse, int nombre)
+{
+	int a = adresse;
+	int n0 = nombre;
+	int n1 = nombre;
+	
+	if ( (a <textSection->startAddress + textSection->size) 
+		&& (a >=textSection->startAddress) )  
+		{	
+			if (n0>=textSection->size - (a-textSection->startAddress))
+				{
+					n0 = textSection->size - (a-textSection->startAddress);
+					n1 = n1-n0;
+				}
+			else { n1 = 0 ;}
+		
+			printPartELFSection(textSection,n0,a);
+
+			n0=n1;
+			a = dataSection->startAddress;
+		}
+		
+	if ( (a <dataSection->startAddress + dataSection->size) 
+		&& (a >=dataSection->startAddress) )  
+		{	
+			if (n0>=dataSection->size - (a-dataSection->startAddress))
+				{
+					n0 = dataSection->size - (a-dataSection->startAddress);
+					n1 = n1-n0;
+				}
+			else { n1 = 0 ;}
+		
+			printPartELFSection(dataSection,n0,a);
+
+			n0=n1;
+			a = bssSection->startAddress;
+		}
+		
+	if ( (a <bssSection->startAddress + bssSection->size) 
+		&& (a >=bssSection->startAddress) )  
+		{	
+			if (n0>=bssSection->size - (a-bssSection->startAddress))
+				{
+					n0 = bssSection->size - (a-bssSection->startAddress);
+					n1 = n1-n0;
+				}
+			else { n1 = 0 ;}
+		
+			printPartELFSection(bssSection,n0,a);
+		}
+}
+
+int execute_cmd_dm(char** Adresses, int* type , int nb_adresses) 
+{
 	char* buffer;
 	char* token;
 	int m=0;
 	int n=0;
 	int j=0;
-	
-	int i=0; 
-	//fprintf(stdout,"j = %d\n", nb_adresses );
-	while (i<nb_adresses) {	
+	int i=0;
+	 
+	while (i<nb_adresses)
+	{	
 		//fprintf(stdout, "CMD TEST RESULT Adresse %s Type %d\n", Adresses[i], type[i]);
 		
 		switch(type[i]) {
 			case 1: // adresse simple
-				//display_one(Adresses[i]);
-				fprintf(stdout, "CMD TEST RESULT Adresse 0x%.8x\n", ((int)strtol(Adresses[i],NULL,0)));
+				display_one((int)strtol(Adresses[i],NULL,0));
+				fprintf(stdout, "Adresse 0x%.8x\n", ((int)strtol(Adresses[i],NULL,0)));
+				
 				break;
-			case 2: // adresse avec nombre d'instructions
+			case 2: // adresse avec nombre d'octets
 				buffer = strdup(Adresses[i]);
 				token = strtok(buffer,":");
 				m = (int)strtol(token, NULL, 0);
 				token = strtok(NULL,":");
 				n = (int)strtol(token, NULL, 0);
-				//display_inst(m,n);
-				fprintf(stdout, "CMD TEST RESULT Adresse 0x%.8x, %d Instructions\n", m,n);
+				display_poly(m,n);
+				fprintf(stdout, "Adresse 0x%.8x, %d Octets\n", m,n);
+				
 				break;
 			case 3: // intervalle d'adresse
 				buffer = strdup(Adresses[i]);
 				token = strtok(buffer,"~");
-				m = (int)strtol(token, NULL, 0);
+				m = (int)strtol(token, NULL, 0); 
 				token = strtok(NULL,"~");
 				n = (int)strtol(token, NULL, 0);
 				if (n<m) {int temp = m; m=n; n=temp;}
 			
+				// On parcourt tous les cas possibles (corrects..) pour les deux adresses n et m
+				
+				if ((m <textSection->startAddress + textSection->size) 
+				&& (m >=textSection->startAddress) ) // m appartient à text
+				{	
+					if ( n <dataSection->startAddress ) // n appartient à text
+					{	
+						if (n>textSection->size) 
+							{display_poly(m,textSection->size-m);}
+						else {display_poly(m,n-m+1);}
+					}
+					else if ( n <bssSection->startAddress ) // n appartient à data
+					{	
+						if (n-dataSection->startAddress >= dataSection->size) 
+							{display_poly(m,textSection->size - m + dataSection->size);}
+						else {display_poly(m,textSection->size - m + n - dataSection->startAddress+1);}
+					}
+					else // n appartient à bss
+					{	
+						if (n-bssSection->startAddress >= bssSection->size) 
+							{display_poly(m,textSection->size - m + dataSection->size + bssSection->size);}
+						else {display_poly(m,textSection->size - m  
+								+ dataSection->size + n - bssSection->startAddress+1);}
+					}
+				}
+				
+				else if((m <dataSection->startAddress + dataSection->size) 
+						&& (m >=dataSection->startAddress) ) // m appartient à data
+				{	
+					if ( n <bssSection->startAddress ) // n appartient à data
+					{	
+						if (n-dataSection->startAddress > dataSection->size) 
+							{display_poly(m,dataSection->size-m);}
+						else {display_poly(m,n-m+1);}
+					}
+					else // n appartient à bss
+					{
+						if (n-bssSection->startAddress >= bssSection->size) 
+							{display_poly(m,dataSection->size - m + bssSection->size);}
+						else {display_poly(m,dataSection->size - m + n - bssSection->startAddress+1);}
+					}
+				}
+				else // m appartient à bss, donc n aussi
+				{
+					if (n-bssSection->startAddress > bssSection->size) 
+							{display_poly(m,bssSection->size-m);}
+					else {display_poly(m,n-m+1);}
+				}
+				
+				if ( ( (m > textSection->startAddress + textSection->size) 
+					&& (m < dataSection->startAddress) )
+					|| ( (m > dataSection->startAddress + dataSection->size) 
+					&& (m < bssSection->startAddress) )
+					|| ( (m > bssSection->startAddress + bssSection->size) )
+					)
+					{ WARNING_MSG("Adresse 0x%.8x incorrecte\n",m);}
+				if ( ( (n > textSection->startAddress + textSection->size) 
+					&& (n < dataSection->startAddress) )
+					|| ( (n > dataSection->startAddress + dataSection->size) 
+					&& (n < bssSection->startAddress) )
+					|| ( (n > bssSection->startAddress + bssSection->size) )
+					)
+					{ WARNING_MSG("Adresse 0x%.8x incorrecte\n",n);}	 
+				
 				for(j=0;j<=n-m;j++)
-				{	//display_one(m+j);
-					fprintf(stdout, "CMD TEST RESULT Adresse 0x%.8x\n", m+j);
+				{	
+					//fprintf(stdout, "Adresse 0x%.8x\n", m+j);
 				}
 				break;
-		}
+			}
 		i++;
 	}
 	
@@ -473,105 +615,108 @@ int execute_cmd_dm(char** Adresses, int* type , int nb_adresses) {
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_dm(char* paramsStr) {
-	// Si l'entrée est nulle, msg d'erreur et on sort de la fonction
-	char* buffer0;
-	char* token0;
-	buffer0=strdup(paramsStr);
-	token0=strtok(buffer0," ");
-	if (token0==NULL){ 
-		free(buffer0);
-		return 2;
-	}
+int parse_and_execute_cmd_dm(char* paramsStr)
+{
+// Si l'entrée est nulle, msg d'erreur et on sort de la fonction
+char* buffer0;
+char* token0;
+buffer0=strdup(paramsStr);
+token0=strtok(buffer0," ");
+if (token0==NULL){ 
+	free(buffer0);
+	return 2;
+}
 
-	else {
-		// Déterminer le nombre d'espaces (donc d'adresses)
-		char* bufferespace;
-		bufferespace = strdup (paramsStr);
-		char* tokenespace;
-		int compteur=0;
-		int nb_espace;
+else {
+	// Déterminer le nombre d'espaces (donc d'adresses)
+	char* bufferespace;
+	bufferespace = strdup (paramsStr);
+	char* tokenespace;
+	int compteur=0;
+	int nb_espace;
 
-		tokenespace = strtok(bufferespace," ");
-			while (tokenespace!=NULL) {
-				compteur++;
-				nb_espace=compteur-1;
-				tokenespace=strtok(NULL," ");
-			}
-		compteur=0;
-
-		// Definition du tableau qui recevra les Adresses à traiter par adressType
-		char* adresses[nb_espace+1];
-		int* type[nb_espace+1];
-		int numero=0;
-		// Initialisation du tableau
-		while (numero!=nb_espace+2) {adresses[numero]=NULL; numero++;}
-		numero=0;
-
-	
-		char* token=NULL;
-		char* token2=NULL;
-		char* buffer=NULL;
-		char* buffer2=NULL;
-		char* separateur = {" "};
-
-		buffer=strdup(paramsStr);
-		buffer2=strdup(paramsStr);
-		token = strtok(buffer,separateur);
-
-		if (token == NULL) {		// cas où il n'y a pas de paramètres
-			WARNING_MSG("Invalid param : Address(es) expected\n");
-			free(buffer);
-			free(buffer2);
-			free(bufferespace);
-			return 2;
+	tokenespace = strtok(bufferespace," ");
+		while (tokenespace!=NULL)
+		{
+			compteur++;
+			nb_espace=compteur-1;
+			tokenespace=strtok(NULL," ");
 		}
-		if (adressType(token)==1) {	// cas où la première adresse est incorrecte
-		WARNING_MSG("First address invalid\n");
+	compteur=0;
+
+	// Definition du tableau qui recevra les Adresses à traiter par adressType
+	char* adresses[nb_espace+1];
+	int* type[nb_espace+1];
+	int numero=0;
+	// Initialisation du tableau
+	while (numero!=nb_espace+2) {adresses[numero]=NULL; numero++;}
+	numero=0;
+
+
+	char* token=NULL;
+	char* token2=NULL;
+	char* buffer=NULL;
+	char* buffer2=NULL;
+	char* separateur = {" "};
+
+	buffer=strdup(paramsStr);
+	buffer2=strdup(paramsStr);
+	token = strtok(buffer,separateur);
+
+	if (token == NULL) {		// cas où il n'y a pas de paramètres
+		WARNING_MSG("Invalid param : Address(es) expected\n");
 		free(buffer);
 		free(buffer2);
 		free(bufferespace);
 		return 2;
-		}
-		else {
-			// la première adresse est correcte
-			adresses[numero]=token;
-			token2=strtok(buffer2,separateur);
-
-			//Boucle qui remplit le tableau avec les adresses
-			while(token2!=NULL) {
-				numero++;
-				token2=strtok(NULL,separateur);
-				if (token2!=NULL) {adresses[numero]=token2;}
-			}
-			free(token2);
-
-			// Boucle qui vérifie les types des adresses
-			int m=0;
-			int n;
-			while (m<nb_espace+1) {
-				n = adressType(adresses[m]);
-				type[m]=n-1;
-				if (n==1) {
-					WARNING_MSG("adresse numero %d invalide\n",m+1);
-				free(buffer);
-				free(buffer2);
-				free(bufferespace);
-				return 2;
-				} 
-				// Si l'adresse est fausse, on sort du programme
-				// Sinon, on poursuit jusqu'à commande OK
-				m++;
-		
-			}
-			return execute_cmd_dm(adresses,type,m);
-		}
 	}
-	/*free(buffer);
-	free(bufferbarre);
-	free(buffer2);*/
+	if (adressType(token)==1) {	// cas où la première adresse est incorrecte
+	WARNING_MSG("First address invalid\n");
+	free(buffer);
+	free(buffer2);
+	free(bufferespace);
 	return 2;
+	}
+	else
+	{	// la première adresse est correcte
+		adresses[numero]=token;
+		token2=strtok(buffer2,separateur);
+
+		//Boucle qui remplit le tableau avec les adresses
+		while(token2!=NULL)
+		{	numero++;
+			token2=strtok(NULL,separateur);
+			if (token2!=NULL) {adresses[numero]=token2;}
+		}
+		free(token2);
+
+		// Boucle qui vérifie les types des adresses
+		int m=0;
+		int n;
+		while (m<nb_espace+1)
+		{n = adressType(adresses[m]);
+		type[m]=n-1;
+		if (n==1) {
+			WARNING_MSG("adresse numero %d invalide\n",m+1);
+			free(buffer);
+			free(buffer2);
+			free(bufferespace);
+			return 2;
+		} 
+		// Si l'adresse est fausse, on sort du programme
+		// Sinon, on poursuit jusqu'à commande OK
+		m++;
+		
+		}
+		return execute_cmd_dm(adresses,type,m);
+	}
 }
+/*free(buffer);
+free(bufferbarre);
+free(buffer2);*/
+return 2;
+}
+
 
 int parse_and_execute_cmd_inst(char* paramsStr) {
 	DEBUG_MSG("Parametres : %s", paramsStr);
@@ -587,6 +732,6 @@ int parse_and_execute_cmd_inst(char* paramsStr) {
 }
 
 int execute_cmd_inst(int n) {
-	fprintf(stdout,"numero: %d nom: %s type: %s nbe d'op: %d 1è op: %s 2è op: %s 3è op: %s opcode: 0x%x function: 0x%x\n", n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);
+	fprintf(stdout,"numero: %d\nnom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: 0x%x\nfunction: 0x%x\n", n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);
 	return CMD_OK_RETURN_VALUE;
 }

@@ -51,26 +51,34 @@ modifier une valeur dans un registre :
 int parse_and_execute_cmd_lr(char* paramsStr);
 int execute_cmd_lr(int num_reg, int value);
 
-int execute_cmd_da(char* adresse, int* nb_instructions);
-int parse_and_execute_cmd_da(char* paramsStr);
 /*
 
 */
+int execute_cmd_da(char* adresse, int* nb_instructions);
+int parse_and_execute_cmd_da(char* paramsStr);
 
-int execute_cmd_lm(char* adresse,char* valeur);
-int parse_and_execute_cmd_lm(char* paramsStr);
 /*
 La commande écrit à l'adresse (hexa) donnée en premier paramètre la valeur (hexa d'octet) donnée en deuxième paramètre, ces paramètres séparés par un espace.
 La valeur entière peut être sur 1 à 8 chiffres hexadécimaux
 */
+int execute_cmd_lm(char* adresse,char* valeur);
+int parse_and_execute_cmd_lm(char* paramsStr);
 
-int execute_cmd_dm(char** Adresses, int* type, int nb_adresses);
-int parse_and_execute_cmd_dm(char* paramsStr);
 /*
 
 */
+void display_one(int adresse);
+void display_poly(int adresse, int nombre);
 
-/*fonction qui affiche les caractéristiques de l'instruction voulue (donnée par le num de la ligne du dico)*/
+/*
+
+*/
+int execute_cmd_dm(char** Adresses, int* type , int nb_adresses);
+int parse_and_execute_cmd_dm(char* paramsStr);
+
+
+/*fonction qui affiche les caractéristiques de l'instruction 
+ *voulue (donnée par le num de la ligne du dico)
+ */
 int parse_and_execute_cmd_inst(char* paramsStr);
 int execute_cmd_inst(int n);
-
