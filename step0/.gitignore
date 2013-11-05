@@ -11,6 +11,7 @@
 *.o
 simMips
 mips-load
-mops-load-test
+mips-load-test
 *~
 *.dbg.o
+*.out
