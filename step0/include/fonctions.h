@@ -17,5 +17,10 @@ int adressType(char* param);
 /*fonction qui vide le dictionnaire*/
 void free_memory();
 
+//fonction qui désassemble l'instruction instr
+int desassemble(char* instr_hexa);
+
+//fonction qui convertit une chaîne de caractères représentant un hexadécimal en un binaire et le range bit à bint dans le tableau bin[]
+int conv_hex_bin(char* hexa, char bin[]);
 
 #endif

@@ -13,6 +13,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define CMD_OK_RETURN_VALUE 0
+#define CMD_EXIT_RETURN_VALUE -1
+#define CMD_EMPTY_RETURN_VALUE -2
+#define CMD_UNKOWN_RETURN_VALUE -3
+
+#define MAX_STR 1024
+
 
 #ifdef __cplusplus
 extern "C" {

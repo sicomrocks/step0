@@ -47,6 +47,7 @@ struct ENTREE { 			//c'est le fichier ELF que l'on veut charger, composé des tr
 	SECTION bss;
 	};
 
+
 /*si on a l'instruction suivante dans le programme : 
 	.space 12000
 au moment de charger, on réserve les 12000 octets dans la section .bss
@@ -59,7 +60,7 @@ typedef struct {
 	char* ops[3];	//tableau de taille contenant les opérandes
 	unsigned int opcode;
 	unsigned int func;
-}INSTRUCTION;
+}INSTRUCTION;		//instruction telle qu'elle figure dans le dictionnaire
 
 /*utilisation d'un dictionnaire : on définit un tableau de structures contenant toutes les instructions*/
 INSTRUCTION DICO[25];
@@ -67,6 +68,12 @@ INSTRUCTION DICO[25];
 /*fonction qui lit dans le fichier dico.txt toutes les instructions à prendre en compte
  * et les range dans le tableau de structures DICO*/
 void init_instr(INSTRUCTION* tab);
+
+typedef struct {
+	union code;
+	unsigned int adresse;	//adresse virtuelle
+	INSTRUCTION* def;	//pointeur vers la définition du dictionnaire
+} inst_da;			//instruction après désassemblage
 
 
 

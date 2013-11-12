@@ -1,15 +1,11 @@
 #include "parseExecute.h"
+#include <math.h>
 #include "notify.h"
 #include "reg.h"
 #include <stdio.h>
 #include "memoire.h"
 
-#define CMD_OK_RETURN_VALUE 0
-#define CMD_EXIT_RETURN_VALUE -1
-#define CMD_EMPTY_RETURN_VALUE -2
-#define CMD_UNKOWN_RETURN_VALUE -3
 
-#define MAX_STR 1024
 
 
 
@@ -99,6 +95,7 @@ int parse_and_execute_cmd_lp(char* paramsStr) {
 	free(buffer);
 	return 2;
 }
+
 int execute_cmd_lp(const char* filename) {
 /*
 	SectionELF *textSection;
@@ -111,9 +108,9 @@ int execute_cmd_lp(const char* filename) {
     free(bssSection);
 */
     /* Ne pas oublier d'allouer les differentes sections */
-    textSection = (SectionELF *) calloc(1,sizeof(SectionELF));
-    dataSection = (SectionELF *) calloc(1,sizeof(SectionELF));
-    bssSection  = (SectionELF *) calloc(1,sizeof(SectionELF));
+   // textSection = (SectionELF *) calloc(1,sizeof(SectionELF));
+    //dataSection = (SectionELF *) calloc(1,sizeof(SectionELF));
+    //bssSection  = (SectionELF *) calloc(1,sizeof(SectionELF));
 	
     if (mipsloader(filename, textSection, dataSection, bssSection)) {
         fprintf(stderr,"**** ERREUR");
@@ -316,18 +313,80 @@ int execute_cmd_lr(int num_reg, int value) {
 }
 
 int execute_cmd_da(char* adresse, int* nb_instructions) {
-	int A=(int)strtol(adresse, NULL, 0);
+	WORD A=(int)strtol(adresse, NULL, 0);
 	int N=(int)strtol(nb_instructions, NULL, 0);
 	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
+
+	inst_da instruction;	//instruction après désassemblage
+
+	//vérifier que A est bien dans la zone .text et qu'elle est bien alignée
+	if (A>=textSection->size) {
+		DEBUG_MSG("L'adresse spécifiée n'est pas dans la section .text");
+		return 2;
+	}
+
+	DEBUG_MSG("A vaut 0x%x", A);
+	if (A%4!=0) {
+		DEBUG_MSG("adresse mal alignée");
+		return 2;
+	}
+	
+	//vérifier que A+N reste dans le fichier ; si ce n'est pas le cas on n'affiche pas
+	
+
+	//translater l'adresse virtuelle en adresse réelle
+		//BYTE* data
+		//WORD address
+
+	/*int offset=&textSection;
+		DEBUG_MSG("offset %d", offset);
+		DEBUG_MSG("adresse réelle de textSection %d", &textSection);*/
+
+	int numero=A-textSection->startAddress;	//c'est le numéro de l'octet dans la section .text
+
+	//récupérer l'octet n° numero
+/*	char chaine[32];
+	int i=0;
+	
+	for (i=0; i<4; i++) {
+		sprintf(chaine+i*3, "%03d", textSection->data[numero+i]);
+	}
+	unsigned int instr;
+	instr=atoi(chaine);
+	DEBUG_MSG("chaine %s", chaine);
+	DEBUG_MSG("instr %x", instr);
+*/
+
+	char* chaine;
+	int i;
+	for (i=0 ; i<4 ; i++) {
+		sprintf(chaine+i*2, "%02x", textSection->data[numero+i]);
+	}
+	DEBUG_MSG("Récupération du mot '%s' à l'adresse '0x%x'", chaine, A);
+	
+	//mot=swap(mot)
+	//mot=(int)strtol(&mot,NULL, 16);
+		//mot=2;
+		//DEBUG_MSG("%d", mot);
+	//	mot=((mot>>24)&0xff) | ((mot<<8)&0xff0000) | ((mot>>8)&0xff00) | ((mot<<24)&0xff000000);
+	//	DEBUG_MSG("%d", mot);
+
+	//inst=désassemble(mot)
+	desassemble(chaine);
+		
+
+	//afficher l'instruction désassemblée
+
+	
+	
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_da(char* paramsStr)
-{
+int parse_and_execute_cmd_da(char* paramsStr) {
 	DEBUG_MSG("Parametres : %s", paramsStr);
 
 	/*deux paramètres : un numéro d'adresse
-	 *					nombre entier d'instructions à afficher
+	 *		    un nombre entier d'instructions à afficher
 	 */
 
 	// Pour le strtok
@@ -352,8 +411,9 @@ int parse_and_execute_cmd_da(char* paramsStr)
 			WARNING_MSG("Nombre entier attendu après %s", token);
 		}
 		else {
+			execute_cmd_da(token, token2);
 			free(buffer);
-			return execute_cmd_da(token, token2);
+			return CMD_OK_RETURN_VALUE;
 		}
 	}
 	free(buffer);

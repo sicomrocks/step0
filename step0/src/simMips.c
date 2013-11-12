@@ -181,11 +181,15 @@ int main ( int argc, char *argv[] ) {
 
     //initialisation des registres
     init_reg(registres);
+
+    //initialisation du dictionnaire d'instructions
     init_instr(DICO);
-    //int i;
-    //for (i=0 ; i<36 ; i++) {
-    //	DEBUG_MSG("%d", registres[i].numero);
-    //}
+
+    //allocation de la mémoire
+    textSection = (SectionELF *) calloc(1,sizeof(SectionELF));
+    dataSection = (SectionELF *) calloc(1,sizeof(SectionELF));
+    bssSection  = (SectionELF *) calloc(1,sizeof(SectionELF));
+	
 
     FILE *fp = NULL; /* le flux dans lequel les commandes seront lues : stdin (mode shell) ou un fichier */
 

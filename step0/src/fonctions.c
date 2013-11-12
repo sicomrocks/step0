@@ -88,8 +88,7 @@ int isregister(char* param) {
 }
 	
 
-int isadress(char* param)
-{
+int isadress(char* param) {
 	char* buffer;
 	buffer=strdup(param);
     if (automate(buffer)==3 /*&& param<adresse_max*/)
@@ -100,8 +99,7 @@ int isadress(char* param)
 // Def des différents états
 enum { INIT , DECIMAL_ZERO, DEBUT_HEXA, HEXA, DECIMAL , OCTAL} ;
 // mise en oeuvre de l'automate
-int automate(char* nombre )
-{
+int automate(char* nombre ) {
 int c ;         //caractère analyse courante
 int S=INIT ;    // etat de l'automate
 int i=0;
@@ -169,8 +167,7 @@ return S;
 //Definition des types d'adresse
 enum {INI,FAUX,SIMPLE,NB_OCTETS,INTERVALLE};
 //Mise en place du vérificateur
-int adressType(char* param)
-{	
+int adressType(char* param) {	
 	if (param==NULL) return 1;
 	
 	char* token0=NULL;
@@ -279,4 +276,176 @@ void free_memory() {
 }
 }
 
+int desassemble(char* instr_hexa) {
+	DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
+
+	//convertir la chaîne de caractères en binaire
+	char binaire[32];
+	conv_hex_bin(instr_hexa, &binaire);	//binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
+	//int i;
+	//for (i=0 ; i<32 ; i++) {
+	//	DEBUG_MSG("retour %d", binaire[i]);
+	//}
+
+
+	//regarder le type de l'instruction
+			// opcode : les 6 bits de poids fort
+	
+
+
+	
+	return CMD_OK_RETURN_VALUE;
+}
+
+int conv_hex_bin(char* hexa, char bin[]) {
+	DEBUG_MSG("conversion en binaire");
+
+	//regarder les caractères de hexa un par un. Pour chacun :
+		//convertir en pseudo-décimal : b=11, f=15, etc
+		//convertir le pseudo-décimal en binaire
+
+	DEBUG_MSG("chaine : %s", hexa);
+
+	char chaine[8];
+	strncpy(chaine, hexa, 8); //chaine[i] contient le code ascii du caractère correspondant de hexa
+	int p_decimal[20];	//contient les valeurs intermédiares pour la conversion
+	//p_decimal=calloc(8, sizeof(int));
+	int i;
+	for (i=0 ; i<8 ; i++) {
+		switch (chaine[i]) {
+			case 48:
+				chaine[i]=0;
+				p_decimal[i]=0;
+				bin[4*i+0]=0;
+				bin[4*i+1]=0;
+				bin[4*i+2]=0;
+				bin[4*i+3]=0;
+				break;
+			case 49:
+				chaine[i]=1;
+				p_decimal[i]=1;
+				bin[4*i+0]=0;
+				bin[4*i+1]=0;
+				bin[4*i+2]=0;
+				bin[4*i+3]=1;
+				break;
+			case 50:
+				chaine[i]=2;
+				p_decimal[i]=2;
+				bin[4*i+0]=0;
+				bin[4*i+1]=0;
+				bin[4*i+2]=1;
+				bin[4*i+3]=0;
+				break;
+			case 51:
+				chaine[i]=3;
+				p_decimal[i]=3;
+				bin[4*i+0]=0;
+				bin[4*i+1]=0;
+				bin[4*i+2]=1;
+				bin[4*i+3]=1;
+				break;
+			case 52:
+				chaine[i]=4;
+				p_decimal[i]=4;
+				bin[4*i+0]=0;
+				bin[4*i+1]=1;
+				bin[4*i+2]=0;
+				bin[4*i+3]=0;
+				break;
+			case 53:
+				chaine[i]=5;
+				p_decimal[i]=5;
+				bin[4*i+0]=0;
+				bin[4*i+1]=1;
+				bin[4*i+2]=0;
+				bin[4*i+3]=1;
+				break;
+			case 54:
+				chaine[i]=6;
+				p_decimal[i]=6;
+				bin[4*i+0]=0;
+				bin[4*i+1]=1;
+				bin[4*i+2]=1;
+				bin[4*i+3]=0;
+				break;
+			case 55:
+				chaine[i]=7;
+				p_decimal[i]=7;
+				bin[4*i+0]=0;
+				bin[4*i+1]=1;
+				bin[4*i+2]=1;
+				bin[4*i+3]=1;
+				break;
+			case 56:
+				chaine[i]=8;
+				p_decimal[i]=8;
+				bin[4*i+0]=1;
+				bin[4*i+1]=0;
+				bin[4*i+2]=0;
+				bin[4*i+3]=0;
+				break;
+			case 57 :
+				chaine[i]=9;
+				p_decimal[i]=9;
+				bin[4*i+0]=1;
+				bin[4*i+1]=0;
+				bin[4*i+2]=0;
+				bin[4*i+3]=1;
+				break;
+			case 97:
+				chaine[i]="a";
+				p_decimal[i]=10;
+				bin[4*i+0]=1;
+				bin[4*i+1]=0;
+				bin[4*i+2]=1;
+				bin[4*i+3]=0;
+				break;
+			case 98:
+				chaine[i]="b";
+				p_decimal[i]=11;
+				bin[4*i+0]=1;
+				bin[4*i+1]=0;
+				bin[4*i+2]=1;
+				bin[4*i+3]=1;
+				break;
+			case 99:
+				chaine[i]="c";
+				p_decimal[i]=12;
+				bin[4*i+0]=1;
+				bin[4*i+1]=1;
+				bin[4*i+2]=0;
+				bin[4*i+3]=0;
+				break;
+			case 100:
+				chaine[i]="d";
+				p_decimal[i]=13;
+				bin[4*i+0]=1;
+				bin[4*i+1]=1;
+				bin[4*i+2]=0;
+				bin[4*i+3]=1;
+				break;
+			case 101:
+				chaine[i]="e";
+				p_decimal[i]=14;
+				bin[4*i+0]=1;
+				bin[4*i+1]=1;
+				bin[4*i+2]=1;
+				bin[4*i+3]=0;
+				break;
+			case 102:
+				chaine[i]="f";
+				p_decimal[i]=15;
+				bin[4*i+0]=1;
+				bin[4*i+1]=1;
+				bin[4*i+2]=1;
+				bin[4*i+3]=1;
+				break;
+		}
+		DEBUG_MSG("caract %d  en decimal %d", chaine[i], p_decimal[i]);
+	}
+	
+		
+	return CMD_OK_RETURN_VALUE;
+}
 
