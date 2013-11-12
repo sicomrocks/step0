@@ -26,4 +26,7 @@ int conv_hex_bin(char* hexa, char bin[]);
 //fonction qui convertit un entier en une chaîne de caractères qui le représente en hexadécimal
 int conv_int_str(unsigned int value, char** string);
 
+//fonction qui trouve le numéro de l'instruction en binaire
+int recup_num(char instr_bin[]);
+
 #endif

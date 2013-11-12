@@ -103,16 +103,16 @@ void init_instr(INSTRUCTION* tab) {        //tab fait 25 lignes et contient des 
                 //mot suivant : unsigned int opcode ÇA MARCHE
                 mot=strtok(NULL, delim); //mot a pour valeur "opcode"
                 mot=strtok(NULL, delim);
-                DEBUG_MSG("mot %s", mot);
+                //DEBUG_MSG("mot %s", mot);
                 strcpy(DICO[i-1].opcode, strdup(mot));
-                DEBUG_MSG("opcode : %s", DICO[i-1].opcode);
+                //DEBUG_MSG("opcode : %s", DICO[i-1].opcode);
                 
                 //dernier mot : unsigned int function
                 mot=strtok(NULL, delim);
                 if (mot != NULL) {
                         mot=strtok(NULL, delim);
                         strcpy(DICO[i-1].func, strdup(mot));
-                        DEBUG_MSG("function : %s", DICO[i-1].func);
+                        //DEBUG_MSG("function : %s", DICO[i-1].func);
                 }
                 else {
                         //DICO[i-1].func='noFunc';
@@ -121,12 +121,12 @@ void init_instr(INSTRUCTION* tab) {        //tab fait 25 lignes et contient des 
                 i++;                
         }
         //affichage des valeurs du dico
-        for (i=0 ; i<25 ; i++) {
+        for (i=0 ; i<taille_DICO ; i++) {
                 if (DICO[i].nom == NULL) {
                         DEBUG_MSG("error");
                 }
                 //DEBUG_MSG("%d %s %s %d %s %s %s 0x%x 0x%x",i+1, DICO[i].nom, DICO[i].type, DICO[i].nbe_op, DICO[i].ops[0], DICO[i].ops[1], DICO[i].ops[2], DICO[i].opcode, DICO[i].func);
         }
-        int nombre=101011;
-        DEBUG_MSG("%d", nombre);
+        //int nombre=101011;
+        //DEBUG_MSG("%d", nombre);
 }

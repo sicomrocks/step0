@@ -282,22 +282,16 @@ int desassemble(char* instr_hexa) {
 	int i;
 
 	//convertir la chaîne de caractères en binaire
-	char binaire[32];
-	conv_hex_bin(instr_hexa, &binaire);	//binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
+	char instr_binaire[32];
+	conv_hex_bin(instr_hexa, &instr_binaire);	//binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
 
 	//vérification
-	//for (i=0 ; i<32 ; i++) {
-	//	DEBUG_MSG("retour %d", binaire[i]);
-	//}
+	fprintf(stdout, "traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
 
+	//récupérer le numéro de l'instruction
+	recup_num(&instr_binaire);
+		
 
-	//regarder le type de l'instruction
-		// opcode : les 6 bits de poids fort
-		//il faut déjà traduire les unsigned int opcode en char*
-
-	int value=0x12f;
-	char* truc='hello';
-	conv_int_str(value, &truc);
 
 
 	
@@ -311,16 +305,17 @@ int conv_hex_bin(char* hexa, char bin[]) {
 		//convertir en pseudo-décimal : b=11, f=15, etc
 		//convertir le pseudo-décimal en binaire
 
-	DEBUG_MSG("chaine : %s", hexa);
+		//fonction codée à la barbare mais qui marche
+
+	//DEBUG_MSG("chaine : %s", hexa);
 
 	char chaine[8];
 	strncpy(chaine, hexa, 8); //chaine[i] contient le code ascii du caractère correspondant de hexa
-	int p_decimal[20];	//contient les valeurs intermédiares pour la conversion
-	//p_decimal=calloc(8, sizeof(int));
+	int p_decimal[20];	//contient les valeurs intermédiares pour la conversion ; utile seuelement pour la personne qui lit le code
 	int i;
 	for (i=0 ; i<8 ; i++) {
 		switch (chaine[i]) {
-			case 48:
+			case '0':
 				chaine[i]=0;
 				p_decimal[i]=0;
 				bin[4*i+0]=0;
@@ -328,7 +323,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=0;
 				break;
-			case 49:
+			case '1':
 				chaine[i]=1;
 				p_decimal[i]=1;
 				bin[4*i+0]=0;
@@ -336,7 +331,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=1;
 				break;
-			case 50:
+			case '2':
 				chaine[i]=2;
 				p_decimal[i]=2;
 				bin[4*i+0]=0;
@@ -344,7 +339,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=1;
 				bin[4*i+3]=0;
 				break;
-			case 51:
+			case '3':
 				chaine[i]=3;
 				p_decimal[i]=3;
 				bin[4*i+0]=0;
@@ -352,7 +347,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=1;
 				bin[4*i+3]=1;
 				break;
-			case 52:
+			case '4':
 				chaine[i]=4;
 				p_decimal[i]=4;
 				bin[4*i+0]=0;
@@ -360,7 +355,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=0;
 				break;
-			case 53:
+			case '5':
 				chaine[i]=5;
 				p_decimal[i]=5;
 				bin[4*i+0]=0;
@@ -368,7 +363,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=1;
 				break;
-			case 54:
+			case '6':
 				chaine[i]=6;
 				p_decimal[i]=6;
 				bin[4*i+0]=0;
@@ -376,7 +371,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=1;
 				bin[4*i+3]=0;
 				break;
-			case 55:
+			case '7':
 				chaine[i]=7;
 				p_decimal[i]=7;
 				bin[4*i+0]=0;
@@ -384,7 +379,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=1;
 				bin[4*i+3]=1;
 				break;
-			case 56:
+			case '8':
 				chaine[i]=8;
 				p_decimal[i]=8;
 				bin[4*i+0]=1;
@@ -392,7 +387,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=0;
 				break;
-			case 57 :
+			case '9':
 				chaine[i]=9;
 				p_decimal[i]=9;
 				bin[4*i+0]=1;
@@ -400,7 +395,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=1;
 				break;
-			case 97:
+			case 'a':
 				chaine[i]="a";
 				p_decimal[i]=10;
 				bin[4*i+0]=1;
@@ -408,7 +403,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=1;
 				bin[4*i+3]=0;
 				break;
-			case 98:
+			case 'b':
 				chaine[i]="b";
 				p_decimal[i]=11;
 				bin[4*i+0]=1;
@@ -416,7 +411,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=1;
 				bin[4*i+3]=1;
 				break;
-			case 99:
+			case 'c':
 				chaine[i]="c";
 				p_decimal[i]=12;
 				bin[4*i+0]=1;
@@ -424,7 +419,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=0;
 				break;
-			case 100:
+			case 'd':
 				chaine[i]="d";
 				p_decimal[i]=13;
 				bin[4*i+0]=1;
@@ -432,7 +427,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=0;
 				bin[4*i+3]=1;
 				break;
-			case 101:
+			case 'e':
 				chaine[i]="e";
 				p_decimal[i]=14;
 				bin[4*i+0]=1;
@@ -440,7 +435,7 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+2]=1;
 				bin[4*i+3]=0;
 				break;
-			case 102:
+			case 'f':
 				chaine[i]="f";
 				p_decimal[i]=15;
 				bin[4*i+0]=1;
@@ -456,7 +451,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 	return CMD_OK_RETURN_VALUE;
 }
 
-
 int conv_int_str(unsigned int value, char** string) {
 	DEBUG_MSG("entrée dans la fonction conv_int_str");
 	
@@ -469,3 +463,28 @@ int conv_int_str(unsigned int value, char** string) {
 	
 	return CMD_OK_RETURN_VALUE;
 }
+
+int recup_num(char instr_bin[]) {
+	DEBUG_MSG("entrée dans la fonction recup_num");
+	int i;
+	int j=0;
+	
+	int trouve=0;
+
+	while (trouve=0 && j<taille_DICO) {	//tant qu'on n'a pas trouvé de quelle instruction il s'agit
+		//d'abord on regarde le opcode
+		char OPCODE[6];
+		for (i=0 ; i<6 ; i++) {
+			OPCODE[i]=DICO[j].opcode[i];
+		}
+		DEBUG_MSG("opcode %s", OPCODE);
+	j++;
+	}
+	if (trouve==0) {
+		DEBUG_MSG("l'instruction n'est pas dans le dictionnaire");
+	}
+	
+	return CMD_OK_RETURN_VALUE;
+}
+
+
