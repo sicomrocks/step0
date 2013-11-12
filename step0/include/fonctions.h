@@ -23,4 +23,7 @@ int desassemble(char* instr_hexa);
 //fonction qui convertit une chaîne de caractères représentant un hexadécimal en un binaire et le range bit à bint dans le tableau bin[]
 int conv_hex_bin(char* hexa, char bin[]);
 
+//fonction qui convertit un entier en une chaîne de caractères qui le représente en hexadécimal
+int conv_int_str(unsigned int value, char** string);
+
 #endif

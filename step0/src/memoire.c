@@ -54,84 +54,79 @@ void init_reg(REGISTRE* tab) {
 	
 }
 
-void init_instr(INSTRUCTION* tab) {	//tab fait 25 lignes et contient des INSTRUCTION
+void init_instr(INSTRUCTION* tab) {        //tab fait 25 lignes et contient des INSTRUCTION
 
-	INFO_MSG("Initialisation du dictionnaire d'instructions");
+        INFO_MSG("Initialisation du dictionnaire d'instructions");
 
-	char* mot=NULL;
-	char ligne[512];
-	const char* delim=" ";
-	
-	FILE* f=fopen("src/dico.txt", "rt");
-	if (f==NULL) {
-		WARNING_MSG("Impossible d'ouvrir le dictionnaire");
-		exit(2);
-	}
-	
-	int i=1;		
-	while (fgets(ligne, 512, f) != NULL) {
-	
-		//premier mot : char* nom
-		mot=strtok(ligne, delim);
-		DICO[i-1].nom=strdup(mot);
-		
-		//2è mot : char* type
-		mot=strtok(NULL, delim);
-		DICO[i-1].type=strdup(mot);
-		
-		//3è mot : int nbe_op
-		mot=strtok(NULL, delim);
-		DICO[i-1].nbe_op=atoi(mot);
-		
-		//4èmot : char* ops[3] : tableau de char* contenant le nom des opérandes (jusqu'à trois)
-		if (DICO[i-1].nbe_op > 0) {
-			mot=strtok(NULL, delim);
-			DICO[i-1].ops[0]=strdup(mot);
-			DICO[i-1].ops[1]=0;
-			DICO[i-1].ops[2]=0;
-		}
-		if (DICO[i-1].nbe_op > 1) {
-			mot=strtok(NULL, delim);
-			DICO[i-1].ops[1]=strdup(mot);
-			DICO[i-1].ops[2]=0;
-		}
-		if (DICO[i-1].nbe_op > 2) {
-			mot=strtok(NULL, delim);
-			DICO[i-1].ops[2]=strdup(mot);
-		}
-		
-		//mot suivant : unsigned int opcode ÇA MARCHE
-		mot=strtok(NULL, delim); //mot a pour valeur "opcode"
-		mot=strtok(NULL, delim);
-		//DEBUG_MSG("opcode lu : %s", mot);
-		//il faut enlever le 0x en tête des nombres
-		char string[strlen(mot)-2];
-		int j;
-		for (j=0 ; j<strlen(mot) ; j++) {
-			string[j]=mot[j+2];
-		}
-		//DEBUG_MSG("opcode pris : %s", string);
-		DICO[i-1].opcode=(int)strtol(strdup(string), NULL, 16);
-		//DEBUG_MSG("opcode : 0x%x", DICO[i-1].opcode);
-		
-		//dernier mot : unsigned int function
-		mot=strtok(NULL, delim);
-		if (mot != NULL) {
-			mot=strtok(NULL, delim);
-			DICO[i-1].func=(unsigned int)strtol(strdup(mot), NULL, 16);
-			//DEBUG_MSG("function : 0x%x", DICO[i-1].func);
-		}
-		else {
-			DICO[i-1].func=0;
-			//DEBUG_MSG("function : 0x%x", DICO[i-1].func);
-		}
-		i++;		
-	}
-	//affichage des valeurs du dico
-	for (i=0 ; i<25 ; i++) {
-		if (DICO[i].nom == NULL) {
-			DEBUG_MSG("error");
-		}
-		//DEBUG_MSG("%d %s %s %d %s %s %s 0x%x 0x%x",i+1, DICO[i].nom, DICO[i].type, DICO[i].nbe_op, DICO[i].ops[0], DICO[i].ops[1], DICO[i].ops[2], DICO[i].opcode, DICO[i].func);
-	}
+        char* mot=NULL;
+        char ligne[512];
+        const char* delim=" ";
+        
+        FILE* f=fopen("src/dico.txt", "rt");
+        if (f==NULL) {
+                WARNING_MSG("Impossible d'ouvrir le dictionnaire");
+                exit(2);
+        }
+        
+        int i=1;                
+        while (fgets(ligne, 512, f) != NULL) {
+        
+                //premier mot : char* nom
+                mot=strtok(ligne, delim);
+                DICO[i-1].nom=strdup(mot);
+                
+                //2è mot : char* type
+                mot=strtok(NULL, delim);
+                DICO[i-1].type=strdup(mot);
+                
+                //3è mot : int nbe_op
+                mot=strtok(NULL, delim);
+                DICO[i-1].nbe_op=atoi(mot);
+                
+                //4èmot : char* ops[3] : tableau de char* contenant le nom des opérandes (jusqu'à trois)
+                if (DICO[i-1].nbe_op > 0) {
+                        mot=strtok(NULL, delim);
+                        DICO[i-1].ops[0]=strdup(mot);
+                        DICO[i-1].ops[1]=0;
+                        DICO[i-1].ops[2]=0;
+                }
+                if (DICO[i-1].nbe_op > 1) {
+                        mot=strtok(NULL, delim);
+                        DICO[i-1].ops[1]=strdup(mot);
+                        DICO[i-1].ops[2]=0;
+                }
+                if (DICO[i-1].nbe_op > 2) {
+                        mot=strtok(NULL, delim);
+                        DICO[i-1].ops[2]=strdup(mot);
+                }
+                
+                //mot suivant : unsigned int opcode ÇA MARCHE
+                mot=strtok(NULL, delim); //mot a pour valeur "opcode"
+                mot=strtok(NULL, delim);
+                
+                DICO[i-1].opcode=(int)strtol(strdup(mot), NULL, 16);
+                //DEBUG_MSG("opcode : 0x%x", DICO[i-1].opcode);
+                
+                //dernier mot : unsigned int function
+                mot=strtok(NULL, delim);
+                if (mot != NULL) {
+                        mot=strtok(NULL, delim);
+                        DICO[i-1].func=(unsigned int)strtol(strdup(mot), NULL, 16);
+                        //DEBUG_MSG("function : 0x%x", DICO[i-1].func);
+                }
+                else {
+                        DICO[i-1].func=0;
+                        //DEBUG_MSG("function : 0x%x", DICO[i-1].func);
+                }
+                i++;                
+        }
+        //affichage des valeurs du dico
+        for (i=0 ; i<25 ; i++) {
+                if (DICO[i].nom == NULL) {
+                        DEBUG_MSG("error");
+                }
+                //DEBUG_MSG("%d %s %s %d %s %s %s 0x%x 0x%x",i+1, DICO[i].nom, DICO[i].type, DICO[i].nbe_op, DICO[i].ops[0], DICO[i].ops[1], DICO[i].ops[2], DICO[i].opcode, DICO[i].func);
+        }
+        int nombre=101011;
+        DEBUG_MSG("%d", nombre);
 }

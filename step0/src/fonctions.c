@@ -279,18 +279,25 @@ void free_memory() {
 int desassemble(char* instr_hexa) {
 	DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
 
+	int i;
+
 	//convertir la chaîne de caractères en binaire
 	char binaire[32];
 	conv_hex_bin(instr_hexa, &binaire);	//binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
-	//int i;
+
+	//vérification
 	//for (i=0 ; i<32 ; i++) {
 	//	DEBUG_MSG("retour %d", binaire[i]);
 	//}
 
 
 	//regarder le type de l'instruction
-			// opcode : les 6 bits de poids fort
-	
+		// opcode : les 6 bits de poids fort
+		//il faut déjà traduire les unsigned int opcode en char*
+
+	int value=0x12f;
+	char* truc='hello';
+	conv_int_str(value, &truc);
 
 
 	
@@ -442,10 +449,23 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				bin[4*i+3]=1;
 				break;
 		}
-		DEBUG_MSG("caract %d  en decimal %d", chaine[i], p_decimal[i]);
+		//DEBUG_MSG("caract %d  en decimal %d", chaine[i], p_decimal[i]);
 	}
 	
 		
 	return CMD_OK_RETURN_VALUE;
 }
 
+
+int conv_int_str(unsigned int value, char** string) {
+	DEBUG_MSG("entrée dans la fonction conv_int_str");
+	
+	//char* chaine;
+	DEBUG_MSG("%s", *string);
+	sprintf(*string, "%x", value);
+	DEBUG_MSG("là");
+	DEBUG_MSG("conversion de la valeur %x en la chaîne %s", value, *string);
+
+	
+	return CMD_OK_RETURN_VALUE;
+}

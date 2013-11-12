@@ -345,24 +345,13 @@ int execute_cmd_da(char* adresse, int* nb_instructions) {
 	int numero=A-textSection->startAddress;	//c'est le numéro de l'octet dans la section .text
 
 	//récupérer l'octet n° numero
-/*	char chaine[32];
-	int i=0;
-	
-	for (i=0; i<4; i++) {
-		sprintf(chaine+i*3, "%03d", textSection->data[numero+i]);
-	}
-	unsigned int instr;
-	instr=atoi(chaine);
-	DEBUG_MSG("chaine %s", chaine);
-	DEBUG_MSG("instr %x", instr);
-*/
 
 	char* chaine;
 	int i;
 	for (i=0 ; i<4 ; i++) {
 		sprintf(chaine+i*2, "%02x", textSection->data[numero+i]);
 	}
-	DEBUG_MSG("Récupération du mot '%s' à l'adresse '0x%x'", chaine, A);
+	DEBUG_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
 	
 	//mot=swap(mot)
 	//mot=(int)strtol(&mot,NULL, 16);
@@ -794,6 +783,6 @@ int parse_and_execute_cmd_inst(char* paramsStr) {
 }
 
 int execute_cmd_inst(int n) {
-	fprintf(stdout,"numero: %d\nnom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: 0x%x\nfunction: 0x%x\n", n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);
+	fprintf(stdout,"numero: %d\nnom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: %x\nfunction: %x\n", n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);
 	return CMD_OK_RETURN_VALUE;
 }
