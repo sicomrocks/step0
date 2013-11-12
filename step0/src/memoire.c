@@ -103,19 +103,19 @@ void init_instr(INSTRUCTION* tab) {        //tab fait 25 lignes et contient des 
                 //mot suivant : unsigned int opcode ÇA MARCHE
                 mot=strtok(NULL, delim); //mot a pour valeur "opcode"
                 mot=strtok(NULL, delim);
-                
-                DICO[i-1].opcode=(int)strtol(strdup(mot), NULL, 16);
-                //DEBUG_MSG("opcode : 0x%x", DICO[i-1].opcode);
+                DEBUG_MSG("mot %s", mot);
+                strcpy(DICO[i-1].opcode, strdup(mot));
+                DEBUG_MSG("opcode : %s", DICO[i-1].opcode);
                 
                 //dernier mot : unsigned int function
                 mot=strtok(NULL, delim);
                 if (mot != NULL) {
                         mot=strtok(NULL, delim);
-                        DICO[i-1].func=(unsigned int)strtol(strdup(mot), NULL, 16);
-                        //DEBUG_MSG("function : 0x%x", DICO[i-1].func);
+                        strcpy(DICO[i-1].func, strdup(mot));
+                        DEBUG_MSG("function : %s", DICO[i-1].func);
                 }
                 else {
-                        DICO[i-1].func=0;
+                        //DICO[i-1].func='noFunc';
                         //DEBUG_MSG("function : 0x%x", DICO[i-1].func);
                 }
                 i++;                

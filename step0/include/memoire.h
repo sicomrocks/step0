@@ -58,8 +58,8 @@ typedef struct {
 	char* type;	//R I ou J
 	int nbe_op;	//nombre d'opérandes
 	char* ops[3];	//tableau de taille contenant les opérandes
-	unsigned int opcode;
-	unsigned int func;
+	char* opcode[6];
+	char* func[6];
 }INSTRUCTION;		//instruction telle qu'elle figure dans le dictionnaire
 
 /*utilisation d'un dictionnaire : on définit un tableau de structures contenant toutes les instructions*/
