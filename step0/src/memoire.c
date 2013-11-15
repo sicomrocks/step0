@@ -54,7 +54,7 @@ void init_reg(REGISTRE* tab) {
 	
 }
 
-void init_instr(INSTRUCTION* tab) {        //tab fait 25 lignes et contient des INSTRUCTION
+void init_instr(INSTRUCTION* tab) { //tab fait 25 lignes et contient des INSTRUCTION
 
         INFO_MSG("Initialisation du dictionnaire d'instructions");
 
@@ -68,7 +68,7 @@ void init_instr(INSTRUCTION* tab) {        //tab fait 25 lignes et contient des 
                 exit(2);
         }
         
-        int i=1;                
+        int i=1;
         while (fgets(ligne, 512, f) != NULL) {
         
                 //premier mot : char* nom
@@ -118,7 +118,7 @@ void init_instr(INSTRUCTION* tab) {        //tab fait 25 lignes et contient des 
                         //DICO[i-1].func='noFunc';
                         //DEBUG_MSG("function : 0x%x", DICO[i-1].func);
                 }
-                i++;                
+                i++;
         }
         //affichage des valeurs du dico
         for (i=0 ; i<taille_DICO ; i++) {

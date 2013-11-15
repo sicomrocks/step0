@@ -317,7 +317,7 @@ int execute_cmd_da(char* adresse, int* nb_instructions) {
 	int N=(int)strtol(nb_instructions, NULL, 0);
 	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
 
-	inst_da instruction;	//instruction après désassemblage
+	//inst_da instruction;	//instruction après désassemblage
 
 	//vérifier que A est bien dans la zone .text et qu'elle est bien alignée
 	if (A>=textSection->size) {

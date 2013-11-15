@@ -280,6 +280,7 @@ int desassemble(char* instr_hexa) {
 	DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
 
 	int i;
+	int num; //numero de l'instruction dans le dictionnaire
 
 	//convertir la chaîne de caractères en binaire
 	char instr_binaire[32];
@@ -289,9 +290,13 @@ int desassemble(char* instr_hexa) {
 	fprintf(stdout, "traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
 
 	//récupérer le numéro de l'instruction
-	recup_num(&instr_binaire);
-		
-
+	num=recup_num(&instr_binaire);
+	if (num==0) {
+		DEBUG_MSG("erreur lors de la recherche de l'intruction");
+	}
+	else {
+		DEBUG_MSG("l'instruction porte le numéro %d", num);
+	}
 
 
 	
@@ -466,25 +471,114 @@ int conv_int_str(unsigned int value, char** string) {
 
 int recup_num(char instr_bin[]) {
 	DEBUG_MSG("entrée dans la fonction recup_num");
+	int num=0;
 	int i;
-	int j=0;
-	
+	int j=0;	
 	int trouve=0;
 
-	while (trouve=0 && j<taille_DICO) {	//tant qu'on n'a pas trouvé de quelle instruction il s'agit
-		//d'abord on regarde le opcode
-		char OPCODE[6];
-		for (i=0 ; i<6 ; i++) {
-			OPCODE[i]=DICO[j].opcode[i];
+	//on récupère le opcode
+	char *OPCODE=calloc(6, sizeof(*OPCODE));
+	//verifie si calloc est OK
+	for (i=0 ; i<6 ; i++) {
+		OPCODE[i]=instr_bin[i];
+	}
+
+	DEBUG_MSG("opcode de l'instruction %d%d%d%d%d%d", OPCODE[0], OPCODE[1], OPCODE[2], OPCODE[3], OPCODE[4], OPCODE[5]);
+DEBUG_MSG("%d", OPCODE[2]);
+
+
+
+int l=0;
+while (l<6)
+{
+	if (OPCODE[l]==1)
+	{
+		OPCODE[l]=49;
+		l++;
+	}
+	else if (OPCODE[l]==0)
+	{
+		OPCODE[l]=48;
+		l++;
+	}
+	
+}
+DEBUG_MSG("%s", OPCODE);
+
+DEBUG_MSG("%d", strcmp(OPCODE,"001000\0"));
+
+
+		
+	if (trouve==0 && j<taille_DICO) {
+		DEBUG_MSG("entrée dans la boucle while");
+	}
+	
+	while (trouve==0 && j<taille_DICO) {	//tant qu'on n'a pas trouvé de quelle instruction il s'agit
+		DEBUG_MSG("opcode du dico %s", DICO[j].opcode);
+	
+
+		if(strcmp(DICO[j].opcode, OPCODE)==0) {
+			DEBUG_MSG("15 instructions peuvent correspondre");
+			trouve=1;
 		}
-		DEBUG_MSG("opcode %s", OPCODE);
-	j++;
+
+		if(strcmp(OPCODE,"001000")==0) { //ADDI
+			num=2;
+			trouve=1;
+		}
+
+		if(strcmp(OPCODE, "100011")==0) { //LW
+			num=13;
+			trouve=1;
+		}	
+
+		if(strcmp(OPCODE, "101011")==0) { //SW
+			num=14;
+			trouve=1;
+		}
+
+		if(strcmp(OPCODE, "001111")==0) { //LUI
+			num=15;
+			trouve=1;
+		}
+
+		if (strcmp(OPCODE, "000100")==0) { //BEQ
+			num=18;
+			trouve=1;
+		}
+
+		if(strcmp(OPCODE, "000101")==0) { //BNE
+			num=19;
+			trouve=1;
+		}
+
+		if (strcmp(OPCODE, "000111")==0) { //BGTZ
+			num=20;
+			trouve=1;
+		}
+		
+		if (strcmp(OPCODE, "000110")==0) { //BLEZ
+			num=21;
+			trouve=1;
+		}
+
+		if (strcmp(OPCODE, "000010")==0) { //J
+			num=22;
+			trouve=1;
+		}
+
+		if (strcmp(OPCODE, "000011")==0) { //JAL
+			num=23;
+			trouve=1;
+		}
+		j++;
 	}
 	if (trouve==0) {
 		DEBUG_MSG("l'instruction n'est pas dans le dictionnaire");
+		return 0;
 	}
 	
-	return CMD_OK_RETURN_VALUE;
+	return num;
 }
 
 
