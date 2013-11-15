@@ -484,28 +484,24 @@ int recup_num(char instr_bin[]) {
 	}
 
 	DEBUG_MSG("opcode de l'instruction %d%d%d%d%d%d", OPCODE[0], OPCODE[1], OPCODE[2], OPCODE[3], OPCODE[4], OPCODE[5]);
-DEBUG_MSG("%d", OPCODE[2]);
 
 
 
-int l=0;
-while (l<6)
-{
-	if (OPCODE[l]==1)
-	{
-		OPCODE[l]=49;
-		l++;
-	}
-	else if (OPCODE[l]==0)
-	{
-		OPCODE[l]=48;
-		l++;
-	}
+	int l=0;
+	while (l<6) {
+		if (OPCODE[l]==1) {
+			OPCODE[l]=49;
+			l++;
+		}
+		else if (OPCODE[l]==0) {
+			OPCODE[l]=48;
+			l++;
+		}
 	
-}
-DEBUG_MSG("%s", OPCODE);
+	}
+	//DEBUG_MSG("%s", OPCODE);
 
-DEBUG_MSG("%d", strcmp(OPCODE,"001000\0"));
+	//DEBUG_MSG("%d", strcmp(OPCODE,"001000\0"));
 
 
 		
@@ -514,7 +510,7 @@ DEBUG_MSG("%d", strcmp(OPCODE,"001000\0"));
 	}
 	
 	while (trouve==0 && j<taille_DICO) {	//tant qu'on n'a pas trouvé de quelle instruction il s'agit
-		DEBUG_MSG("opcode du dico %s", DICO[j].opcode);
+		//DEBUG_MSG("opcode du dico %s", DICO[j].opcode);
 	
 
 		if(strcmp(DICO[j].opcode, OPCODE)==0) {
