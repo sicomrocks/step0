@@ -280,16 +280,16 @@ int desassemble(char* instr_hexa) {
 	DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
 
 	int i;
-	int num; //numero de l'instruction dans le dictionnaire
 
 	//convertir la chaîne de caractères en binaire
 	char instr_binaire[32];
-	conv_hex_bin(instr_hexa, &instr_binaire);	//binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
+	conv_hex_bin(instr_hexa, &instr_binaire); //binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
 
 	//vérification
 	fprintf(stdout, "traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
 
 	//récupérer le numéro de l'instruction
+	int num; //numero de l'instruction dans le dictionnaire
 	num=recup_num(&instr_binaire);
 	if (num==0) {
 		DEBUG_MSG("erreur lors de la recherche de l'intruction");
@@ -297,6 +297,12 @@ int desassemble(char* instr_hexa) {
 	else {
 		DEBUG_MSG("l'instruction porte le numéro %d", num);
 	}
+
+	//remplir la structure de l'instruction décodée
+	INSTRUCTION decode;
+	
+	decode.nom=strdup(DICO[num-1].nom);
+	DEBUG_MSG("nom %s", decode.nom);
 
 
 	
@@ -316,13 +322,11 @@ int conv_hex_bin(char* hexa, char bin[]) {
 
 	char chaine[8];
 	strncpy(chaine, hexa, 8); //chaine[i] contient le code ascii du caractère correspondant de hexa
-	int p_decimal[20];	//contient les valeurs intermédiares pour la conversion ; utile seuelement pour la personne qui lit le code
 	int i;
 	for (i=0 ; i<8 ; i++) {
 		switch (chaine[i]) {
 			case '0':
 				chaine[i]=0;
-				p_decimal[i]=0;
 				bin[4*i+0]=0;
 				bin[4*i+1]=0;
 				bin[4*i+2]=0;
@@ -330,7 +334,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '1':
 				chaine[i]=1;
-				p_decimal[i]=1;
 				bin[4*i+0]=0;
 				bin[4*i+1]=0;
 				bin[4*i+2]=0;
@@ -338,7 +341,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '2':
 				chaine[i]=2;
-				p_decimal[i]=2;
 				bin[4*i+0]=0;
 				bin[4*i+1]=0;
 				bin[4*i+2]=1;
@@ -346,7 +348,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '3':
 				chaine[i]=3;
-				p_decimal[i]=3;
 				bin[4*i+0]=0;
 				bin[4*i+1]=0;
 				bin[4*i+2]=1;
@@ -354,7 +355,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '4':
 				chaine[i]=4;
-				p_decimal[i]=4;
 				bin[4*i+0]=0;
 				bin[4*i+1]=1;
 				bin[4*i+2]=0;
@@ -362,7 +362,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '5':
 				chaine[i]=5;
-				p_decimal[i]=5;
 				bin[4*i+0]=0;
 				bin[4*i+1]=1;
 				bin[4*i+2]=0;
@@ -370,7 +369,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '6':
 				chaine[i]=6;
-				p_decimal[i]=6;
 				bin[4*i+0]=0;
 				bin[4*i+1]=1;
 				bin[4*i+2]=1;
@@ -378,7 +376,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '7':
 				chaine[i]=7;
-				p_decimal[i]=7;
 				bin[4*i+0]=0;
 				bin[4*i+1]=1;
 				bin[4*i+2]=1;
@@ -386,7 +383,6 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '8':
 				chaine[i]=8;
-				p_decimal[i]=8;
 				bin[4*i+0]=1;
 				bin[4*i+1]=0;
 				bin[4*i+2]=0;
@@ -394,55 +390,48 @@ int conv_hex_bin(char* hexa, char bin[]) {
 				break;
 			case '9':
 				chaine[i]=9;
-				p_decimal[i]=9;
 				bin[4*i+0]=1;
 				bin[4*i+1]=0;
 				bin[4*i+2]=0;
 				bin[4*i+3]=1;
 				break;
 			case 'a':
-				chaine[i]="a";
-				p_decimal[i]=10;
+				chaine[i]='a';
 				bin[4*i+0]=1;
 				bin[4*i+1]=0;
 				bin[4*i+2]=1;
 				bin[4*i+3]=0;
 				break;
 			case 'b':
-				chaine[i]="b";
-				p_decimal[i]=11;
+				chaine[i]='b';
 				bin[4*i+0]=1;
 				bin[4*i+1]=0;
 				bin[4*i+2]=1;
 				bin[4*i+3]=1;
 				break;
 			case 'c':
-				chaine[i]="c";
-				p_decimal[i]=12;
+				chaine[i]='c';
 				bin[4*i+0]=1;
 				bin[4*i+1]=1;
 				bin[4*i+2]=0;
 				bin[4*i+3]=0;
 				break;
 			case 'd':
-				chaine[i]="d";
-				p_decimal[i]=13;
+				chaine[i]='d';
 				bin[4*i+0]=1;
 				bin[4*i+1]=1;
 				bin[4*i+2]=0;
 				bin[4*i+3]=1;
 				break;
 			case 'e':
-				chaine[i]="e";
-				p_decimal[i]=14;
+				chaine[i]='e';
 				bin[4*i+0]=1;
 				bin[4*i+1]=1;
 				bin[4*i+2]=1;
 				bin[4*i+3]=0;
 				break;
 			case 'f':
-				chaine[i]="f";
-				p_decimal[i]=15;
+				chaine[i]='f';
 				bin[4*i+0]=1;
 				bin[4*i+1]=1;
 				bin[4*i+2]=1;
