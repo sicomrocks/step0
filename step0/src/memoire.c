@@ -100,7 +100,7 @@ void init_instr(INSTRUCTION* tab) { //tab fait 25 lignes et contient des INSTRUC
                         DICO[i-1].ops[2]=strdup(mot);
                 }
                 
-                //mot suivant : unsigned int opcode ÇA MARCHE
+                //mot suivant :  opcode ÇA MARCHE
                 mot=strtok(NULL, delim); //mot a pour valeur "opcode"
                 mot=strtok(NULL, delim);
                 //DEBUG_MSG("mot %s", mot);

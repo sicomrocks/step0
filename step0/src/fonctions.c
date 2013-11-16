@@ -485,8 +485,7 @@ int recup_num(char instr_bin[]) {
 
 	DEBUG_MSG("opcode de l'instruction %d%d%d%d%d%d", OPCODE[0], OPCODE[1], OPCODE[2], OPCODE[3], OPCODE[4], OPCODE[5]);
 
-
-
+	//transformation du tableau d'entiers en un tableau de caractères pour povoir utiliser strcmp
 	int l=0;
 	while (l<6) {
 		if (OPCODE[l]==1) {
@@ -499,24 +498,16 @@ int recup_num(char instr_bin[]) {
 		}
 	
 	}
-	//DEBUG_MSG("%s", OPCODE);
+	//DEBUG_MSG("opcode %s", OPCODE);
 
 	//DEBUG_MSG("%d", strcmp(OPCODE,"001000\0"));
 
-
-		
-	if (trouve==0 && j<taille_DICO) {
+	/*if (trouve==0 && j<taille_DICO) {
 		DEBUG_MSG("entrée dans la boucle while");
-	}
+	}*/
 	
 	while (trouve==0 && j<taille_DICO) {	//tant qu'on n'a pas trouvé de quelle instruction il s'agit
 		//DEBUG_MSG("opcode du dico %s", DICO[j].opcode);
-	
-
-		if(strcmp(DICO[j].opcode, OPCODE)==0) {
-			DEBUG_MSG("15 instructions peuvent correspondre");
-			trouve=1;
-		}
 
 		if(strcmp(OPCODE,"001000")==0) { //ADDI
 			num=2;
@@ -567,11 +558,137 @@ int recup_num(char instr_bin[]) {
 			num=23;
 			trouve=1;
 		}
+
+		if(strcmp("000000", OPCODE)==0) {
+			DEBUG_MSG("15 instructions peuvent correspondre");
+			//on récupère le code func
+			char *FUNC=calloc(6, sizeof(*FUNC));
+			//verifie si calloc est OK
+			for (i=0 ; i<6 ; i++) {
+				FUNC[i]=instr_bin[26+i];
+			}
+
+			DEBUG_MSG("code func de l'instruction %d%d%d%d%d%d", FUNC[0], FUNC[1], FUNC[2], FUNC[3], FUNC[4], FUNC[5]);
+
+			//transformation du tableau d'entiers en un tableau de caractères pour povoir utiliser strcmp
+			l=0;
+			while (l<6) {
+				if (FUNC[l]==1) {
+					FUNC[l]=49;
+					l++;
+				}
+				else if (FUNC[l]==0) {
+					FUNC[l]=48;
+					l++;
+				}
+	
+			}
+			//DEBUG_MSG("func %s", FUNC);
+
+			//DEBUG_MSG("comparaison %d", strcmp("001100", FUNC));
+			//DEBUG_MSG("recomparaison %d", strcmp("100000", FUNC));
+
+			
+			if (strcmp("100000", FUNC)==0) { //ADD
+				//DEBUG_MSG("on est là");
+				num=1;
+				trouve=1;
+			}
+
+			if (strcmp("100010", FUNC)==0) { //SUB
+				num=3;
+				trouve=1;
+			}
+
+			if (strcmp("011000", FUNC)==0) { //MULT
+				num=4;
+				trouve=1;
+			}
+
+			if (strcmp("011010", FUNC)==0) { //DIV
+				num=5;
+				trouve=1;
+			}
+
+			if (strcmp("100100", FUNC)==0) { //AND
+				num=6;
+				trouve=1;
+			}
+
+			if (strcmp("100101", FUNC)==0) { //OR
+				num=7;
+				trouve=1;
+			}
+
+			if (strcmp("100110", FUNC)==0) { //XOR
+				num=8;
+				trouve=1;
+			}
+
+			if (strcmp("101010", FUNC)==0) { //SLT
+				num=12;
+				trouve=1;
+			}
+
+			if (strcmp("010000", FUNC)==0) { //MFHI
+				num=16;
+				trouve=1;
+			}
+
+			if (strcmp("010010", FUNC)==0) { //MFLO
+				num=17;
+				trouve=1;
+			}
+
+			if (strcmp("001000", FUNC)==0) { //JR
+				num=24;
+				trouve=1;
+			}
+
+			if (strcmp("000010", FUNC)==0) {
+				if (instr_bin[11]==0) { //SRL
+					num=11;
+					trouve=1;
+				}
+				if (instr_bin[11]==0) { //ROTR
+					num=9;
+					trouve=1;
+				}
+			}
+
+			if (strcmp("000000", FUNC)==0) {
+				l=0;
+				int s=0;
+				while (l==0 && s<32) {
+					if (instr_bin[s]!=0) {
+						l=1;
+					}
+					s++;
+				}
+				if (l==0) { //l'instruction NOM n'a que des 0
+					num=25;
+					trouve=1;
+				}
+				if (l==1) { //SLL
+					num=10;
+					trouve=1;
+				}
+			}
+			else {
+				j=45;
+			}
+			
+
+		//Et là on a étudié tous les cas possibles
+						
+		}
+		
 		j++;
 	}
+	
 	if (trouve==0) {
 		DEBUG_MSG("l'instruction n'est pas dans le dictionnaire");
-		return 0;
+		num=0;
 	}
 	
 	return num;
