@@ -23,3 +23,4 @@ J J 1 target opcode 000010
 JAL J 1 target opcode 000011
 JR J 1 $rs opcode 000000 func 001000
 NOP R 0 opcode 000000 func 000000
+SYSCALL R 0 opcode 000000 func 001100

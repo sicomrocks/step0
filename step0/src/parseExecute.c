@@ -773,8 +773,8 @@ int parse_and_execute_cmd_inst(char* paramsStr) {
 	DEBUG_MSG("Parametres : %s", paramsStr);
 	int num=atoi(paramsStr);
 	DEBUG_MSG("instruction %d", num);
-	if (num == 0 || num > 25) {
-		WARNING_MSG("les instructions vont de 1 à 25");
+	if (num == 0 || num > taille_DICO) {
+		WARNING_MSG("les instructions vont de 1 à %d", taille_DICO);
 		return 2;
 	}
 	else {

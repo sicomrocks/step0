@@ -656,6 +656,11 @@ int recup_num(char instr_bin[]) {
 				}
 			}
 
+			if (strcmp("001100", FUNC)==0) { //SYSCALL
+				num=26;
+				trouve=1;
+			}
+
 			if (strcmp("000000", FUNC)==0) {
 				l=0;
 				int s=0;

@@ -63,7 +63,7 @@ typedef struct {
 }INSTRUCTION;		//instruction telle qu'elle figure dans le dictionnaire
 
 /*utilisation d'un dictionnaire : on définit un tableau de structures contenant toutes les instructions*/
-#define taille_DICO 25
+#define taille_DICO 26
 INSTRUCTION DICO[taille_DICO];
 
 /*fonction qui lit dans le fichier dico.txt toutes les instructions à prendre en compte
