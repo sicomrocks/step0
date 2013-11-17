@@ -31,8 +31,7 @@ int conv_int_str(unsigned int value, char** string);
 //fonction qui trouve le numéro de l'instruction en binaire
 int recup_num(char instr_bin[]);
 
-//fonction qui remplit les champs de l'instruction instr_binaire en cours de désassemblage.
-//Cette instruction est à la ligne num de dico.txt, càd porte l'indice i-1 dans DICO
-void remplit_inst(INSTRUCTION* decode,char instr_binaire,int num);
+//fonction qui récupère les opérandes de l'instruction de type R instr_bin et les range dans le tableau de mots operandes
+void recup_op_R(char instr_bin[], int nbe_op, char** operandes);
 
 #endif

@@ -57,7 +57,7 @@ typedef struct {
 	char nom[25];	//mnémonique de la fonction
 	char type[3];	//R I ou J
 	int nbe_op;	//nombre d'opérandes
-	char ops[4][4];	//tableau de taille contenant les opérandes
+	char ops[4][26];	//tableau à 2dimensions = tableau de mots
 	char opcode[78];
 	char func[9];
 }INSTRUCTION;		//instruction telle qu'elle figure dans le dictionnaire
