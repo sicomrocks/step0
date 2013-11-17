@@ -318,48 +318,53 @@ int execute_cmd_da(char* adresse, char* nb_instructions) {
 	int N=(int)strtol(nb_instructions, NULL, 0); 
 	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
 
-	//inst_da instruction;	//instruction après désassemblage
-
 	//vérifier que A est bien dans la zone .text et qu'elle est bien alignée
 	if (A>=textSection->size) {
-		DEBUG_MSG("L'adresse spécifiée n'est pas dans la section .text");
+		fprintf(stdout, "L'adresse spécifiée n'est pas dans la section .text");
 		return 2;
 	}
 
 	DEBUG_MSG("A vaut 0x%x", A);
 	if (A%4!=0) {
-		DEBUG_MSG("adresse mal alignée");
+		fprintf(stdout, "Adresse mal alignée");
 		return 2;
 	}
 	
 	//vérifier que A+N reste dans le fichier ; si ce n'est pas le cas on n'affiche pas
-	
-
-	//translater l'adresse virtuelle en adresse réelle
-		//BYTE* data
-		//WORD address
-
-	/*int offset=&textSection;
-		DEBUG_MSG("offset %d", offset);
-		DEBUG_MSG("adresse réelle de textSection %d", &textSection);*/
-
-	int numero=A-textSection->startAddress;	//c'est le numéro de l'octet dans la section .text
-
-	//récupérer l'octet n° numero
-
-	char* chaine=calloc(1,sizeof(*chaine));
-	int i;
-	for (i=0 ; i<4 ; i++) {
-		sprintf(chaine+i*2, "%02x", textSection->data[numero+i]);
+	if (A+4*N-1 >= textSection->size) {
+		fprintf(stdout, "Il n'y a pas autant d'instructions à afficher à partir de l'adresse 0x%.8x\n", A);
+		return 2;
 	}
-	DEBUG_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
+
+		//////////////////////////////////////////
+		//					//
+		//	Début du désassemblage		//
+		//					//
+		//////////////////////////////////////////
+
+	int z=0;
+	while (z<N) {	
+
+		//trouver la position de l'instruction A dans la section .text
+		int numero=A-textSection->startAddress;
+
+		//récupérer l'octet n° numero
+		char* chaine=calloc(1,sizeof(*chaine));
+		int i;
+		for (i=0 ; i<4 ; i++) {
+			sprintf(chaine+i*2, "%02x", textSection->data[numero+i]);
+		}
+		INFO_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
 	
-	INSTRUCTION decode; //résultat du désassemblage
-	decode=desassemble(chaine);
+		INSTRUCTION decode; //résultat du désassemblage
+		decode=desassemble(chaine);
 		
-	//afficher l'instruction désassemblée
-	affiche_inst(decode);
-	
+		//afficher l'instruction désassemblée
+		affiche_inst(decode);
+
+	A=A+8;
+	z++;
+	}
 	
 	return CMD_OK_RETURN_VALUE;
 }

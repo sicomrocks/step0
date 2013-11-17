@@ -285,7 +285,7 @@ INSTRUCTION desassemble(char* instr_hexa) {
 	conv_hex_bin(instr_hexa, instr_binaire); //binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
 
 	//vérification
-	fprintf(stdout, "traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
+	INFO_MSG("traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
 
 	//récupérer le numéro de l'instruction
 	int num; //numero de l'instruction dans le dictionnaire
@@ -693,12 +693,6 @@ INSTRUCTION desassemble(char* instr_hexa) {
 	return decode;
 }
 
-void recup_op_R(char instr_bin[], int nbe_op, char** operandes){
-	DEBUG_MSG("entrée dans la fonction recup_op_R");
-
-	
-}
-
 int conv_hex_bin(char* hexa, char bin[]) {
 	DEBUG_MSG("conversion en binaire");
 
@@ -1070,7 +1064,7 @@ int recup_num(char instr_bin[]) {
 	}
 	
 	if (trouve==0) {
-		DEBUG_MSG("l'instruction n'est pas dans le dictionnaire");
+		WARNING_MSG("l'instruction n'est pas dans le dictionnaire");
 		num=0;
 	}
 	
@@ -1079,8 +1073,26 @@ int recup_num(char instr_bin[]) {
 
 void affiche_inst(INSTRUCTION i) {
 	DEBUG_MSG("entrée dans la fonction affiche_inst");
-	fprintf(stdout, "nom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: %s\nfunction: %s\n",
-	i.nom, i.type, i.nbe_op, i.ops[0], i.ops[1], i.ops[2], i.opcode, i.func);
+
+	if (i.nbe_op==3) {
+		fprintf(stdout, "nom: %s nbe d'op: %d 1è op: %s 2è op: %s 3è op: %s opcode: %s function: %s\n",
+		i.nom, i.nbe_op, i.ops[0], i.ops[1], i.ops[2], i.opcode, i.func);
+	}
+
+	if (i.nbe_op==2) {
+		fprintf(stdout, "nom: %s nbe d'op: %d 1è op: %s 2è op: %s opcode: %s function: %s\n",
+		i.nom, i.nbe_op, i.ops[0], i.ops[1], i.opcode, i.func);
+	}
+
+	if (i.nbe_op==1) {
+		fprintf(stdout, "nom: %s nbe d'op: %d 1è op: %s opcode: %s function: %s\n",
+		i.nom, i.nbe_op, i.ops[0], i.opcode, i.func);
+	}
+
+	if (i.nbe_op==0) {
+		fprintf(stdout, "nom: %s nbe d'op: %d opcode: %s function: %s\n",
+		i.nom, i.nbe_op, i.opcode, i.func);
+	}
 }
 
 
