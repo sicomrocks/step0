@@ -354,14 +354,7 @@ int execute_cmd_da(char* adresse, char* nb_instructions) {
 	}
 	DEBUG_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
 	
-	//mot=swap(mot)
-	//mot=(int)strtol(&mot,NULL, 16);
-		//mot=2;
-		//DEBUG_MSG("%d", mot);
-	//	mot=((mot>>24)&0xff) | ((mot<<8)&0xff0000) | ((mot>>8)&0xff00) | ((mot<<24)&0xff000000);
-	//	DEBUG_MSG("%d", mot);
-
-	//inst=désassemble(mot)
+	
 	desassemble(chaine);
 		
 

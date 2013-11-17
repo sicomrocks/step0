@@ -316,6 +316,9 @@ int desassemble(char* instr_hexa) {
 	DEBUG_MSG("func %s", decode.func);
 
 	//récupérer les opérandes
+
+	//initialisation du tableau d'opérandes : s'il y a moins de trois opérandes il ne faut pas que ops[2]
+	//par exemple contienne des trucs
 	int i;
 	for (i=0 ; i<4 ; i++) {
 		strcpy(decode.ops[i], "init");
@@ -519,7 +522,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)(decode.ops[0]));
+			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 
@@ -682,10 +685,10 @@ int desassemble(char* instr_hexa) {
 		
 
 
-	}
+		}
 
 	}
-	
+
 	return CMD_OK_RETURN_VALUE;
 }
 
