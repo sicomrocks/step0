@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "reg.h"
-#include "memoire.h"
+
 
 
 
@@ -259,7 +259,7 @@ int adressType(char* param) {
 	//printf("S = %d\n",S);
 	return S;
 	}
-	
+}	
 	
 void free_memory() {
 	DEBUG_MSG("Entrée dans la fonction free_memory");
@@ -267,30 +267,30 @@ void free_memory() {
 	
 	//vidage du dictionnaire d'instructions
 	for (i=0 ; i<25 ; i++) {
-		DICO[i].nom=NULL;
-		DICO[i].type=NULL;
-		DICO[i].ops[0]=NULL;
-		DICO[i].ops[1]=NULL;
-		DICO[i].ops[2]=NULL;
+		free(DICO[i].nom);
+ 		free(DICO[i].type);
+		free(DICO[i].ops[0]);
+ 		free(DICO[i].ops[1]);
+		free(DICO[i].ops[2]);
 	}	
-}
+
 }
 
 int desassemble(char* instr_hexa) {
 	DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
 
-	int i;
+//	int i;
 
 	//convertir la chaîne de caractères en binaire
 	char instr_binaire[32];
-	conv_hex_bin(instr_hexa, &instr_binaire); //binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
+	conv_hex_bin(instr_hexa, instr_binaire); //binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
 
 	//vérification
 	fprintf(stdout, "traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
 
 	//récupérer le numéro de l'instruction
 	int num; //numero de l'instruction dans le dictionnaire
-	num=recup_num(&instr_binaire);
+	num=recup_num(instr_binaire);
 	if (num==0) {
 		DEBUG_MSG("erreur lors de la recherche de l'intruction");
 	}
@@ -300,13 +300,45 @@ int desassemble(char* instr_hexa) {
 
 	//remplir la structure de l'instruction décodée
 	INSTRUCTION decode;
-	
-	decode.nom=strdup(DICO[num-1].nom);
-	DEBUG_MSG("nom %s", decode.nom);
+	strcpy(decode.nom, DICO[num-1].nom);
+	DEBUG_MSG("nom de l'instruction %s", decode.nom);
+
+
+	strcpy(decode.type, DICO[num-1].type);
+	DEBUG_MSG("type %s", decode.type);
+
+	decode.nbe_op=DICO[num-1].nbe_op;
+	DEBUG_MSG("opérandes %d", DICO[num-1].nbe_op);
+
+	strcpy(decode.opcode, DICO[num-1].opcode);
+	DEBUG_MSG("opcode dans le dico %s", DICO[num-1].opcode);
+	DEBUG_MSG("func dans le dico %s", DICO[num-1].func);
+	DEBUG_MSG("opcode dans decode %s", decode.opcode);
+	DEBUG_MSG("longueur %zu", strlen(decode.opcode));
+	DEBUG_MSG("%zu", strlen(DICO[num-1].opcode));
 
 
 	
 	return CMD_OK_RETURN_VALUE;
+}
+
+void remplit_inst(INSTRUCTION* decode,char instr_binaire,int num) {
+	DEBUG_MSG("entrée dans la fonction remplit_inst");
+
+	/*int i;
+	for (i=0 ; i<strlen(DICO[num-1].nom) ; i++) {
+		DEBUG_MSG("%d", i);
+		DEBUG_MSG("%c", DICO[num-1].nom[i]);
+		decode->nom[i]=DICO[num-1].nom[i];
+	}
+	DEBUG_MSG("%s", decode->nom);*/
+
+	DEBUG_MSG("%s", decode->nom);
+// MATT	decode->nom="bonjour";					//JE SAIS PAS CE QUE C'EST
+	//strcpy(*decode->nom, "bonjour");
+	DEBUG_MSG("ici");
+	DEBUG_MSG("nom %s", decode->nom);
+
 }
 
 int conv_hex_bin(char* hexa, char bin[]) {
@@ -473,7 +505,6 @@ int recup_num(char instr_bin[]) {
 	}
 
 	DEBUG_MSG("opcode de l'instruction %d%d%d%d%d%d", OPCODE[0], OPCODE[1], OPCODE[2], OPCODE[3], OPCODE[4], OPCODE[5]);
-
 	//transformation du tableau d'entiers en un tableau de caractères pour povoir utiliser strcmp
 	int l=0;
 	while (l<6) {
@@ -549,7 +580,7 @@ int recup_num(char instr_bin[]) {
 		}
 
 		if(strcmp("000000", OPCODE)==0) {
-			DEBUG_MSG("15 instructions peuvent correspondre");
+			//DEBUG_MSG("15 instructions peuvent correspondre");
 			//on récupère le code func
 			char *FUNC=calloc(6, sizeof(*FUNC));
 			//verifie si calloc est OK
@@ -659,7 +690,7 @@ int recup_num(char instr_bin[]) {
 					}
 					s++;
 				}
-				if (l==0) { //l'instruction NOM n'a que des 0
+				if (l==0) { //l'instruction NOP n'a que des 0
 					num=25;
 					trouve=1;
 				}
@@ -669,7 +700,7 @@ int recup_num(char instr_bin[]) {
 				}
 			}
 			else {
-				j=45;
+				j=taille_DICO+45;
 			}
 			
 

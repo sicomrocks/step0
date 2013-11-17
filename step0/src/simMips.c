@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "memoire.h"
+//#include "memoire.h"
 
 /* la librairie readline */
 #include <readline/readline.h>

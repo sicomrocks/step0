@@ -3,7 +3,7 @@
 #include "notify.h"
 #include "reg.h"
 #include <stdio.h>
-#include "memoire.h"
+//#include "memoire.h"
 
 
 
@@ -43,6 +43,7 @@ int parse_and_execute_cmd_testcmd(char * paramsStr) {
 }
 
 int execute_cmd_exit() {
+	//free_memory();
     INFO_MSG("Bye bye !");
     return CMD_EXIT_RETURN_VALUE;
 }
@@ -312,9 +313,9 @@ int execute_cmd_lr(int num_reg, int value) {
 	return CMD_OK_RETURN_VALUE;
 }
 
-int execute_cmd_da(char* adresse, int* nb_instructions) {
+int execute_cmd_da(char* adresse, char* nb_instructions) {
 	WORD A=(int)strtol(adresse, NULL, 0);
-	int N=(int)strtol(nb_instructions, NULL, 0);
+	int N=(int)strtol(nb_instructions, NULL, 0); 
 	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
 
 	//inst_da instruction;	//instruction après désassemblage
@@ -697,7 +698,7 @@ else {
 
 	// Definition du tableau qui recevra les Adresses à traiter par adressType
 	char* adresses[nb_espace+1];
-	int* type[nb_espace+1];
+	int type[nb_espace+1];
 	int numero=0;
 	// Initialisation du tableau
 	while (numero!=nb_espace+2) {adresses[numero]=NULL; numero++;}
@@ -778,7 +779,8 @@ int parse_and_execute_cmd_inst(char* paramsStr) {
 		return 2;
 	}
 	else {
-		return execute_cmd_inst(num);
+		execute_cmd_inst(num);
+		return CMD_OK_RETURN_VALUE;
 	}
 }
 

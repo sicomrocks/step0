@@ -1,3 +1,6 @@
+#ifndef _PARSEEXECUTE_H__
+#define _PARSEEXECUTE_H_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,9 +14,8 @@
 #include "global.h"
 #include "mipself.h"
 
-#ifndef _MEMOIRE_H_
-#define _MEMOIRE_H_
-#endif
+
+
 
 int parse_and_execute_cmd_testcmd(char * paramsStr);
 int execute_cmd_testcmd(int hexValue);
@@ -54,7 +56,7 @@ int execute_cmd_lr(int num_reg, int value);
 /*
 
 */
-int execute_cmd_da(char* adresse, int* nb_instructions);
+int execute_cmd_da(char* adresse, char* nb_instructions);
 int parse_and_execute_cmd_da(char* paramsStr);
 
 /*
@@ -82,3 +84,7 @@ int parse_and_execute_cmd_dm(char* paramsStr);
  */
 int parse_and_execute_cmd_inst(char* paramsStr);
 int execute_cmd_inst(int n);
+
+
+
+#endif

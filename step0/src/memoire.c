@@ -70,49 +70,63 @@ void init_instr(INSTRUCTION* tab) { //tab fait 25 lignes et contient des INSTRUC
         
         int i=1;
         while (fgets(ligne, 512, f) != NULL) {
+		delim=" ";
         
                 //premier mot : char* nom
                 mot=strtok(ligne, delim);
-                DICO[i-1].nom=strdup(mot);
+                strcpy(DICO[i-1].nom, mot);
                 
                 //2è mot : char* type
                 mot=strtok(NULL, delim);
-                DICO[i-1].type=strdup(mot);
+                strcpy(DICO[i-1].type, mot);
+
                 
                 //3è mot : int nbe_op
                 mot=strtok(NULL, delim);
                 DICO[i-1].nbe_op=atoi(mot);
+
+
                 
                 //4èmot : char* ops[3] : tableau de char* contenant le nom des opérandes (jusqu'à trois)
                 if (DICO[i-1].nbe_op > 0) {
                         mot=strtok(NULL, delim);
-                        DICO[i-1].ops[0]=strdup(mot);
-                        DICO[i-1].ops[1]=0;
-                        DICO[i-1].ops[2]=0;
+                        strcpy((DICO[i-1].ops[0]), mot);
+
+                        DICO[i-1].ops[1][0]=0;
+                        DICO[i-1].ops[2][0]=0;
+
                 }
                 if (DICO[i-1].nbe_op > 1) {
                         mot=strtok(NULL, delim);
-                        DICO[i-1].ops[1]=strdup(mot);
-                        DICO[i-1].ops[2]=0;
+                        strcpy(DICO[i-1].ops[1],mot);
+                        DICO[i-1].ops[2][0]=0;
                 }
                 if (DICO[i-1].nbe_op > 2) {
                         mot=strtok(NULL, delim);
-                        DICO[i-1].ops[2]=strdup(mot);
+                        strcpy(DICO[i-1].ops[2],mot);
                 }
                 
-                //mot suivant :  opcode ÇA MARCHE
+                //mot suivant :  opcode
                 mot=strtok(NULL, delim); //mot a pour valeur "opcode"
+                delim="\n";
                 mot=strtok(NULL, delim);
-                //DEBUG_MSG("mot %s", mot);
-                strcpy(DICO[i-1].opcode, strdup(mot));
+            //    DEBUG_MSG("mot %s", mot);
+                delim=" ";
+                char *mot2=strtok(mot, delim);
+                strcpy(DICO[i-1].opcode, mot);
+                
+                //DEBUG_MSG("%d", strlen(DICO[i-1].opcode));
                 //DEBUG_MSG("opcode : %s", DICO[i-1].opcode);
                 
-                //dernier mot : unsigned int function
-                mot=strtok(NULL, delim);
-                if (mot != NULL) {
-                        mot=strtok(NULL, delim);
-                        strcpy(DICO[i-1].func, strdup(mot));
-                        //DEBUG_MSG("function : %s", DICO[i-1].func);
+		//dernier mot : unsigned int function
+                mot2=strtok(NULL, delim);
+              //  DEBUG_MSG("gyhkgi %s", mot2);
+                if (mot2 != NULL) {
+			delim="\n";
+                        mot2=strtok(NULL, delim);
+                        strcpy(DICO[i-1].func, mot2);
+                        
+                   //     DEBUG_MSG("function : %s", DICO[i-1].func);
                 }
                 else {
                         //DICO[i-1].func='noFunc';
@@ -129,4 +143,5 @@ void init_instr(INSTRUCTION* tab) { //tab fait 25 lignes et contient des INSTRUC
         }
         //int nombre=101011;
         //DEBUG_MSG("%d", nombre);
+
 }

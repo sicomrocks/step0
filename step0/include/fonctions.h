@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>  // exit
 
+#include "memoire.h"
+
 #ifndef _FONCTIONS_H_
 #define _FONCTIONS_H_
 
@@ -28,5 +30,9 @@ int conv_int_str(unsigned int value, char** string);
 
 //fonction qui trouve le numéro de l'instruction en binaire
 int recup_num(char instr_bin[]);
+
+//fonction qui remplit les champs de l'instruction instr_binaire en cours de désassemblage.
+//Cette instruction est à la ligne num de dico.txt, càd porte l'indice i-1 dans DICO
+void remplit_inst(INSTRUCTION* decode,char instr_binaire,int num);
 
 #endif
