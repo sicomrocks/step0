@@ -347,19 +347,18 @@ int execute_cmd_da(char* adresse, char* nb_instructions) {
 
 	//récupérer l'octet n° numero
 
-	char* chaine;
+	char* chaine=calloc(1,sizeof(*chaine));
 	int i;
 	for (i=0 ; i<4 ; i++) {
 		sprintf(chaine+i*2, "%02x", textSection->data[numero+i]);
 	}
 	DEBUG_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
 	
-	
-	desassemble(chaine);
+	INSTRUCTION decode; //résultat du désassemblage
+	decode=desassemble(chaine);
 		
-
 	//afficher l'instruction désassemblée
-
+	affiche_inst(decode);
 	
 	
 	return CMD_OK_RETURN_VALUE;

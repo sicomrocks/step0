@@ -276,9 +276,10 @@ void free_memory() {
 
 }
 
-int desassemble(char* instr_hexa) {
+INSTRUCTION desassemble(char* instr_hexa) {
 	DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
-
+	INSTRUCTION error;
+	strcpy(error.nom, "ERREUR");
 	//convertir la chaîne de caractères en binaire
 	char instr_binaire[32];
 	conv_hex_bin(instr_hexa, instr_binaire); //binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
@@ -291,7 +292,7 @@ int desassemble(char* instr_hexa) {
 	num=recup_num(instr_binaire);
 	if (num==0) {
 		DEBUG_MSG("erreur lors de la recherche de l'intruction");
-		return 2;
+		return error  ;
 	}
 	else {
 		DEBUG_MSG("l'instruction porte le numéro %d", num);
@@ -349,7 +350,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est bon !
 		}
 
@@ -367,7 +368,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 
@@ -385,7 +386,7 @@ int desassemble(char* instr_hexa) {
 			op0[strlen(op0)-1]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//et maintenant on a pile ce qu'il faut =)
 		}
 		
@@ -410,7 +411,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 			
@@ -428,7 +429,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 		}
 
 		//trois cas possibles pour ops[1] : $rt, imm et offset
@@ -447,7 +448,7 @@ int desassemble(char* instr_hexa) {
 			op1[5]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			fprintf(stdout, "decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+			DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 		}
 
 		if (strcmp(DICO[num-1].ops[1], "imm")==0) { //cas ops[1]=imm
@@ -464,7 +465,7 @@ int desassemble(char* instr_hexa) {
 			op1[16]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			fprintf(stdout, "decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+			DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 		}
 
 		if (strcmp(DICO[num-1].ops[1], "offset")==0) { //cas ops[1]=offset
@@ -481,7 +482,7 @@ int desassemble(char* instr_hexa) {
 			op1[16]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			fprintf(stdout, "decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+			DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 		}
 
 	}
@@ -504,7 +505,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est bon !
 		}
 
@@ -522,7 +523,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 
@@ -540,7 +541,7 @@ int desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			fprintf(stdout, "decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+			DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 		}
 
 		//trois cas possibles pour ops[1] : rs rt offset
@@ -558,7 +559,7 @@ int desassemble(char* instr_hexa) {
 			op1[5]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			fprintf(stdout, "decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+			DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 		
@@ -576,7 +577,7 @@ int desassemble(char* instr_hexa) {
 			op1[5]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			fprintf(stdout, "decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+			DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 		}
 
 		if (strcmp(DICO[num-1].ops[1], "offset")==0) { //cas ops[1]=offset
@@ -593,7 +594,7 @@ int desassemble(char* instr_hexa) {
 			op1[16]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			fprintf(stdout, "decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+			DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 		}
 
 		//cinq cas possibles pour ops[2] : rt imm sa rs offset
@@ -612,7 +613,7 @@ int desassemble(char* instr_hexa) {
 			op2[16]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			fprintf(stdout, "decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+			DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		}
 
 		if (strcmp(DICO[num-1].ops[2], "$rs")==0) { //cas 3e op =$rs
@@ -629,7 +630,7 @@ int desassemble(char* instr_hexa) {
 			op2[5]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			fprintf(stdout, "decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+			DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 		
@@ -647,7 +648,7 @@ int desassemble(char* instr_hexa) {
 			op2[5]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			fprintf(stdout, "decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+			DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		}
 
 		if (strcmp(DICO[num-1].ops[2], "imm")==0) { //cas ops[2]=imm
@@ -664,7 +665,7 @@ int desassemble(char* instr_hexa) {
 			op2[16]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			fprintf(stdout, "decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+			DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		}
 
 		if (strcmp(DICO[num-1].ops[2], "$sa")==0) { //cas 3e op =$sa
@@ -681,7 +682,7 @@ int desassemble(char* instr_hexa) {
 			op2[5]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			fprintf(stdout, "decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+			DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		
 
 
@@ -689,7 +690,7 @@ int desassemble(char* instr_hexa) {
 
 	}
 
-	return CMD_OK_RETURN_VALUE;
+	return decode;
 }
 
 void recup_op_R(char instr_bin[], int nbe_op, char** operandes){
@@ -1074,6 +1075,12 @@ int recup_num(char instr_bin[]) {
 	}
 	
 	return num;
+}
+
+void affiche_inst(INSTRUCTION i) {
+	DEBUG_MSG("entrée dans la fonction affiche_inst");
+	fprintf(stdout, "nom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: %s\nfunction: %s\n",
+	i.nom, i.type, i.nbe_op, i.ops[0], i.ops[1], i.ops[2], i.opcode, i.func);
 }
 
 
