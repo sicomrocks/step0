@@ -1022,7 +1022,7 @@ int recup_num(char instr_bin[]) {
 					num=11;
 					trouve=1;
 				}
-				if (instr_bin[11]==0) { //ROTR
+				if (instr_bin[11]==1) { //ROTR
 					num=9;
 					trouve=1;
 				}
