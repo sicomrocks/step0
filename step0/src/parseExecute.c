@@ -362,7 +362,7 @@ int execute_cmd_da(char* adresse, char* nb_instructions) {
 		//afficher l'instruction désassemblée
 		affiche_inst(decode);
 
-	A=A+8;
+	A=A+4;
 	z++;
 	}
 	
@@ -407,11 +407,17 @@ int parse_and_execute_cmd_da(char* paramsStr) {
 	return 2;
 }
 
-int execute_cmd_lm(char* adresse,char* valeur) {
-	DEBUG_MSG("%s %s", adresse, valeur);
-	int A=(int)strtol(adresse, NULL, 0);
+int execute_cmd_lm(char* adresse,char* value) {
+	DEBUG_MSG("%s %s", adresse, value);
+	/*int A=(int)strtol(adresse, NULL, 0);
 	int val=(int)strtol(valeur, NULL, 0);
-	fprintf(stdout, "adresse 0x%.8x valeur 0x%.8x\n", A, val);
+	fprintf(stdout, "adresse %d valeur %d\n", A, val);*/
+
+	int A=(int)strtol(adresse, NULL, 0);
+	int val=(int)strtol(value, NULL, 0); 
+	fprintf(stdout, "adresse 0x%.8x, valeur à écrire %d\n", A, val);
+
+	
 	return CMD_OK_RETURN_VALUE;
 }
 
@@ -419,7 +425,7 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 {
     // Définition des sorties de la fonction
 	char* adresse=NULL;
-	char* valeur=NULL;
+	char* value=NULL;
 
 	DEBUG_MSG("Parametres : %s", paramsStr);
 
@@ -440,10 +446,13 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 	token = strtok( buffer, separateur);
 	if (token == NULL) {		// cas où il n'y a pas de paramètres
 		WARNING_MSG("Invalid param : address and hexadecimal value awaited in %s", token);
+		return 2;
 	}
 
-    else if (isadress(token)==0)
-    WARNING_MSG("Invalid param : hexadecimal address expected in first parameter");
+    else if (isadress(token)==0) {
+	WARNING_MSG("Invalid param : hexadecimal address expected in first parameter");
+	return 2;
+    }
 
 	else if (isadress(token)==1)
 	{   adresse=token; // utile pour la fin
@@ -472,12 +481,12 @@ int parse_and_execute_cmd_lm(char* paramsStr)
             }
 		} while ( token2!=NULL  && compteur < 8);
 		adresse = strtok( buffer2, separateur);
-		valeur = strtok( NULL, ".");
-		DEBUG_MSG("adresse = %s\nvaleur = %s",adresse,valeur);
+		value = strtok( NULL, ".");
+		DEBUG_MSG("adresse = %s\nvaleur = %s",adresse,value);
 	}
 	free(buffer);
 	free(buffer2);
-	return execute_cmd_lm(adresse, valeur);
+	return execute_cmd_lm(adresse, value);
 }
 
 /* @param adresse adresse à afficher 
@@ -671,7 +680,8 @@ char* buffer0;
 char* token0;
 buffer0=strdup(paramsStr);
 token0=strtok(buffer0," ");
-if (token0==NULL){ 
+if (token0==NULL){
+	WARNING_MSG("Missing parameters");
 	free(buffer0);
 	return 2;
 }
@@ -782,8 +792,10 @@ int parse_and_execute_cmd_inst(char* paramsStr) {
 }
 
 int execute_cmd_inst(int n) {
-	fprintf(stdout,"numero: %d\nnom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: %s\nfunction: %s\n",
-	n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);
+	/*fprintf(stdout,"numero: %d\nnom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: %s\nfunction: %s\n",
+	n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);*/
+	fprintf(stdout, "numero %d\n", n);
+	affiche_inst(DICO[n-1]);
 	
 	return CMD_OK_RETURN_VALUE;
 }
