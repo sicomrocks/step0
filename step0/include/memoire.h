@@ -1,4 +1,4 @@
-#ifndef _MEMOIRE_H__
+#ifndef _MEMOIRE_H_
 #define _MEMOIRE_H_
 
 
@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "notify.h"
 #include "reg.h"
+#include "liste.h"
 
 //		DÉFINITION DES STRUCTURES MODÉLISANT LA MÉMOIRE ET LES REGISTRES DU MIPS
 
@@ -62,6 +63,11 @@ typedef struct {
 	char func[9];
 }INSTRUCTION;		//instruction telle qu'elle figure dans le dictionnaire
 
+//#define taille_bp 10
+//unsigned int breakpoints[taille_bp];
+//int nb_bps;
+
+
 /*utilisation d'un dictionnaire : on définit un tableau de structures contenant toutes les instructions*/
 #define taille_DICO 26
 INSTRUCTION DICO[taille_DICO];
@@ -70,12 +76,11 @@ INSTRUCTION DICO[taille_DICO];
  * et les range dans le tableau de structures DICO*/
 void init_instr(INSTRUCTION* tab);
 
-/*typedef struct {
-	union code;
-	unsigned int adresse;	//adresse virtuelle
-	INSTRUCTION* def;	//pointeur vers la définition du dictionnaire
-} inst_da;			//instruction après désassemblage
-*/
+
+//La liste des breakpoints. Elle doit être une liste ordonnée
+Liste liste_bp;
+
+
 
 
 #endif /* _MEMOIRE_H_ */

@@ -8,8 +8,7 @@
 # Ignorer les objets et les archives
 *.a
 
-*.out
-#*.o
+*.o
 simMips
 mips-load
 mips-load-test

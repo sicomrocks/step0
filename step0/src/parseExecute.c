@@ -316,7 +316,7 @@ int execute_cmd_lr(int num_reg, int value) {
 int execute_cmd_da(char* adresse, char* nb_instructions) {
 	WORD A=(int)strtol(adresse, NULL, 0);
 	int N=(int)strtol(nb_instructions, NULL, 0); 
-	fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
+	//fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
 
 	//vérifier que A est bien dans la zone .text et qu'elle est bien alignée
 	if (A>=textSection->size) {
@@ -324,7 +324,7 @@ int execute_cmd_da(char* adresse, char* nb_instructions) {
 		return 2;
 	}
 
-	DEBUG_MSG("A vaut 0x%x", A);
+	//DEBUG_MSG("A vaut 0x%x", A);
 	if (A%4!=0) {
 		fprintf(stdout, "Adresse mal alignée");
 		return 2;
@@ -354,19 +354,74 @@ int execute_cmd_da(char* adresse, char* nb_instructions) {
 		for (i=0 ; i<4 ; i++) {
 			sprintf(chaine+i*2, "%02x", textSection->data[numero+i]);
 		}
-		INFO_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
+		//INFO_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
 	
 		INSTRUCTION decode; //résultat du désassemblage
 		decode=desassemble(chaine);
 		
+		printf("0x%.8x %s ",A,chaine);
 		//afficher l'instruction désassemblée
-		affiche_inst(decode);
+		affiche_inst_brut(decode);
 
 	A=A+4;
 	z++;
 	}
 	
 	return CMD_OK_RETURN_VALUE;
+}
+
+INSTRUCTION execute_cmd_da_un(char* adresse) {
+	WORD A=(int)strtol(adresse, NULL, 0);
+	//int N=(int)strtol(nb_instructions, NULL, 0); 
+	//fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, 1);
+
+	/*
+	//vérifier que A est bien dans la zone .text et qu'elle est bien alignée
+	if (A>=textSection->size) {
+		fprintf(stdout, "L'adresse spécifiée n'est pas dans la section .text");
+		return 2;
+	}
+
+	DEBUG_MSG("A vaut 0x%x", A);
+	if (A%4!=0) {
+		fprintf(stdout, "Adresse mal alignée");
+		return 2;
+	}
+	*/
+	//vérifier que A+N reste dans le fichier ; si ce n'est pas le cas on n'affiche pas
+	/*if (A+4*N-1 >= textSection->size) {
+		fprintf(stdout, "Il n'y a pas autant d'instructions à afficher à partir de l'adresse 0x%.8x\n", A);
+		return 2;
+	}*/
+
+		//////////////////////////////////////////
+		//					//
+		//	Début du désassemblage		//
+		//					//
+		//////////////////////////////////////////
+
+		
+		//trouver la position de l'instruction A dans la section .text
+		int numero=A-textSection->startAddress;
+
+		//récupérer l'octet n° numero
+		char* chaine=calloc(1,sizeof(*chaine));
+		int i;
+		for (i=0 ; i<4 ; i++) {
+			sprintf(chaine+i*2, "%02x", textSection->data[numero+i]);
+		}
+	//	INFO_MSG("Récupération de l'instruction '%s' à l'adresse 0x%x", chaine, A);
+	
+		INSTRUCTION decode; //résultat du désassemblage
+		decode=desassemble(chaine);
+
+		//afficher l'instruction désassemblée
+		printf("0x%.8x %s ",A,chaine);
+		affiche_inst_brut(decode);
+		//affiche_inst(decode);
+	
+	
+	return decode;
 }
 
 int parse_and_execute_cmd_da(char* paramsStr) {
@@ -407,26 +462,45 @@ int parse_and_execute_cmd_da(char* paramsStr) {
 	return 2;
 }
 
-int execute_cmd_lm(char* adresse,char* value) {
-	DEBUG_MSG("%s %s", adresse, value);
-	/*int A=(int)strtol(adresse, NULL, 0);
-	int val=(int)strtol(valeur, NULL, 0);
-	fprintf(stdout, "adresse %d valeur %d\n", A, val);*/
-
-	int A=(int)strtol(adresse, NULL, 0);
-	int val=(int)strtol(value, NULL, 0); 
-	fprintf(stdout, "adresse 0x%.8x, valeur à écrire %d\n", A, val);
-
+int execute_cmd_lm(char* adresse,char* valeur) {
+	//DEBUG_MSG("adresse %s valeur %s", adresse, valeur);
+	int val = (int)strtol(valeur,NULL,0);
+	char vstring[10];
+	sprintf(vstring,"0x%.8x",val);
+	//DEBUG_MSG("vstring = %s\n",vstring);
+	char vtemp[4];
 	
+	int i;
+	int a = (int)strtol(adresse,NULL,0);
+	
+	for (i=0;i<=3;i++)
+	{	//DEBUG_MSG("a=%d",a);
+		sprintf(vtemp,"0x%c%c",vstring[2*i+2],vstring[2*i+3]);
+		val = (int)strtol(vtemp,NULL,0);
+		//DEBUG_MSG("valeur%d = %d",i,valeur);
+		
+		if ( (a <textSection->startAddress + textSection->size) 
+			&& (a >=textSection->startAddress) )  
+			{	textSection->data[a-textSection->startAddress]=val;
+			}
+			
+		if ( (a <dataSection->startAddress + dataSection->size) 
+			&& (a >=dataSection->startAddress) )  
+			{	dataSection->data[a-dataSection->startAddress]=val;
+			}
+			
+		if ( (a <bssSection->startAddress + bssSection->size) 
+			&& (a >=bssSection->startAddress) )  
+			{	bssSection->data[a-bssSection->startAddress]=val;
+			}
+		a = a + 1;
+	}
 	return CMD_OK_RETURN_VALUE;
 }
 
 int parse_and_execute_cmd_lm(char* paramsStr)
 {
     // Définition des sorties de la fonction
-	char* adresse=NULL;
-	char* value=NULL;
-
 	DEBUG_MSG("Parametres : %s", paramsStr);
 
 	/*deux paramètres : une adresse valide
@@ -434,13 +508,10 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 	 */
 
 	char* token;
+	char* token2;
 	char* separateur = { " " };
 	char* buffer;
-	char* buffer2;
-	int compteur=0;
-
 	buffer = strdup ( paramsStr );
-	buffer2 = strdup ( paramsStr ); // utilisé à la fin pour adresse et valeur
 
 	// premier appel, pour vérifier s'il y a des paramètres
 	token = strtok( buffer, separateur);
@@ -449,44 +520,21 @@ int parse_and_execute_cmd_lm(char* paramsStr)
 		return 2;
 	}
 
-    else if (isadress(token)==0) {
-	WARNING_MSG("Invalid param : hexadecimal address expected in first parameter");
-	return 2;
-    }
+    else if (isadress(token)==0)
+    WARNING_MSG("Invalid param : hexadecimal address expected in first parameter");
 
 	else if (isadress(token)==1)
-	{   adresse=token; // utile pour la fin
-
-		// Tester si le 2è paramètre est de la bonne forme
-		char* token2;
+	{  	// Tester si le 2è paramètre est de la bonne forme
 		token2=strtok(NULL,separateur);
-
-		do
-		{
-            if ( (token2==NULL && compteur==0) || (token2!=NULL && automate(token2)!=3) || strlen(token2)>10)
-            {	WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
-                free(buffer);
-                free(buffer2);
-                return 2;
-            }
-            else
-            {   compteur=compteur +1;
-                token2=strtok( NULL,separateur);
-                if (token2!=NULL && compteur==8)
-                {   WARNING_MSG("Invalid value : too many parameters");
-                    free(buffer);
-                    free(buffer2);
-                    return 2;
-                }
-            }
-		} while ( token2!=NULL  && compteur < 8);
-		adresse = strtok( buffer2, separateur);
-		value = strtok( NULL, ".");
-		DEBUG_MSG("adresse = %s\nvaleur = %s",adresse,value);
+		
+        if ( token2==NULL || automate(token2)!=3 || strlen(token2)>10)
+        {	WARNING_MSG("Invalid value : 1 to 8 hexa numbers are expected");
+			free(buffer);
+			return 2;
+		}
 	}
-	free(buffer);
-	free(buffer2);
-	return execute_cmd_lm(adresse, value);
+	DEBUG_MSG("adresse = %s\nvaleur = %s",token,token2);
+return execute_cmd_lm(token, token2);
 }
 
 /* @param adresse adresse à afficher 
@@ -673,6 +721,27 @@ int execute_cmd_dm(char** Adresses, int* type , int nb_adresses)
 	return CMD_OK_RETURN_VALUE;
 }
 
+
+int isaddressbusy(char* param)
+{	if (isadress(param)==1)
+	{	int m=(int)strtol(param,NULL,0);
+	
+		if ( 		( (m >= textSection->startAddress + textSection->size) 
+					&& (m < dataSection->startAddress) )
+					|| ( (m >= dataSection->startAddress + dataSection->size) 
+					&& (m < bssSection->startAddress) )
+					|| ( (m >= bssSection->startAddress + bssSection->size) 
+					)
+			)
+		{	WARNING_MSG("Adresse inoccupée");
+			return 0;
+		}
+		else return 1;
+	}
+	else WARNING_MSG("Adresse incorrecte");
+	return 0;
+}	
+
 int parse_and_execute_cmd_dm(char* paramsStr)
 {
 // Si l'entrée est nulle, msg d'erreur et on sort de la fonction
@@ -680,9 +749,9 @@ char* buffer0;
 char* token0;
 buffer0=strdup(paramsStr);
 token0=strtok(buffer0," ");
-if (token0==NULL){
-	WARNING_MSG("Missing parameters");
+if (token0==NULL){ 
 	free(buffer0);
+	display_poly(0,textSection->size+dataSection->size+bssSection->size);
 	return 2;
 }
 
@@ -792,10 +861,110 @@ int parse_and_execute_cmd_inst(char* paramsStr) {
 }
 
 int execute_cmd_inst(int n) {
-	/*fprintf(stdout,"numero: %d\nnom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: %s\nfunction: %s\n",
-	n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);*/
-	fprintf(stdout, "numero %d\n", n);
-	affiche_inst(DICO[n-1]);
+	//fprintf(stdout,"numero: %d\nnom: %s\ntype: %s\nnbe d'op: %d\n1è op: %s\n2è op: %s\n3è op: %s\nopcode: %s\nfunction: %s\n",
+	//n, DICO[n-1].nom, DICO[n-1].type, DICO[n-1].nbe_op, DICO[n-1].ops[0], DICO[n-1].ops[1], DICO[n-1].ops[2], DICO[n-1].opcode, DICO[n-1].func);
 	
 	return CMD_OK_RETURN_VALUE;
+}
+
+
+int execute_cmd_run(char* adresse_debut)
+{	
+	int compteur;
+	int res;
+	char mot[12];
+	INSTRUCTION inst; 
+	
+	compteur = 0;
+	
+	while (compteur< 50 && registres[32].valeur<textSection->size /* ||isbp(registres[32].valeur)==0*/)
+	{	sprintf(mot,"0x%.8x",registres[32].valeur);
+		inst=execute_cmd_da_un(mot);
+		res=exec_inst(inst);
+		/*if (res==0)
+		{ 	ERROR_MSG("erreur adresse 0x%.8x",registres[32].valeur);
+		}
+		else
+		*/ {
+		registres[32].valeur = registres[32].valeur + 4;
+		compteur ++;
+		}
+	}
+	
+	return CMD_OK_RETURN_VALUE;
+}
+
+int parse_and_execute_cmd_run(char* paramsStr)
+{
+	char* token;
+	char* buffer;
+	token = NULL;
+	
+	buffer = paramsStr;
+	token = strtok(buffer," ");
+	if (token==NULL || buffer==NULL) 
+	{	//registres[32].valeur=0;
+		DEBUG_MSG("Lancement du MIPS32 à l'actuel PC : 0x%.8x",registres[32].valeur);
+	}
+	else if (isaddressbusy(token)==1 || isaddressbusy(buffer)==1)
+	{	registres[32].valeur=(int)strtol(token,NULL,0);
+		DEBUG_MSG("Lancement du MIPS32 à PC : 0x%.8x",registres[32].valeur);
+	}
+	
+return execute_cmd_run(token);
+}
+
+int parse_and_execute_cmd_s(char* paramsStr)
+{
+	return 5;
+}
+
+int execute_cmd_s(char* paramsStr)
+{
+	return 5;
+}
+
+int parse_and_execute_cmd_si(char* paramsStr)
+{
+	if (!(paramsStr==NULL))
+	{ERROR_MSG("Pas de parametres attendus en entrée");
+	}
+	
+	else return execute_cmd_s(paramsStr); 
+}
+
+int execute_cmd_si(char* paramsStr)
+{	char newbp[10];
+	int J;
+	J=0;
+	
+	// On ajoute un nouveau breakpoint
+	if (isbp(registres[32].valeur + 4)==1)
+	{	J=1;}
+	else 
+	{	sprintf(newbp,"0x%.8x",registres[32].valeur + 4);
+		//execute_cmd_bp(newbp);
+	}
+	
+	execute_cmd_run(paramsStr); // run pour une étape
+	
+	//if (J==0) er(newbp);
+
+	
+	return CMD_OK_RETURN_VALUE;
+} 
+
+int parse_and_execute_cmd_bp(char* paramsStr)
+{	if(!(isaddressbusy(paramsStr)==1))
+	{	int a;
+		a = atoi(paramsStr);
+		a = atoi(paramsStr);
+		execute_cmd_bp(a);
+	}
+	return CMD_OK_RETURN_VALUE;
+}
+
+int execute_cmd_bp(unsigned int adresse)
+{
+	return 5;
 }

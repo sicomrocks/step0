@@ -117,6 +117,15 @@ int parse_and_execute_cmd_string(char *input) {
     else if(strcmp(cmdStr, "inst") == 0) {
 	    return parse_and_execute_cmd_inst(input + strlen(cmdStr) );
     }
+     else if(strcmp(cmdStr, "run") == 0) {
+	    return parse_and_execute_cmd_run(input + strlen(cmdStr) );
+    }
+    else if(strcmp(cmdStr, "s") == 0) {
+	    return parse_and_execute_cmd_s(input + strlen(cmdStr) );
+    }
+    else if(strcmp(cmdStr, "si") == 0) {
+	    return parse_and_execute_cmd_si(input + strlen(cmdStr) );
+    }
 
     WARNING_MSG("Unknown Command : '%s'", cmdStr);
     return CMD_UNKOWN_RETURN_VALUE;

@@ -57,18 +57,20 @@ int execute_cmd_lr(int num_reg, int value);
 
 */
 int execute_cmd_da(char* adresse, char* nb_instructions);
+INSTRUCTION execute_cmd_da_un(char* adresse);
 int parse_and_execute_cmd_da(char* paramsStr);
 
 /*
 La commande écrit à l'adresse (hexa) donnée en premier paramètre la valeur (hexa d'octet) donnée en deuxième paramètre, ces paramètres séparés par un espace.
 La valeur entière peut être sur 1 à 8 chiffres hexadécimaux
 */
-int execute_cmd_lm(char* adresse,char* valeur);
 int parse_and_execute_cmd_lm(char* paramsStr);
+int execute_cmd_lm(char* adresse,char* valeur);
 
 /*
 
 */
+int isaddressbusy(char* param);
 int display_one(int adresse);
 int display_poly(int adresse, int nombre);
 
@@ -86,5 +88,17 @@ int parse_and_execute_cmd_inst(char* paramsStr);
 int execute_cmd_inst(int n);
 
 
+int execute_cmd_run(char* adresse_debut);
+int parse_and_execute_cmd_run(char* paramsStr);
+
+int parse_and_execute_cmd_s(char* paramsStr);
+int execute_cmd_s(char* paramsStr);
+
+
+int parse_and_execute_cmd_si(char* paramsStr);
+int execute_cmd_si(char* paramsStr$);
+
+int parse_and_execute_cmd_bp(char* paramsStr);
+int execute_cmd_bp(unsigned int adresse);
 
 #endif

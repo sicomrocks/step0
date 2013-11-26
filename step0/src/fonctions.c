@@ -88,10 +88,12 @@ int isregister(char* param) {
 }
 	
 
-int isadress(char* param) {
+int isadress(char* param)
+{
 	char* buffer;
 	buffer=strdup(param);
-    if (automate(buffer)==3 /*&& param<adresse_max*/)
+	int a = (int)strtol(param,NULL,0);
+    if (automate(buffer)==3 && a<=0xffffffff)
     return 1;
     else return 0;
 }
@@ -277,7 +279,7 @@ void free_memory() {
 }
 
 INSTRUCTION desassemble(char* instr_hexa) {
-	DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
+	//DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
 	INSTRUCTION error;
 	strcpy(error.nom, "ERREUR");
 	//convertir la chaîne de caractères en binaire
@@ -285,7 +287,7 @@ INSTRUCTION desassemble(char* instr_hexa) {
 	conv_hex_bin(instr_hexa, instr_binaire); //binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
 
 	//vérification
-	INFO_MSG("traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
+	//INFO_MSG("traduction en binaire %d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d\n", instr_binaire[0], instr_binaire[1], instr_binaire[2], instr_binaire[3], instr_binaire[4], instr_binaire[5], instr_binaire[6], instr_binaire[7], instr_binaire[8], instr_binaire[9], instr_binaire[10], instr_binaire[11], instr_binaire[12], instr_binaire[13], instr_binaire[14], instr_binaire[15], instr_binaire[16], instr_binaire[17], instr_binaire[18], instr_binaire[19], instr_binaire[20], instr_binaire[21], instr_binaire[22], instr_binaire[23], instr_binaire[24], instr_binaire[25], instr_binaire[26], instr_binaire[27], instr_binaire[28], instr_binaire[29], instr_binaire[30], instr_binaire[31]);
 
 	//récupérer le numéro de l'instruction
 	int num; //numero de l'instruction dans le dictionnaire
@@ -355,7 +357,7 @@ INSTRUCTION desassemble(char* instr_hexa) {
 		}
 
 		if (strcmp(DICO[num-1].ops[0], "$rs")==0) {
-			//DEBUG_MSG("\nopérande : rs");
+		//	DEBUG_MSG("\nopérande : rs");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rs est codé sur 5bits
 				op0[j]=instr_binaire[j+6]; //$rs commence juste après les 6bits du opcode
@@ -368,12 +370,12 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			//DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+		//	DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 
 		if (strcmp(DICO[num-1].ops[0], "target")==0) {
-			//DEBUG_MSG("\nopérande : target");
+		//	DEBUG_MSG("\nopérande : target");
 			//récupérer l'opérande dans instr_binaire
 			for (j=0 ; j<26 ; j++) {
 				op0[j]=instr_binaire[j+6]; //l'opérande commence juste après les 6bits du opcode
@@ -382,11 +384,11 @@ INSTRUCTION desassemble(char* instr_hexa) {
 				if(op0[j]==0) {op0[j]=48;}
 			}
 			
-			//bizarrement il y a un caractère de trop à la fin donc :
-			op0[strlen(op0)-1]='\0';
+			//enlever les bits de trop à la fin :
+			op0[26]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			//DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+		//	DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//et maintenant on a pile ce qu'il faut =)
 		}
 		
@@ -492,7 +494,7 @@ INSTRUCTION desassemble(char* instr_hexa) {
 
 		//trois cas possibles pour ops[0] : rd rs rt
 		if (strcmp(DICO[num-1].ops[0], "$rd")==0) { //cas 1e op = $rd
-			//DEBUG_MSG("\n1e opérande : rd");
+		//	DEBUG_MSG("\n1e opérande : rd");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rd est codé sur 5bits
 				op0[j]=instr_binaire[j+16];
@@ -505,12 +507,12 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			//DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+		//	DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est bon !
 		}
 
 		if (strcmp(DICO[num-1].ops[0], "$rs")==0) { //cas 1e op =$rs
-			//DEBUG_MSG("\n1e opérande : rs");
+		//	DEBUG_MSG("\n1e opérande : rs");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rs est codé sur 5bits
 				op0[j]=instr_binaire[j+6]; //$rs commence juste après les 6bits du opcode
@@ -523,12 +525,12 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			//DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+		//	DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 
 		if (strcmp(DICO[num-1].ops[0], "$rt")==0) { //cas ops[0]=$rt
-			//DEBUG_MSG("\n1e opérande : rt");
+		//	DEBUG_MSG("\n1e opérande : rt");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rt est codé sur 5bits
 				op0[j]=instr_binaire[j+11];
@@ -541,12 +543,12 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op0[5]='\0';
 			
 			strcpy(decode.ops[0], op0);
-			//DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
+		//	DEBUG_MSG("decode.ops[0] %s %d\n", decode.ops[0], (int)strlen(decode.ops[0]));
 		}
 
 		//trois cas possibles pour ops[1] : rs rt offset
 		if (strcmp(DICO[num-1].ops[1], "$rs")==0) { //cas 2e op =$rs
-			//DEBUG_MSG("\n2e opérande : rs");
+		//	DEBUG_MSG("\n2e opérande : rs");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rs est codé sur 5bits
 				op1[j]=instr_binaire[j+6]; //$rs commence juste après les 6bits du opcode
@@ -559,12 +561,12 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op1[5]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			//DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+		//	DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 		
 		if (strcmp(DICO[num-1].ops[1], "$rt")==0) { //cas ops[1]=$rt
-			//DEBUG_MSG("\n2e opérande : rt");
+		//	DEBUG_MSG("\n2e opérande : rt");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rt est codé sur 5bits
 				op1[j]=instr_binaire[j+11];
@@ -577,11 +579,11 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op1[5]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			//DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+		//	DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 		}
 
 		if (strcmp(DICO[num-1].ops[1], "offset")==0) { //cas ops[1]=offset
-			//DEBUG_MSG("\n2e opérande : offset");
+		//	DEBUG_MSG("\n2e opérande : offset");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<16 ; j++) { //offset est codé sur 16bits
 				op1[j]=instr_binaire[j+16];
@@ -594,13 +596,13 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op1[16]='\0';
 			
 			strcpy(decode.ops[1], op1);
-			//DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
+		//	DEBUG_MSG("decode.ops[1] %s %d\n", decode.ops[1], (int)strlen(decode.ops[1]));
 		}
 
 		//cinq cas possibles pour ops[2] : rt imm sa rs offset
 
 		if (strcmp(DICO[num-1].ops[2], "offset")==0) { //cas ops[2]=offset
-			//DEBUG_MSG("\n3e opérande : offset");
+		//	DEBUG_MSG("\n3e opérande : offset");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<16 ; j++) { //offset est codé sur 16bits
 				op2[j]=instr_binaire[j+16];
@@ -613,11 +615,11 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op2[16]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			//DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+		//	DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		}
 
 		if (strcmp(DICO[num-1].ops[2], "$rs")==0) { //cas 3e op =$rs
-			//DEBUG_MSG("\n3e opérande : rs");
+		//	DEBUG_MSG("\n3e opérande : rs");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rs est codé sur 5bits
 				op2[j]=instr_binaire[j+6]; //$rs commence juste après les 6bits du opcode
@@ -630,12 +632,12 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op2[5]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			//DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+		//	DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 			//c'est codé pareil que les autres cas donc c'est bon
 		}
 		
 		if (strcmp(DICO[num-1].ops[2], "$rt")==0) { //cas ops[2]=$rt
-			//DEBUG_MSG("\n3e opérande : rt");
+		//	DEBUG_MSG("\n3e opérande : rt");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$rt est codé sur 5bits
 				op2[j]=instr_binaire[j+11];
@@ -648,11 +650,11 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op2[5]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			//DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+		//	DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		}
 
 		if (strcmp(DICO[num-1].ops[2], "imm")==0) { //cas ops[2]=imm
-			//DEBUG_MSG("\n3e opérande : immediate");
+		//	DEBUG_MSG("\n3e opérande : immediate");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<16 ; j++) { //immediate est codé sur 16bits
 				op2[j]=instr_binaire[j+16];
@@ -665,11 +667,11 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op2[16]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			//DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+		//	DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		}
 
 		if (strcmp(DICO[num-1].ops[2], "$sa")==0) { //cas 3e op =$sa
-			//DEBUG_MSG("\n3e opérande : sa");
+		//	DEBUG_MSG("\n3e opérande : sa");
 			//récupérer l'opérande dans instr_bin :
 			for (j=0 ; j<5 ; j++) { //$sa est codé sur 5bits
 				op2[j]=instr_binaire[j+21];
@@ -682,7 +684,7 @@ INSTRUCTION desassemble(char* instr_hexa) {
 			op2[5]='\0';
 			
 			strcpy(decode.ops[2], op2);
-			//DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
+		//	DEBUG_MSG("decode.ops[2] %s %d\n", decode.ops[2], (int)strlen(decode.ops[2]));
 		
 
 
@@ -694,7 +696,7 @@ INSTRUCTION desassemble(char* instr_hexa) {
 }
 
 int conv_hex_bin(char* hexa, char bin[]) {
-	DEBUG_MSG("conversion en binaire");
+	//DEBUG_MSG("conversion en binaire");
 
 	//regarder les caractères de hexa un par un. Pour chacun :
 		//convertir en pseudo-décimal : b=11, f=15, etc
@@ -830,20 +832,20 @@ int conv_hex_bin(char* hexa, char bin[]) {
 }
 
 int conv_int_str(unsigned int value, char** string) {
-	DEBUG_MSG("entrée dans la fonction conv_int_str");
+	//DEBUG_MSG("entrée dans la fonction conv_int_str");
 	
 	//char* chaine;
-	DEBUG_MSG("%s", *string);
+	//DEBUG_MSG("%s", *string);
 	sprintf(*string, "%x", value);
-	DEBUG_MSG("là");
-	DEBUG_MSG("conversion de la valeur %x en la chaîne %s", value, *string);
+	//DEBUG_MSG("là");
+	//DEBUG_MSG("conversion de la valeur %x en la chaîne %s", value, *string);
 
 	
 	return CMD_OK_RETURN_VALUE;
 }
 
 int recup_num(char instr_bin[]) {
-	DEBUG_MSG("entrée dans la fonction recup_num");
+	//DEBUG_MSG("entrée dans la fonction recup_num");
 	int num=0;
 	int i;
 	int j=0;	
@@ -856,7 +858,7 @@ int recup_num(char instr_bin[]) {
 		OPCODE[i]=instr_bin[i];
 	}
 
-	DEBUG_MSG("opcode de l'instruction %d%d%d%d%d%d", OPCODE[0], OPCODE[1], OPCODE[2], OPCODE[3], OPCODE[4], OPCODE[5]);
+	//DEBUG_MSG("opcode de l'instruction %d%d%d%d%d%d", OPCODE[0], OPCODE[1], OPCODE[2], OPCODE[3], OPCODE[4], OPCODE[5]);
 	//transformation du tableau d'entiers en un tableau de caractères pour povoir utiliser strcmp
 	int l=0;
 	while (l<6) {
@@ -940,7 +942,7 @@ int recup_num(char instr_bin[]) {
 				FUNC[i]=instr_bin[26+i];
 			}
 
-			DEBUG_MSG("code func de l'instruction %d%d%d%d%d%d", FUNC[0], FUNC[1], FUNC[2], FUNC[3], FUNC[4], FUNC[5]);
+		//	DEBUG_MSG("code func de l'instruction %d%d%d%d%d%d", FUNC[0], FUNC[1], FUNC[2], FUNC[3], FUNC[4], FUNC[5]);
 
 			//transformation du tableau d'entiers en un tableau de caractères pour povoir utiliser strcmp
 			l=0;
@@ -1022,7 +1024,7 @@ int recup_num(char instr_bin[]) {
 					num=11;
 					trouve=1;
 				}
-				if (instr_bin[11]==1) { //ROTR
+				if (instr_bin[11]==0) { //ROTR
 					num=9;
 					trouve=1;
 				}
@@ -1072,7 +1074,7 @@ int recup_num(char instr_bin[]) {
 }
 
 void affiche_inst(INSTRUCTION i) {
-	DEBUG_MSG("entrée dans la fonction affiche_inst");
+	//DEBUG_MSG("entrée dans la fonction affiche_inst");
 
 	if (i.nbe_op==3) {
 		fprintf(stdout, "nom: %s nbe d'op: %d 1è op: %s 2è op: %s 3è op: %s opcode: %s function: %s\n",
@@ -1095,4 +1097,129 @@ void affiche_inst(INSTRUCTION i) {
 	}
 }
 
+
+void affiche_inst_brut(INSTRUCTION i) {
+	//DEBUG_MSG("entrée dans la fonction affiche_inst");
+	
+	if (i.nbe_op==3) {
+		fprintf(stdout, "%s %d %s %s %s %s %s\n",
+		i.nom, i.nbe_op, i.ops[0], i.ops[1], i.ops[2], i.opcode, i.func);
+	}
+
+	if (i.nbe_op==2) {
+		fprintf(stdout, "%s %d %s %s %s %s\n",
+		i.nom, i.nbe_op, i.ops[0], i.ops[1], i.opcode, i.func);
+	}
+
+	if (i.nbe_op==1) {
+		fprintf(stdout, "%s %d %s %s %s\n",
+		i.nom, i.nbe_op, i.ops[0], i.opcode, i.func);
+	}
+
+	if (i.nbe_op==0) {
+		fprintf(stdout, "%s %d %s %s\n",
+		i.nom, i.nbe_op, i.opcode, i.func);
+	}
+}
+
+int exec_inst(INSTRUCTION inst)
+{
+	//int i;
+	//int j;
+	/*for (i=0;i<25;i++)
+	{
+		//printf("%s,%s, strcmp = %d\n",DICO[i].nom,DICO[i].nom,strcmp(DICO[i].nom,DICO[i].nom));
+		//printf("%s,%s, strcmp2 = %d\n",DICO[i].nom,inst.nom,strcmp(DICO[i].nom,inst.nom));
+		j=strcmp(DICO[i].nom,inst.nom);
+		if (j='0'){execute_cmd_inst(i+1);i=30;}
+		
+	}*/
+	
+	if (strcmp(inst.nom,"ADD")==0)
+	{	ADD(inst);
+	}
+	if (strcmp(inst.nom,"ADDI")==0)
+	{	ADDI(inst);
+	}
+	if (strcmp(inst.nom,"SUB")==0)
+	{	SUB(inst);
+	}
+	if (strcmp(inst.nom,"MULT")==0)
+	{	MULT(inst);
+	}
+	if (strcmp(inst.nom,"DIV")==0)
+	{	DIV(inst);
+	}
+	if (strcmp(inst.nom,"AND")==0)
+	{	AND(inst);
+	}
+	if (strcmp(inst.nom,"OR")==0)
+	{	OR(inst);
+	}
+	if (strcmp(inst.nom,"XOR")==0)
+	{	XOR(inst);
+	}
+	if (strcmp(inst.nom,"ROTR")==0)
+	{	ROTR(inst);
+	}
+	if (strcmp(inst.nom,"SLL")==0)
+	{	SLL(inst);
+	}
+	if (strcmp(inst.nom,"SRL")==0)
+	{	SRL(inst);
+	}
+	if (strcmp(inst.nom,"SLT")==0)
+	{	SLT(inst);
+	}
+	if (strcmp(inst.nom,"LW")==0)
+	{	LW(inst);
+	}
+	if (strcmp(inst.nom,"SW")==0)
+	{	SW(inst);
+	}
+	if (strcmp(inst.nom,"LUI")==0)
+	{	LUI(inst);
+	}
+	if (strcmp(inst.nom,"MFHI")==0)
+	{	MFHI(inst);
+	}
+	if (strcmp(inst.nom,"MFLO")==0)
+	{	MFLO(inst);
+	}
+	if (strcmp(inst.nom,"BEQ")==0)
+	{	BEQ(inst);
+	}
+	if (strcmp(inst.nom,"BNE")==0)
+	{	BNE(inst);
+	}
+	if (strcmp(inst.nom,"BQTZ")==0)
+	{	BGTZ(inst);
+	}
+	if (strcmp(inst.nom,"BLEZ")==0)
+	{	BLEZ(inst);
+	}
+	if (strcmp(inst.nom,"J")==0)
+	{	J(inst);
+	}
+	if (strcmp(inst.nom,"JAL")==0)
+	{	JAL(inst);
+	}
+	if (strcmp(inst.nom,"JR")==0)
+	{	JR(inst);
+	}
+	if (strcmp(inst.nom,"SYSCALL")==0)
+	{	SYSCALL(inst);
+	}
+return CMD_OK_RETURN_VALUE;	
+}
+
+int isbp(unsigned int adresse){
+	/*int i;
+	
+	for(i=0;i<taille_bp;i++)
+	{	if(breakpoints[i]==adresse)
+		return 1;
+	}*/
+	return 0;
+}
 
