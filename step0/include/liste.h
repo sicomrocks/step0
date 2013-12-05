@@ -38,8 +38,8 @@ Liste copie(Liste l);
 //supprime la carte en position n dans la liste l et retourne la nouvelle liste. Attention : il faut être sur le maillon n-1 pour supprimer le maillon n et chainer le maillon n-1 avec le maillon n.
 Liste supprime(int n, Liste l);
 
-//met les éléments dans l'ordre croissant des adresses c'est-à-dire du champ bp
-Liste ordonne(Liste l);
-
 //recherche dans la liste l l'élément dont le champ est champ ; renvoie la position de cet élément dans la liste
 int recherche(Liste l, unsigned int champ);
+
+//ajoute l'émément c dans la liste l en respectant l'ordre
+Liste ajoute_ordre(breakpoint c, Liste l);

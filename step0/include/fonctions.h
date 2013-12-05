@@ -47,5 +47,7 @@ int exec_inst(INSTRUCTION inst);
 //regarde si l'adresse a un breakpoint : retourne 1 si oui et 0 si non
 int isbp(unsigned int adresse);
 
+//fonction outil pour tester
+void test_liste();
 
 #endif

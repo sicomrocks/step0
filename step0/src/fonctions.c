@@ -278,12 +278,25 @@ void free_memory() {
 
 }
 
+
+unsigned int get_opcode(mot){
+	return (mot &0xFC000000 )>>26; 
+}
+
+int get_imm(mot){
+	return (short)(mot &0x0000FFFF); 
+}
+
+
+
 INSTRUCTION desassemble(char* instr_hexa) {
 	//DEBUG_MSG("désassemblage de l'instruction %s", instr_hexa);
 	INSTRUCTION error;
 	strcpy(error.nom, "ERREUR");
 	//convertir la chaîne de caractères en binaire
 	char instr_binaire[32];
+	unsigned int mot =0;
+	sscanf(instr_hexa,"%x",&mot);
 	conv_hex_bin(instr_hexa, instr_binaire); //binaire est un tableau de 32 bits contenant tous les bits de l'instruction ; big endian
 
 	//vérification
@@ -1223,3 +1236,25 @@ int isbp(unsigned int adresse){
 	return 0;
 }
 
+void test_liste() {
+	DEBUG_MSG("entrée dans la fonction test_liste");
+	breakpoint b;
+	b.bp=0x123;
+	b.numero=0;
+	b.commande="commande";
+	DEBUG_MSG("initial %s", b.commande);
+	b.actif='0';
+	
+	Liste ma_liste=calloc(1, sizeof(*ma_liste));
+
+	DEBUG_MSG("AJOUT TETE");
+	ma_liste=ajoute_ordre(b, ma_liste);
+	
+	visualiser_liste(ma_liste);
+}
+
+	
+
+
+
+	
