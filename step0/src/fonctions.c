@@ -1239,17 +1239,51 @@ int isbp(unsigned int adresse){
 void test_liste() {
 	DEBUG_MSG("entrée dans la fonction test_liste");
 	breakpoint b;
-	b.bp=0x123;
-	b.numero=0;
-	b.commande="commande";
-	DEBUG_MSG("initial %s", b.commande);
+	b.bp=9+1;
+	b.numero=69;
+	b.commande="commandehqofe";
+	//DEBUG_MSG("initial %s", b.commande);
+	//DEBUG_MSG("initial numero %d", b.numero);
 	b.actif='0';
+	//DEBUG_MSG("initial actif %c", b.actif);
 	
-	Liste ma_liste=calloc(1, sizeof(*ma_liste));
+	Liste ma_liste=creer_liste();
+	{breakpoint b;
+	b.bp=9;
+	b.numero=70;
+	b.commande="blouce";
+	b.actif='0';
+	ma_liste=ajout_tete(b,ma_liste);
+	//visualiser_liste(ma_liste);
+	
+	breakpoint op;
+	op.bp=4;
+	op.numero=95;
+	op.commande="bloussssse";
+	op.actif='0';	
+	ma_liste=ajout_tete(op,ma_liste);
+	//visualiser_liste(ma_liste);
+}
 
-	DEBUG_MSG("AJOUT TETE");
+	DEBUG_MSG("AJOUT ORDRE");
 	ma_liste=ajoute_ordre(b, ma_liste);
+
+	breakpoint caca;
+	caca.bp=2;
+	caca.numero=41;
+	caca.commande="caca";
+	caca.actif='0';
+
+	ma_liste=ajoute_ordre(caca, ma_liste);
+
+
+	DEBUG_MSG("\nrésultat de ajoute ordre\n");
+	//visualiser_liste(ma_liste);
+
 	
+	DEBUG_MSG("ON RECOMMENCE");
+	caca.commande="recommenciation";
+	ma_liste=ajoute_ordre(caca, ma_liste);
 	visualiser_liste(ma_liste);
 }
 

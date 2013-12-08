@@ -43,3 +43,6 @@ int recherche(Liste l, unsigned int champ);
 
 //ajoute l'émément c dans la liste l en respectant l'ordre
 Liste ajoute_ordre(breakpoint c, Liste l);
+
+//met à jour les indices dans une liste et renvoie le nombre d'ékéments dans la liste
+int numerote(Liste l);

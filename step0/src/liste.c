@@ -9,45 +9,74 @@ Liste creer_liste(void) {
 }
 
 int est_vide(Liste l) {
-	return !l;
+		if (l==NULL) {
+			return 1;
+		}
+		else return 0;
 }
 
 void visualiser_liste(Liste l) {
+	DEBUG_MSG("entrée dans visualiser liste");
 	Liste p;
 	p=l;
-	while (!est_vide(p)) {
+	while (est_vide(p)==0) {
 		DEBUG_MSG("adresse %x,  actif %c, numero %d, instruction %s", p->element.bp, p->element.actif, p->element.numero, p->element.commande);
 		p=p->suiv;
 	}
 }
 
 Liste ajout_tete(breakpoint c, Liste l) {
-	DEBUG_MSG("entrée dans la fonction ajout_tete");
-	Liste p=calloc(1,sizeof(*p));
+	DEBUG_MSG("\nentrée dans la fonction ajout_tete");
+	if (est_vide(l)==1) {
+		l=calloc(1,sizeof(*l));
+		//MATT VERIIE CALLLOC
+		//DEBUG_MSG("recopie des champs");
+	
+		l->element.actif=c.actif;
+		//DEBUG_MSG("actif %c", l->element.actif);
+	
+		l->element.bp=c.bp;
+		//DEBUG_MSG("adresse %d", l->element.bp);
+	
+		l->element.numero=c.numero;
+		//DEBUG_MSG("numero %d", l->element.numero);
+	
+		l->element.commande=strdup(c.commande);
+		//DEBUG_MSG("commande %s", l->element.commande);
+	
+		l->suiv=NULL;
+		return l;
+
+	}
+	
+	Liste p=creer_liste();
+	p=calloc(1,sizeof(*p));
 	if (p==NULL) {
-		DEBUG_MSG("truc");
+		//DEBUG_MSG("truc");
+		WARNING_MSG("erreur lors de l'allocation d'une liste");
 		return NULL;
 	}
-	DEBUG_MSG("recopie des champs");
+	//DEBUG_MSG("recopie des champs");
 	
 	p->element.actif=c.actif;
-	DEBUG_MSG("actif %c", p->element.actif);
+	//DEBUG_MSG("actif %c", p->element.actif);
 	
 	p->element.bp=c.bp;
-	DEBUG_MSG("adresse %d", p->element.bp);
+	//DEBUG_MSG("adresse %d", p->element.bp);
 	
 	p->element.numero=c.numero;
-	DEBUG_MSG("numero %d", p->element.numero);
+	//DEBUG_MSG("numero %d", p->element.numero);
 	
 	p->element.commande=strdup(c.commande);
-	DEBUG_MSG("commande %s", p->element.commande);
+	//DEBUG_MSG("commande %s", p->element.commande);
 	
 	p->suiv=l;
 	return p;
+	
 }
 
 Liste supprimer_tete(Liste l) {
-	if (!est_vide(l)) {
+	if (est_vide(l)==0) {
 		Liste p;
 		p=l->suiv;
 		free (l);
@@ -57,7 +86,7 @@ Liste supprimer_tete(Liste l) {
 		return NULL;
 	}
 }
-
+/*
 Liste ajout_queue(breakpoint c, Liste l) {
 
 	//plus malin : return concat(l,c);
@@ -99,7 +128,7 @@ Liste copie(Liste l) {
 	}
 	return copie;
 }
-
+*/
 Liste supprime(int n, Liste l) { //supprime le maillon en position n dans la liste l
 	if (n!=1){
 		Liste p;
@@ -118,51 +147,65 @@ Liste supprime(int n, Liste l) { //supprime le maillon en position n dans la lis
 }
 
 Liste ajoute_ordre(breakpoint c, Liste l) {
-	Liste p;
+	DEBUG_MSG("entrée dans la fonction ajoute ordre");
+	Liste p=creer_liste();
 	p=l;
+	//DEBUG_MSG("on crée un maillon qui contient l'élément c");
+	Liste maillon=creer_liste();
+	maillon=ajout_tete(c,maillon);
 
-	DEBUG_MSG("on crée un maillon qui contient l'élément c");
-	Liste maillon=calloc(1, sizeof(*maillon));
-	
-	maillon->element.actif='5';
-	DEBUG_MSG("coucou");
-	
-	/*DEBUG_MSG("%c", maillon->element.actif);
-	DEBUG_MSG("%c", c.actif);
-	maillon->element.actif=c.actif;
-	DEBUG_MSG("idfs");
-	maillon->element.bp=c.bp;
-	maillon->element.commande=strdup(c.commande);
-	maillon->element.numero=c.numero;*/
-	maillon->element=c;
-	maillon->suiv=NULL;
-	
-	
-	DEBUG_MSG("on regarde si c devrait être le premier élément");
-	if (c.bp < l->element.bp) {
-		l=ajout_tete(c, l);
+	Liste j=creer_liste();
+	j=p;
+
+	if (maillon->element.bp < j->element.bp) {
+		//le maillon doit aller en première position
+		p=ajout_tete(c,p);
+		//visualiser_liste(p);
+		numerote(p);
 		return p;
 	}
 
-	DEBUG_MSG("si c est en 2è position");
-	if (c.bp < l->suiv->element.bp) {
-		maillon->suiv=l->suiv;
-		l->suiv=maillon;
-		return p;
+	while(est_vide(p->suiv)==0) {
+		//DEBUG_MSG("entrée dans la boucle while");
+		if (maillon->element.bp < p->suiv->element.bp) {
+			//DEBUG_MSG("lalalala");
+			maillon->suiv=p->suiv;
+			p->suiv=maillon;
+			//visualiser_liste(j);
+			numerote(j);
+			return j;
+		}
+		p=p->suiv;
 	}
+	//DEBUG_MSG("sortie de la boucle while");
 	
-	while (c.bp > l->suiv->element.bp) {
-		l=l->suiv;
-	}
-	DEBUG_MSG("on se trouve maintenant au maillon immédiatement inférieur à c.bp");
-	maillon->suiv=l->suiv;
-	l->suiv=maillon;
+	//si on arrive ici c'est que le maillon doit aller à la fin de la liste
+	p->suiv=maillon;
 
-	return l;
-
+	//DEBUG_MSG("premier de j %d", j->element.bp);
+	numerote(j);
 	
+	return j;
 }
 
+int numerote(Liste l) {
+	DEBUG_MSG("entrée dans la fonction numerote");
+	int n=1;
+	Liste p=creer_liste();
+	p=l;
+	//DEBUG_MSG("%d", p->element.bp);
+	while (est_vide(p)==0) {
+		p->element.numero=n;
+		p=p->suiv;
+		n++;
+	}
+
+
+	return 0;
+}
+
+
+/*
 int recherche(Liste l, unsigned int champ) {
 	Liste p;
 	p=l;
@@ -175,7 +218,7 @@ int recherche(Liste l, unsigned int champ) {
 	DEBUG_MSG("erreur lors de la recherche de l'élément dans la liste de bp");
 	return -1;
 }
-
+*/
 
 
 
