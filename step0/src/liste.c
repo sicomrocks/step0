@@ -130,6 +130,25 @@ Liste copie(Liste l) {
 }
 */
 Liste supprime(int n, Liste l) { //supprime le maillon en position n dans la liste l
+	DEBUG_MSG("entrée dans supprimer");
+	if (n==0) {
+		DEBUG_MSG("impossible de retirer l'élément 0 d'une liste : liste inchangée");
+		return l;
+	}
+
+	//on parcourt la liste pour savoir combien elle a d'éléments
+	Liste q=creer_liste();
+	q=l;
+	while (est_vide(q->suiv)==0) {
+		q=q->suiv;
+	}
+	unsigned int nomb;
+	nomb=q->element.numero;
+	if (nomb<n) {
+		DEBUG_MSG("la liste ne comporte pas %d éléments : liste inchangée", n);
+		return l;
+	}
+	
 	if (n!=1){
 		Liste p;
 		p=l;
@@ -143,6 +162,7 @@ Liste supprime(int n, Liste l) { //supprime le maillon en position n dans la lis
 	else {
 		l=supprimer_tete(l);		
 	}
+	numerote(l);
 	return l;	
 }
 
@@ -205,20 +225,20 @@ int numerote(Liste l) {
 }
 
 
-/*
+
 int recherche(Liste l, unsigned int champ) {
-	Liste p;
+	Liste p=creer_liste();
 	p=l;
-	while (p->element.bp!=champ) {
+	while (p->element.bp!=champ && p->suiv!=NULL) {
 		p=p->suiv;
 	}
 	if (p->element.bp==champ) {
 		return p->element.numero;
 	}
-	DEBUG_MSG("erreur lors de la recherche de l'élément dans la liste de bp");
-	return -1;
+	DEBUG_MSG("l'élément d'adresse %d ne figure pas dans la liste", champ);
+	return 0;
 }
-*/
+
 
 
 

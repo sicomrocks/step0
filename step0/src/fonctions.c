@@ -1277,14 +1277,23 @@ void test_liste() {
 	ma_liste=ajoute_ordre(caca, ma_liste);
 
 
-	DEBUG_MSG("\nrésultat de ajoute ordre\n");
+	//DEBUG_MSG("\nrésultat de ajoute ordre\n");
 	//visualiser_liste(ma_liste);
 
 	
-	DEBUG_MSG("ON RECOMMENCE");
+	//DEBUG_MSG("ON RECOMMENCE");
 	caca.commande="recommenciation";
 	ma_liste=ajoute_ordre(caca, ma_liste);
 	visualiser_liste(ma_liste);
+
+	DEBUG_MSG("         TEST DE SUPPRESSION");
+	ma_liste=supprime(45,ma_liste);
+	visualiser_liste(ma_liste);
+
+	DEBUG_MSG("         TEST DE RECHERCHE");
+	DEBUG_MSG("%d", recherche(ma_liste, 48));
+
+
 }
 
 	
