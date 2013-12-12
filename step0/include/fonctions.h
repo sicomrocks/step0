@@ -2,15 +2,15 @@
 #ifndef _FONCTIONS_H_
 #define _FONCTIONS_H_
 
-#include <string.h>
-#include "notify.h"
-#include <stdio.h>
-#include <stdlib.h>  // exit
 
+#include "reg.h"
+#include "notify.h"
 #include "instructions.h"
 #include "memoire.h"
+#include "parseExecute.h"
 
-
+void display_one(int adresse);
+void display_poly(int adresse, int nombre);
 
 /*fonction pour regarder si le paramètre est bien un nom de registre.
  * Si oui, elle renvoie le numéro du registre (PC=32 SR=33 HI=34 LO=35, si non elle renvoie -1*/
@@ -20,10 +20,23 @@ int isregister(char* param);
 int automate(char* nombre );
 
 int isadress(char* param);
+int isaddressbusy(char* param);
 int adressType(char* param);
 
 /*fonction qui vide le dictionnaire*/
 void free_memory();
+
+int get_opcode(unsigned int mot);
+int get_rs(unsigned int mot);
+int get_rt(unsigned int mot);
+int get_rd(unsigned int mot);
+int get_sa(unsigned int mot);
+int get_function(unsigned int mot);
+int get_imm(unsigned int mot);
+int get_target(unsigned int mot);
+int get_memory(int adresse);
+
+int isnull(char* pointer);
 
 //fonction qui désassemble l'instruction instr
 INSTRUCTION desassemble(char* instr_hexa);
@@ -39,15 +52,17 @@ int recup_num(char instr_bin[]);
 
 //fonction qui affiche une instruction (nom, type, nombre d'opérandes, liste les opérande, opcode, func
 void affiche_inst(INSTRUCTION i);
-void affiche_inst_brut(INSTRUCTION i);
+void affiche_inst_brut(INSTRUCTION inst, int adresse);
 
 //fonction qui execute l'instruction
-int exec_inst(INSTRUCTION inst);
+int exec_inst(INSTRUCTION inst, int adresse);
 
 //regarde si l'adresse a un breakpoint : retourne 1 si oui et 0 si non
 int isbp(unsigned int adresse);
 
 //fonction outil pour tester
 void test_liste();
+
+int isadtype1(char* pointer);
 
 #endif

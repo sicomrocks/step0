@@ -1,13 +1,85 @@
 #include "fonctions.h"
-#include "notify.h"
-#include <stdlib.h>
-#include <stdio.h>
+
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>  // exit
 #include <ctype.h>
-#include "reg.h"
 
 
+int isnull(char* pointer)
+{	if (pointer==NULL) return 1;
+	else return 0;
+}
+int isadtype1(char* pointer)
+{ 	if(adressType(pointer)==1) return 1;
+	else return 0;
+}
 
+
+/* @param adresse adresse à afficher 
+ * @brief affiche le contenu de l'adresse
+ */
+void display_one(int adresse)
+{	display_poly(adresse,1);
+}
+
+
+/* @param adresse adresse a partir de laquelle on affiche
+ * @param nombre nombre d'octets à afficher
+ * @brief affiche le contenu des "nombre" octets à partir de "adresse", 
+ * @brief en parcourant toutes les sections.
+ */
+void display_poly(int adresse, int nombre)
+{
+	int a = adresse;
+	int n0 = nombre;
+	int n1 = nombre;
+	
+	if ( (a <textSection->startAddress + textSection->size) 
+		&& (a >=textSection->startAddress) )  
+		{	
+			if (n0>=textSection->size - (a-textSection->startAddress))
+				{
+					n0 = textSection->size - (a-textSection->startAddress);
+					n1 = n1-n0;
+				}
+			else { n1 = 0 ;}
+		
+			printPartELFSection(textSection,n0,a);
+
+			n0=n1;
+			a = dataSection->startAddress;
+		}
+		
+	if ( (a <dataSection->startAddress + dataSection->size) 
+		&& (a >=dataSection->startAddress) )  
+		{	
+			if (n0>=dataSection->size - (a-dataSection->startAddress))
+				{
+					n0 = dataSection->size - (a-dataSection->startAddress);
+					n1 = n1-n0;
+				}
+			else { n1 = 0 ;}
+		
+			printPartELFSection(dataSection,n0,a);
+
+			n0=n1;
+			a = bssSection->startAddress;
+		}
+		
+	if ( (a <bssSection->startAddress + bssSection->size) 
+		&& (a >=bssSection->startAddress) )  
+		{	
+			if (n0>=bssSection->size - (a-bssSection->startAddress))
+				{
+					n0 = bssSection->size - (a-bssSection->startAddress);
+					n1 = n1-n0;
+				}
+			else { n1 = 0 ;}
+		
+			printPartELFSection(bssSection,n0,a);
+		}
+}
 
 
 int isregister(char* param) {
@@ -89,14 +161,33 @@ int isregister(char* param) {
 	
 
 int isadress(char* param)
-{
-	char* buffer;
+{	char* buffer;
 	buffer=strdup(param);
 	int a = (int)strtol(param,NULL,0);
     if (automate(buffer)==3 && a<=0xffffffff)
     return 1;
     else return 0;
 }
+
+int isaddressbusy(char* param)
+{	if (isadress(param)==1)
+	{	int m=(int)strtol(param,NULL,0);
+	
+		if ( 		( (m >= textSection->startAddress + textSection->size) 
+					&& (m < dataSection->startAddress) )
+					|| ( (m >= dataSection->startAddress + dataSection->size) 
+					&& (m < bssSection->startAddress) )
+					|| ( (m >= bssSection->startAddress + bssSection->size) 
+					)
+			)
+		{	WARNING_MSG("Adresse inoccupée");
+			return 0;
+		}
+		else return 1;
+	}
+	else WARNING_MSG("Adresse incorrecte");
+	return 0;
+}	
 
 // Def des différents états
 enum { INIT , DECIMAL_ZERO, DEBUT_HEXA, HEXA, DECIMAL , OCTAL} ;
@@ -145,7 +236,7 @@ while (i<strlen(nombre))
         case DECIMAL : // tant que c'est un chiffre
             if ( isdigit(c)) S=DECIMAL ;
             else if (isspace(c)) { S=INIT ;}
-            /*printf ( " la chaine est sous forme decimale\n");*/                   
+            //printf ( " la chaine est sous forme decimale\n");                 
             else {//perror (  "erreur caracter (etape Decimal)"  ); 
 				return 0;}
         break ;
@@ -153,7 +244,7 @@ while (i<strlen(nombre))
         case OCTAL: // tant que c'est un chiffre
             if( isdigit(c)&& c<'8' ) S=OCTAL;
             else if (isspace(c)) { S=INIT ;
-            /*printf ( " la chaine est sous forme octale \n" ) ;*/
+            //printf ( " la chaine est sous forme octale \n" ) ;*/
                                                 }
             else {//perror (  "erreur caracter (etape Octal)"  ); 
 				return 0;}
@@ -279,14 +370,72 @@ void free_memory() {
 }
 
 
-unsigned int get_opcode(mot){
+int get_opcode(unsigned int mot){
+
 	return (mot &0xFC000000 )>>26; 
 }
 
-int get_imm(mot){
-	return (short)(mot &0x0000FFFF); 
+int get_rs(unsigned int mot){
+	return (mot & 0x03C00000) >> 21;
+	
 }
 
+int get_rd(unsigned int mot){
+	return (mot & 0x0000F800) >> 11;
+}
+
+int get_rt(unsigned int mot){
+	return (mot & 0x000F8000) >> 16;
+}
+
+int get_sa(unsigned int mot){
+	return (mot & 0x000007C0) >> 6;
+}
+
+int get_function(unsigned int mot){
+
+	return (mot & 0x0000003F);
+}
+
+int get_imm(unsigned int mot){
+	
+	return (short)(mot & 0x0000FFFF); 
+}
+
+int get_target(unsigned int mot){
+	return (mot & 0x03FFFFFF);
+}
+
+int get_memory(int adresse)
+{	int val=0;
+	char chaine[10];
+	int i;
+
+	if ( (adresse <textSection->startAddress + textSection->size) 
+		&& (adresse >=textSection->startAddress) )  
+		{	for (i=0 ; i<4 ; i++) {
+				sprintf(chaine+i*2, "%02x", textSection->data[adresse+i]);
+			}	
+		}
+		
+	if ( (adresse <dataSection->startAddress + dataSection->size) 
+		&& (adresse >=dataSection->startAddress) )  
+		{	for (i=0 ; i<4 ; i++) {
+				sprintf(chaine+i*2, "%02x", dataSection->data[adresse-dataSection->startAddress+i]);
+			}	
+		}
+		
+	if ( (adresse <bssSection->startAddress + bssSection->size) 
+		&& (adresse >=bssSection->startAddress) )  
+		{	for (i=0 ; i<4 ; i++) {
+				sprintf(chaine+i*2, "%02x", textSection->data[adresse-bssSection->startAddress+i]);
+			}	
+		}
+	sscanf(chaine,"%x",&val);
+	//fprintf(stdout,"chaine = %s\n",chaine);
+	//fprintf(stdout,"val = %x\n",val);
+	return val;
+}
 
 
 INSTRUCTION desassemble(char* instr_hexa) {
@@ -1111,31 +1260,157 @@ void affiche_inst(INSTRUCTION i) {
 }
 
 
-void affiche_inst_brut(INSTRUCTION i) {
+void affiche_inst_brut(INSTRUCTION inst, int adresse) {  // !!!!! ATTENTION à la valeur de PC !
 	//DEBUG_MSG("entrée dans la fonction affiche_inst");
 	
-	if (i.nbe_op==3) {
-		fprintf(stdout, "%s %d %s %s %s %s %s\n",
-		i.nom, i.nbe_op, i.ops[0], i.ops[1], i.ops[2], i.opcode, i.func);
-	}
-
-	if (i.nbe_op==2) {
+		//if (inst.nbe_op==3) {
+		//fprintf(stdout, "%s %s %s %s %s %s\n",
+		//inst.nom, inst.ops[0], inst.ops[1], inst.ops[2], inst.opcode, inst.func);	
+		//	}
+/*
+	if (inst.nbe_op==2) {
 		fprintf(stdout, "%s %d %s %s %s %s\n",
-		i.nom, i.nbe_op, i.ops[0], i.ops[1], i.opcode, i.func);
+		inst.nom, inst.nbe_op, inst.ops[0], inst.ops[1], inst.opcode, inst.func);
 	}
 
-	if (i.nbe_op==1) {
+	if (inst.nbe_op==1) {
 		fprintf(stdout, "%s %d %s %s %s\n",
-		i.nom, i.nbe_op, i.ops[0], i.opcode, i.func);
+		inst.nom, inst.nbe_op, inst.ops[0], inst.opcode, inst.func);
 	}
 
-	if (i.nbe_op==0) {
+	if (inst.nbe_op==0) {
 		fprintf(stdout, "%s %d %s %s\n",
-		i.nom, i.nbe_op, i.opcode, i.func);
+		inst.nom, inst.nbe_op, inst.opcode, inst.func);
 	}
+*/
+
+	//INSTRUCTIONS TYPE R
+	//R : rd, rs, rt
+	if ((strcmp(inst.nom,"ADD")==0)||
+		(strcmp(inst.nom,"SUB")==0)||
+		(strcmp(inst.nom,"AND")==0)||
+		(strcmp(inst.nom,"OR") ==0)||
+		(strcmp(inst.nom,"XOR")==0)||
+		(strcmp(inst.nom,"SLT")==0)
+		)
+	{	fprintf(stdout, "%s $%d $%d $%d\n",
+			inst.nom,
+			(get_rd(get_memory(adresse))), 
+			(get_rs(get_memory(adresse))),
+			(get_rt(get_memory(adresse)))
+			);
+	}
+	
+	//R : rs, rt, imm
+	if (strcmp(inst.nom,"ADDI")==0)
+	{	fprintf(stdout, "%s $%d $%d %d\n",
+			inst.nom,
+			(get_rt(get_memory(adresse))), 
+			(get_rs(get_memory(adresse))),
+			(get_imm(get_memory(adresse)))
+			);
+	}
+	
+	//R : rs, rt
+	if ((strcmp(inst.nom,"MULT")==0)||
+		(strcmp(inst.nom,"DIV")==0) 
+		)
+	{	fprintf(stdout, "%s $%d $%d\n",
+			inst.nom,
+			(get_rs(get_memory(adresse))), 
+			(get_rt(get_memory(adresse)))
+			);
+	}
+	
+	//R : rd, rt, sa
+	if ((strcmp(inst.nom,"ROTR")==0)||
+		(strcmp(inst.nom,"SLL")==0) ||
+		(strcmp(inst.nom,"SRL")==0) 
+		)
+	{ 	fprintf(stdout, "%s $%d $%d %d\n",
+			inst.nom,
+			(get_rd(get_memory(adresse))), 
+			(get_rt(get_memory(adresse))),
+			(get_sa(get_memory(adresse)))
+			);
+	}
+	
+	//R : rd
+	if ((strcmp(inst.nom,"MFHI")==0)||
+		(strcmp(inst.nom,"MFLO")==0)
+		)
+	{	fprintf(stdout, "%s $%d\n", inst.nom, (get_rd(get_memory(adresse))) );
+	}
+	
+	//R : 0
+	if ((strcmp(inst.nom,"SYSCALL")==0)||
+		(strcmp(inst.nom,"NOP")==0)
+		)
+	{	fprintf(stdout, "%s\n", inst.nom);
+	}
+	
+	//INSTRUCTIONS TYPE I
+	//I : rt, base , offset   | offset obtenu par get_imm
+	if ((strcmp(inst.nom,"LW")==0)||
+		(strcmp(inst.nom,"SW")==0)
+		)
+	{	fprintf(stdout, "%s $%d, %d(%d)\n",
+			inst.nom,
+			(get_rt(get_memory(adresse))), 
+			(get_imm(get_memory(adresse))),
+			(get_rs(get_memory(adresse)))
+			);
+	}
+	
+	//I : rt, imm
+	if (strcmp(inst.nom,"LUI")==0)
+	{	fprintf(stdout, "%s $%d %d\n",
+			inst.nom,
+			(get_rt(get_memory(adresse))), 
+			(get_imm(get_memory(adresse)))
+			);
+	}
+
+	//I : rs, rt, offset
+	if ((strcmp(inst.nom,"BEQ")==0)||
+		(strcmp(inst.nom,"BEQ")==0)
+		)
+	{	fprintf(stdout, "%s $%d $%d %d\n",
+			inst.nom,
+			(get_rs(get_memory(adresse))), 
+			(get_rt(get_memory(adresse))),
+			(get_imm(get_memory(adresse)))
+			);
+	}
+	
+	//I : rs, offset
+	if ((strcmp(inst.nom,"BQTZ")==0)||
+		(strcmp(inst.nom,"BLEZ")==0)
+		)
+	{	fprintf(stdout, "%s $%d %d\n",
+			inst.nom,
+			(get_rs(get_memory(adresse))),
+			(get_imm(get_memory(adresse))) );
+	}
+	
+	//INSTRUCTIONS TYPE J
+	//J : target
+	if ((strcmp(inst.nom,"J")==0)||
+		(strcmp(inst.nom,"JAL")==0)
+		)
+	{	fprintf(stdout, "%s %d\n", inst.nom,
+			get_target(get_memory(adresse)) );
+	}
+	
+	//J: rs
+	if (strcmp(inst.nom,"JR")==0)
+	{	fprintf(stdout, "%s $%d\n",inst.nom,
+			(get_rs(get_memory(adresse)))  );
+	}
+	
 }
 
-int exec_inst(INSTRUCTION inst)
+int exec_inst(INSTRUCTION inst, int adresse)
 {
 	//int i;
 	//int j;
@@ -1149,79 +1424,79 @@ int exec_inst(INSTRUCTION inst)
 	}*/
 	
 	if (strcmp(inst.nom,"ADD")==0)
-	{	ADD(inst);
+	{	ADD(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"ADDI")==0)
-	{	ADDI(inst);
+	{	ADDI(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"SUB")==0)
-	{	SUB(inst);
+	{	SUB(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"MULT")==0)
-	{	MULT(inst);
+	{	MULT(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"DIV")==0)
-	{	DIV(inst);
+	{	DIV(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"AND")==0)
-	{	AND(inst);
+	{	AND(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"OR")==0)
-	{	OR(inst);
+	{	OR(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"XOR")==0)
-	{	XOR(inst);
+	{	XOR(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"ROTR")==0)
-	{	ROTR(inst);
+	{	ROTR(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"SLL")==0)
-	{	SLL(inst);
+	{	SLL(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"SRL")==0)
-	{	SRL(inst);
+	{	SRL(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"SLT")==0)
-	{	SLT(inst);
+	{	SLT(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"LW")==0)
-	{	LW(inst);
+	{	LW(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"SW")==0)
-	{	SW(inst);
+	{	SW(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"LUI")==0)
-	{	LUI(inst);
+	{	LUI(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"MFHI")==0)
-	{	MFHI(inst);
+	{	MFHI(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"MFLO")==0)
-	{	MFLO(inst);
+	{	MFLO(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"BEQ")==0)
-	{	BEQ(inst);
+	{	BEQ(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"BNE")==0)
-	{	BNE(inst);
+	{	BNE(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"BQTZ")==0)
-	{	BGTZ(inst);
+	{	BGTZ(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"BLEZ")==0)
-	{	BLEZ(inst);
+	{	BLEZ(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"J")==0)
-	{	J(inst);
+	{	J(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"JAL")==0)
-	{	JAL(inst);
+	{	JAL(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"JR")==0)
-	{	JR(inst);
+	{	JR(get_memory(adresse) );
 	}
 	if (strcmp(inst.nom,"SYSCALL")==0)
-	{	SYSCALL(inst);
+	{	SYSCALL(get_memory(adresse) );
 	}
 return CMD_OK_RETURN_VALUE;	
 }
@@ -1287,15 +1562,14 @@ void test_liste() {
 	visualiser_liste(ma_liste);
 
 	DEBUG_MSG("         TEST DE SUPPRESSION");
-	ma_liste=supprime(45,ma_liste);
+	ma_liste=supprime(5,ma_liste);
 	visualiser_liste(ma_liste);
 
 	DEBUG_MSG("         TEST DE RECHERCHE");
-	DEBUG_MSG("%d", recherche(ma_liste, 48));
+	DEBUG_MSG("%d", recherche(ma_liste, 4));
 
 
 }
-
 	
 
 

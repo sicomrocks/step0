@@ -1,7 +1,10 @@
 #Test de la fonction dm : fonctionnement normal
 
 lp ./res/exempleELF.o
-dm 0x1002
-dm 0x0~0x3
-dm 0x4:3
+dm 0x1
+dm 0x3
+dm 0X1002
+dm 0x2003
+dm 0X2007
+
 

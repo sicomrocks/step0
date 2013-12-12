@@ -247,4 +247,3 @@ int recherche(Liste l, unsigned int champ) {
 
 
 
-

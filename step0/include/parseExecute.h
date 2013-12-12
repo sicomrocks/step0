@@ -1,4 +1,4 @@
-#ifndef _PARSEEXECUTE_H__
+#ifndef _PARSEEXECUTE_H_
 #define _PARSEEXECUTE_H_
 
 #include <stdlib.h>
@@ -70,9 +70,7 @@ int execute_cmd_lm(char* adresse,char* valeur);
 /*
 
 */
-int isaddressbusy(char* param);
-int display_one(int adresse);
-int display_poly(int adresse, int nombre);
+
 
 /*
 

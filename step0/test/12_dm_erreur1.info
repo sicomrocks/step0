@@ -9,5 +9,5 @@
 # TEST_COMMENT (optional)
 #	a string describing the test
 ###############
-TEST_RETURN_CODE=PASS
-TEST_COMMENT="Test de la fonction dm : type adresse simple, dans trois sections"
+TEST_RETURN_CODE=FAIL
+TEST_COMMENT="Test de la fonction dm : erreur 1 vide"

@@ -1,0 +1,4 @@
+#Test de la fonction dm : erreur vide ./res/exempleELF.o utilisé
+
+lp ./res/exempleELF.o
+dm

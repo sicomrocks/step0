@@ -1,0 +1,5 @@
+#Test de la fonction dm :  ./res/exempleELF.o utilisé
+
+lp ./res/exempleELF.o
+dm 0100~0x800
+

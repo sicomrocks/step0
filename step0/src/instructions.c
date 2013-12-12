@@ -5,154 +5,196 @@
 #include "instructions.h"
 #include "parseExecute.h"
 
-int ADD(INSTRUCTION inst)
+int ADD(unsigned int mot)
 { 	DEBUG_MSG("ADD instruction\n");
 	long int res;
-	//printf("op[0] = %s, op[1] = %s, op[2] = %s\n",inst.ops[0],inst.ops[1],inst.ops[2]);
-	int op1;
-	op1=(int)strtol(inst.ops[0],NULL,2);
-	int op2;
-	op2=(int)strtol(inst.ops[1],NULL,2);
-	int op3;
-	op3=(int)strtol(inst.ops[2],NULL,2);
-	//printf("op1 = %d, op2 = %d, op3 = %d\n",op1,op2,op3);
 	
-	res = registres[op1].valeur+registres[op2].valeur;
+	res = registres[get_rs(mot)].valeur+registres[get_rt(mot)].valeur;
 	
 	if(res>0xffffffff || res<0)
-	{return 0;}
-	else {execute_cmd_lr(op3,res); return 1;}
+	{return 1;}
+	else {execute_cmd_lr(get_rd(mot),res); return 0;}
 }
 
-int ADDI(INSTRUCTION inst)
+int ADDI(unsigned int mot)
 {	DEBUG_MSG("ADDI instruction\n");
 	long int res;
-	int op1;
-	op1=(int)strtol(inst.ops[0],NULL,2);
-	int op2;
-	op2=(int)strtol(inst.ops[1],NULL,2);
-	int op3;
-	op3=(int)strtol(inst.ops[2],NULL,2);
-	res = registres[op1].valeur+registres[op3].valeur;
+	
+	res = registres[get_rs(mot)].valeur+registres[get_imm(mot)].valeur;
 	
 	if(res>0xffffffff || res<0)
-	{return 0;}
-	else {
-		registres[op2].valeur=res;
-		return 1;}
+	{return 1;}
+	else {execute_cmd_lr(get_rt(mot),res); return 0;}
 }
 
-int SUB(INSTRUCTION inst)
-{
+int SUB(unsigned int mot)
+{	DEBUG_MSG("SUB instruction");
+	long int res;
+	
+	res = registres[get_rs(mot)].valeur-registres[get_imm(mot)].valeur;
+	
+	if(res>0xffffffff || res<0)
+	{return 1;}
+	else {execute_cmd_lr(get_rt(mot),res); return 0;}
+
+}
+
+int MULT(unsigned int mot)
+{	DEBUG_MSG("MULT instruction");
+	long int res;
+	res = registres[get_rs(mot)].valeur * registres[get_rs(mot)].valeur;
+	execute_cmd_lr(34, (int)((res & 0xFFFFFFFF00000000) >> 32) );
+	execute_cmd_lr(36, (int)( res & 0x00000000FFFFFFFF ));
 	return 0;
 }
 
-int MULT(INSTRUCTION ins)
-{
+int DIV(unsigned int mot)
+{	DEBUG_MSG("DIV instruction");
 	return 0;
 }
 
-int DIV(INSTRUCTION inst)
-{
+int AND(unsigned int mot)
+{	DEBUG_MSG("AND instruction");
+	execute_cmd_lr(get_rd(mot),
+		registres[get_rt(mot)].valeur & registres[get_rs(mot)].valeur );
 	return 0;
 }
 
-int AND(INSTRUCTION inst)
-{
+int OR(unsigned int mot)
+{	DEBUG_MSG("OR instruction");
+	execute_cmd_lr(get_rd(mot),
+		registres[get_rt(mot)].valeur | registres[get_rs(mot)].valeur );
 	return 0;
 }
 
-int OR(INSTRUCTION inst)
-{
+int XOR(unsigned int mot)
+{	DEBUG_MSG("XOR instruction");
+	execute_cmd_lr(get_rd(mot),registres[get_rt(mot)].valeur ^ registres[get_rs(mot)].valeur  );
 	return 0;
 }
 
-int XOR(INSTRUCTION inst)
-{
+int ROTR(unsigned int mot) // ??
+{	DEBUG_MSG("ROTR instruction");
+	unsigned int temp;
+	temp = registres[get_rt(mot)].valeur;
+	if (temp == 'a') {
+		DEBUG_MSG("shouldn't be there");
+	}
+	//execute_cmd_lr(get_rd(mot),
 	return 0;
 }
 
-int ROTR(INSTRUCTION inst)
-{
+int SLL(unsigned int mot)
+{	DEBUG_MSG("SLL instruction");
+	execute_cmd_lr(get_rd(mot),registres[get_rs(mot)].valeur << get_sa(mot) );
 	return 0;
 }
 
-int SLL(INSTRUCTION inst)
-{
+int SRL(unsigned int mot)
+{	DEBUG_MSG("SRL instruction");
+	execute_cmd_lr(get_rd(mot),registres[get_rt(mot)].valeur << get_sa(mot) );
 	return 0;
 }
 
-int SRL(INSTRUCTION inst)
-{
+int SLT(unsigned int mot)
+{	DEBUG_MSG("SLT instruction");
+	if (registres[get_rs(mot)].valeur < registres[get_rt(mot)].valeur)
+	execute_cmd_lr(get_rd(mot),1);
+	else execute_cmd_lr(get_rd(mot),0);
 	return 0;
 }
 
-int SLT(INSTRUCTION inst)
-{
-	return 0;
-}
-
-int LW(INSTRUCTION inst)
-{
+int LW(unsigned int mot)
+{	DEBUG_MSG("LW instruction");
+	
 	return 0;	
 }
 
-int SW(INSTRUCTION inst)
-{
+int SW(unsigned int mot)
+{	DEBUG_MSG("SW instruction");
+	
 	return 0;
 }
 
-int LUI(INSTRUCTION inst)
-{
+int LUI(unsigned int mot)
+{	DEBUG_MSG("LUI instruction");
+	execute_cmd_lr(get_rt(mot),get_imm(mot) <<16);
 	return 0;
 }
 
-int MFHI(INSTRUCTION inst)
-{
+int MFHI(unsigned int mot)
+{	DEBUG_MSG("MFHI instruction");
+	execute_cmd_lr(get_rd(mot),registres[34].valeur);
 	return 0;
 }
 
-int MFLO(INSTRUCTION inst)
-{
+int MFLO(unsigned int mot)
+{	DEBUG_MSG("MFLO instruction");
+	execute_cmd_lr(get_rd(mot),registres[36].valeur);
 	return 0;
 }
 
-int BEQ(INSTRUCTION inst)
-{
+int BEQ(unsigned int mot)
+{	DEBUG_MSG("BEQ instruction");
+	
+	if ( registres[get_rs(mot)].valeur == registres[get_rt(mot)].valeur )
+	{ 	execute_cmd_lr(32,registres[32].valeur + (get_imm(mot)<<2));	
+	}
 	return 0;
 }
 
-int BNE(INSTRUCTION inst)
-{
+int BNE(unsigned int mot)
+{	DEBUG_MSG("BNE instruction");
+	
+	if (registres[get_rs(mot)].valeur!=registres[get_rt(mot)].valeur)
+	{ 	execute_cmd_lr(32,registres[32].valeur + (get_imm(mot)<<2));	
+	}
 	return 0;
 }
 
-int BGTZ(INSTRUCTION inst)
-{
+int BGTZ(unsigned int mot)
+{	DEBUG_MSG("BGTZ instruction");
+	
+	if (registres[get_rs(mot)].valeur>0)
+	{ 	execute_cmd_lr(32,registres[32].valeur + (get_imm(mot)<<2));	
+	}
 	return 0;
 }
 
-int BLEZ(INSTRUCTION inst)
-{
+int BLEZ(unsigned int mot)
+{	DEBUG_MSG("BLEZ instruction");
+	
+	if (registres[get_rs(mot)].valeur<=0)
+	{ 	execute_cmd_lr(32,registres[32].valeur + (get_imm(mot)<<2));	
+	}
 	return 0;
 }
 
-int J(INSTRUCTION inst)
-{
+int J(unsigned int mot)
+{	DEBUG_MSG("J instruction");
+	execute_cmd_lr(32, (registres[32].valeur & 0xF0000000)+(get_target(mot)<<2) );
 	return 0;
 }
 
-int JAL(INSTRUCTION inst)
-{
+int JAL(unsigned int mot)
+{	DEBUG_MSG("JAL instruction");
+	execute_cmd_lr(31,registres[32].valeur+8);
+	execute_cmd_lr(32,(registres[32].valeur & 0xF0000000)+(get_target(mot)<<2) );
 	return 0;
 }
 
-int JR(INSTRUCTION inst)
-{
+int JR(unsigned int mot)
+{	DEBUG_MSG("JR instruction");
+	execute_cmd_lr(32,registres[get_rs(mot)].valeur);
 	return 0;
 }
 
-int SYSCALL(INSTRUCTION inst)
-{
+int NOP(unsigned int mot)
+{	DEBUG_MSG("OR instruction");
+	return 0;
+}
+
+int SYSCALL(unsigned int mot)
+{	DEBUG_MSG("SYSCALL instruction");
 	return 0;
 }

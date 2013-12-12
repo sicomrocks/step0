@@ -1,5 +1,5 @@
-#ifndef _INSTRUCTIONS_H_
-#define _INSTRUCTIONS_H_
+#ifndef _INSTRUCTIONS2_H_
+#define _INSTRUCTIONS2_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,31 +7,31 @@
 #include "reg.h"
 #include "memoire.h"
 
-int ADD(INSTRUCTION inst);
-int ADDI(INSTRUCTION inst);
-int SUB(INSTRUCTION inst);
-int MULT(INSTRUCTION ins);
-int DIV(INSTRUCTION inst);
-int AND(INSTRUCTION inst);
-int OR(INSTRUCTION inst);
-int XOR(INSTRUCTION inst);
-int ROTR(INSTRUCTION inst);
-int SLL(INSTRUCTION inst);
-int SRL(INSTRUCTION inst);
-int SLT(INSTRUCTION inst);
-int LW(INSTRUCTION inst);
-int SW(INSTRUCTION inst);
-int LUI(INSTRUCTION inst);
-int MFHI(INSTRUCTION inst);
-int MFLO(INSTRUCTION inst);
-int BEQ(INSTRUCTION inst);
-int BNE(INSTRUCTION inst);
-int BGTZ(INSTRUCTION inst);
-int BLEZ(INSTRUCTION inst);
-int J(INSTRUCTION inst);
-int JAL(INSTRUCTION inst);
-int JR(INSTRUCTION inst);
-int SYSCALL(INSTRUCTION inst);
+int ADD(unsigned int mot);
+int ADDI(unsigned int mot);
+int SUB(unsigned int mot);
+int MULT(unsigned int mot);
+int DIV(unsigned int mot);
+int AND(unsigned int mot);
+int OR(unsigned int mot);
+int XOR(unsigned int mot);
+int ROTR(unsigned int mot);
+int SLL(unsigned int mot);
+int SRL(unsigned int mot);
+int SLT(unsigned int mot);
+int LW(unsigned int mot);
+int SW(unsigned int mot);
+int LUI(unsigned int mot);
+int MFHI(unsigned int mot);
+int MFLO(unsigned int mot);
+int BEQ(unsigned int mot);
+int BNE(unsigned int mot);
+int BGTZ(unsigned int mot);
+int BLEZ(unsigned int mot);
+int J(unsigned int mot);
+int JAL(unsigned int mot);
+int JR(unsigned int mot);
+int SYSCALL(unsigned int mot);
 
 	
 #endif

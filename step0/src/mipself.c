@@ -412,16 +412,16 @@ void printPartELFSection(SectionELF *section, int NbOctets, int debut)
 
 				// Si un symbole est a cette adresse, on l'affiche avec l'adresse
 				if ((nom=getAddressName(address)) != NULL) {
-					fprintf(stderr,"\n<%s>\n %08x:\t", nom, address);
+					fprintf(stdout,"\n<%s>\n %08x:\t", nom, address);
 				}
 				// Sinon, on affiche juste l'adresse, si elle est alignee sur 4 octets
 				else if (!(address%4) || (address==debut))
-					fprintf(stderr,"\n %08x:\t", address);
+					fprintf(stdout,"\n %08x:\t", address);
 
 				// Affichage du ieme octet de la zone
-				fprintf(stderr,"%02x ", section->data[address-section->startAddress]);
+				fprintf(stdout,"%02x ", section->data[address-section->startAddress]);
 			}
-		fprintf(stderr,"\n\n");
+		fprintf(stdout,"\n\n");
 		
 	}
 }
@@ -775,6 +775,7 @@ int mipsloader(const char *filename, SectionELF *textSection, SectionELF *dataSe
     printELFSection(textSection);
     printELFSection(dataSection);
     printELFSection(bssSection);
+
 #endif
 
     close(fd) ;

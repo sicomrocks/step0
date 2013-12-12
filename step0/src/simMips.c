@@ -200,7 +200,7 @@ int main ( int argc, char *argv[] ) {
     bssSection  = (SectionELF *) calloc(1,sizeof(SectionELF));
 
     //test des fonctions sur les listes
-    test_liste();
+    //test_liste();
 
     FILE *fp = NULL; /* le flux dans lequel les commandes seront lues : stdin (mode shell) ou un fichier */
 

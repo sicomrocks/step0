@@ -1,0 +1,13 @@
+#Test de la fonction dm : fonctionnement normal
+
+lp ./res/exempleELF.o
+dm 0x2:4
+dm 0x5:10
+dm 0x4:2030
+dm 0X1002:10
+dm 0x1001:2
+dm 0X1000:300000
+dm 0x2003:4
+dm 0X2007:200
+
+
