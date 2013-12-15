@@ -3,6 +3,7 @@
 #include "notify.h"
 #include "reg.h"
 #include <stdio.h>
+#include "fonctions.h"
 //#include "memoire.h"
 
 
@@ -319,14 +320,19 @@ int execute_cmd_da(char* adresse, char* nb_instructions) {
 	//fprintf(stdout, "adresse de départ 0x%.8x, %d instructions\n", A, N);
 
 	//vérifier que A est bien dans la zone .text et qu'elle est bien alignée
+	if (textSection->size==0) {
+		fprintf(stdout, "Aucun programme n'est chargé\n");
+		return 2;
+	}
+	
 	if (A>=textSection->size) {
-		fprintf(stdout, "L'adresse spécifiée n'est pas dans la section .text");
+		fprintf(stdout, "L'adresse spécifiée n'est pas dans la section .text\n");
 		return 2;
 	}
 
 	//DEBUG_MSG("A vaut 0x%x", A);
 	if (A%4!=0) {
-		fprintf(stdout, "Adresse mal alignée");
+		fprintf(stdout, "Adresse mal alignée\n");
 		return 2;
 	}
 	
@@ -855,17 +861,94 @@ int execute_cmd_si(char* paramsStr)
 	return CMD_OK_RETURN_VALUE;
 } 
 
-int parse_and_execute_cmd_bp(char* paramsStr)
-{	if(!(isaddressbusy(paramsStr)==1))
-	{	int a;
-		a = atoi(paramsStr);
-		a = atoi(paramsStr);
-		execute_cmd_bp(a);
+int parse_and_execute_cmd_bp(char* paramsStr) {
+	DEBUG_MSG("Parametres : %s", paramsStr);
+
+	//verifier que c'est une adresse
+	
+	if (isadress(paramsStr)==0) {
+		fprintf(stdout, "Invalid parameter : valid address awaited\n");
+		return 2;
 	}
+
+	//vérifier que c'est dans la section .text
+
+	if (textSection->size==0) {
+		fprintf(stdout, "aucun programme n'est chargé\n");
+		return 2;
+	}
+
+	WORD A=(int)strtol(paramsStr, NULL, 0);
+	DEBUG_MSG("l'adresse est 0x%.8x", A);
+
+	if (A>=textSection->size) {
+		fprintf(stdout, "L'adresse spécifiée n'est pas dans la section .text\n");
+		return 2;
+	}
+
+	if (A<=textSection->size) {
+		DEBUG_MSG("L'adresse est dans la zone .text");
+	}
+	
+	if (A%4!=0) {
+		fprintf(stdout, "Adresse mal alignée\n");
+		return 2;
+	}
+
+	if (A%4==0) {
+		DEBUG_MSG("adresse bien alignée");
+	}
+
+	DEBUG_MSG("adresse valide");
+	
+
+	//vérifier que cette adresse n'a pas déjà un breakpoint
+
+	int s;
+	s=recherche(liste_bp, A);
+
+	if (s==0) {
+		//ajouter cette adresse dans la liste
+		execute_cmd_bp(A);
+		fprintf(stdout, "élément ajouté dans la liste des breakpoints\n");
+		fprintf(stdout, "commande 'breakp' pour afficher la liste\n");	
+	}
+
+	if (s!=0) {
+		fprintf(stdout, "élément déjà compris dans les breakpoints\n");
+		fprintf(stdout, "commande 'breakp' pour afficher la liste\n");	
+		/*fprintf(stdout, "afficher la liste des breakpoints ? o/[n]\n");
+		char reponse;
+		scanf("%c", &reponse);
+		if (reponse=='o') {
+			visualiser_liste(liste_bp);
+		}*/
+	}
+
+	
+	
 	return CMD_OK_RETURN_VALUE;
 }
 
-int execute_cmd_bp(unsigned int adresse)
+int execute_cmd_bp(unsigned int A)
 {
+
+	//visualiser_liste(liste_bp);
+	breakpoint c;
+		c.bp=A;
+		c.actif='1';
+		c.commande="pas encore remplie";
+
+		liste_bp=ajoute_ordre(c, liste_bp);
+
+		//visualiser_liste(liste_bp);
+		
+	return CMD_OK_RETURN_VALUE;
+}
+
+int parse_and_execute_cmd_breakp() {
+	if (visualiser_liste(liste_bp)==2) {
+		fprintf(stdout, "il n'y a pas de breakpoints enregistrés\n");
+	}
 	return CMD_OK_RETURN_VALUE;
 }

@@ -126,6 +126,12 @@ int parse_and_execute_cmd_string(char *input) {
     else if(strcmp(cmdStr, "si") == 0) {
 	    return parse_and_execute_cmd_si(input + strlen(cmdStr) );
     }
+    else if(strcmp(cmdStr, "bp") ==0) {
+	    return parse_and_execute_cmd_bp(input + strlen(cmdStr) );
+    }
+    else if (strcmp(cmdStr, "breakp") == 0) {
+	    return parse_and_execute_cmd_breakp();
+    }
 
     WARNING_MSG("Unknown Command : '%s'", cmdStr);
     return CMD_UNKOWN_RETURN_VALUE;
@@ -200,7 +206,9 @@ int main ( int argc, char *argv[] ) {
     bssSection  = (SectionELF *) calloc(1,sizeof(SectionELF));
 
     //test des fonctions sur les listes
-    //test_liste();
+   // test_liste();
+
+   
 
     FILE *fp = NULL; /* le flux dans lequel les commandes seront lues : stdin (mode shell) ou un fichier */
 

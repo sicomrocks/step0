@@ -21,7 +21,7 @@ Liste creer_liste(void);
 
 int est_vide(Liste l);
 
-void visualiser_liste(Liste l);
+int visualiser_liste(Liste l);
 
 Liste ajout_tete(breakpoint c, Liste l);
  
@@ -38,7 +38,7 @@ Liste copie(Liste l);
 //supprime la carte en position n dans la liste l et retourne la nouvelle liste. Attention : il faut être sur le maillon n-1 pour supprimer le maillon n et chainer le maillon n-1 avec le maillon n.
 Liste supprime(int n, Liste l);
 
-//recherche dans la liste l l'élément dont le champ est champ ; renvoie la position de cet élément dans la liste
+//recherche dans la liste l'élément dont l'adresse est champ ; renvoie la position de cet élément dans la liste
 int recherche(Liste l, unsigned int champ);
 
 //ajoute l'émément c dans la liste l en respectant l'ordre

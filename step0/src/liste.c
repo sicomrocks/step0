@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "global.h"
 
 Liste creer_liste(void) {
 	return NULL;
@@ -15,36 +16,48 @@ int est_vide(Liste l) {
 		else return 0;
 }
 
-void visualiser_liste(Liste l) {
+int visualiser_liste(Liste l) {
 	DEBUG_MSG("entrée dans visualiser liste");
+
+	if (est_vide(l) == 1) {
+		return 2;
+	}
+	
 	Liste p;
 	p=l;
+
+	//DEBUG_MSG("%d", est_vide(l));
+	
 	while (est_vide(p)==0) {
-		DEBUG_MSG("adresse %x,  actif %c, numero %d, instruction %s", p->element.bp, p->element.actif, p->element.numero, p->element.commande);
+		fprintf(stdout, "numero %d, adresse 0x%x,  actif %c, instruction %s\n",p->element.numero, p->element.bp, p->element.actif,  p->element.commande);
 		p=p->suiv;
 	}
+
+	return 0;
 }
 
 Liste ajout_tete(breakpoint c, Liste l) {
 	DEBUG_MSG("\nentrée dans la fonction ajout_tete");
 	if (est_vide(l)==1) {
 		l=calloc(1,sizeof(*l));
-		//MATT VERIIE CALLLOC
+		//MATT VERIFIE CALLLOC
 		//DEBUG_MSG("recopie des champs");
 	
 		l->element.actif=c.actif;
 		//DEBUG_MSG("actif %c", l->element.actif);
 	
 		l->element.bp=c.bp;
-		//DEBUG_MSG("adresse %d", l->element.bp);
+		//DEBUG_MSG("adresse 0x%x", l->element.bp);
 	
 		l->element.numero=c.numero;
 		//DEBUG_MSG("numero %d", l->element.numero);
 	
 		l->element.commande=strdup(c.commande);
-		//DEBUG_MSG("commande %s", l->element.commande);
+	//	DEBUG_MSG("commande %s", l->element.commande);
 	
 		l->suiv=NULL;
+
+	//	DEBUG_MSG("vide ? %d", est_vide(l));
 		return l;
 
 	}
@@ -168,6 +181,22 @@ Liste supprime(int n, Liste l) { //supprime le maillon en position n dans la lis
 
 Liste ajoute_ordre(breakpoint c, Liste l) {
 	DEBUG_MSG("entrée dans la fonction ajoute ordre");
+
+	if (est_vide(l)==1) {
+		l=ajout_tete(c, l);
+	//	DEBUG_MSG("ici %d", est_vide(l));
+		numerote(l);
+		return l;
+	}
+
+	//on regarde si l'élément n'est pas déjà dans la liste
+	DEBUG_MSG("recherche dans ajoute ordre %d", recherche(l, c.bp));
+	if (recherche(l, c.bp)!=0) {
+		DEBUG_MSG("l'élément est déjà dans la liste ; liste inchangée");
+		return l;
+	}
+
+	
 	Liste p=creer_liste();
 	p=l;
 	//DEBUG_MSG("on crée un maillon qui contient l'élément c");
@@ -226,7 +255,14 @@ int numerote(Liste l) {
 
 
 
-int recherche(Liste l, unsigned int champ) {
+int recherche(Liste l, WORD champ) {
+	if (est_vide(l)==1) {
+		DEBUG_MSG("il n'y a rien dans la liste de breakpoints");
+		return 0;
+	}
+
+	
+	
 	Liste p=creer_liste();
 	p=l;
 	while (p->element.bp!=champ && p->suiv!=NULL) {

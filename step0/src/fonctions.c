@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>  // exit
 #include <ctype.h>
+#include "notify.h"
+#include "parseExecute.h"
+#include "reg.h"
+
+#include <math.h>
 
 
 int isnull(char* pointer)
@@ -1532,7 +1537,7 @@ void test_liste() {
 	//visualiser_liste(ma_liste);
 	
 	breakpoint op;
-	op.bp=4;
+	op.bp=0x4;
 	op.numero=95;
 	op.commande="bloussssse";
 	op.actif='0';	
@@ -1566,7 +1571,7 @@ void test_liste() {
 	visualiser_liste(ma_liste);
 
 	DEBUG_MSG("         TEST DE RECHERCHE");
-	DEBUG_MSG("%d", recherche(ma_liste, 4));
+	DEBUG_MSG("%d", recherche(ma_liste, 0x9));
 
 
 }

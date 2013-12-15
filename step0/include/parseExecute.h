@@ -99,4 +99,8 @@ int execute_cmd_si(char* paramsStr$);
 int parse_and_execute_cmd_bp(char* paramsStr);
 int execute_cmd_bp(unsigned int adresse);
 
+//fonction qui affiche la liste des breakpoints
+int parse_and_execute_cmd_breakp();
+
+
 #endif
