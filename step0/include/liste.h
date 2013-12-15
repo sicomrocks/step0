@@ -46,3 +46,6 @@ Liste ajoute_ordre(breakpoint c, Liste l);
 
 //met à jour les indices dans une liste et renvoie le nombre d'ékéments dans la liste
 int numerote(Liste l);
+
+//vide la liste
+Liste supprime_tout(Liste l);

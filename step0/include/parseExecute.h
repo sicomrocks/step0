@@ -96,11 +96,17 @@ int execute_cmd_s(char* paramsStr);
 int parse_and_execute_cmd_si(char* paramsStr);
 int execute_cmd_si(char* paramsStr$);
 
+//ajout d'un point d'arrêt
 int parse_and_execute_cmd_bp(char* paramsStr);
 int execute_cmd_bp(unsigned int adresse);
 
 //fonction qui affiche la liste des breakpoints
-int parse_and_execute_cmd_breakp();
+int parse_and_execute_cmd_db();
+
+//retrait d'un point d'arrêt
+int parse_and_execute_cmd_er(char* paramsStr);
+int execute_cmd_er(int position);
+
 
 
 #endif

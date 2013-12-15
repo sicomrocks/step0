@@ -129,8 +129,11 @@ int parse_and_execute_cmd_string(char *input) {
     else if(strcmp(cmdStr, "bp") ==0) {
 	    return parse_and_execute_cmd_bp(input + strlen(cmdStr) );
     }
-    else if (strcmp(cmdStr, "breakp") == 0) {
-	    return parse_and_execute_cmd_breakp();
+    else if (strcmp(cmdStr, "db") == 0) {
+	    return parse_and_execute_cmd_db();
+    }
+    else if(strcmp(cmdStr, "er") ==0) {
+	    return parse_and_execute_cmd_er(input + strlen(cmdStr) );
     }
 
     WARNING_MSG("Unknown Command : '%s'", cmdStr);

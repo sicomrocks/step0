@@ -276,7 +276,22 @@ int recherche(Liste l, WORD champ) {
 }
 
 
+Liste supprime_tout(Liste l) {
+	DEBUG_MSG("entrée dans supprime tout");
 
+	if (l->suiv == NULL) {
+		DEBUG_MSG("un seul élément dans la liste");
+		l=supprimer_tete(l);
+	}
+
+	while (est_vide(l)==0) {
+		l=supprimer_tete(l);
+		l=l->suiv;
+	}
+		
+	return l;
+
+}
 
 
 

@@ -911,12 +911,10 @@ int parse_and_execute_cmd_bp(char* paramsStr) {
 		//ajouter cette adresse dans la liste
 		execute_cmd_bp(A);
 		fprintf(stdout, "élément ajouté dans la liste des breakpoints\n");
-		fprintf(stdout, "commande 'breakp' pour afficher la liste\n");	
 	}
 
 	if (s!=0) {
 		fprintf(stdout, "élément déjà compris dans les breakpoints\n");
-		fprintf(stdout, "commande 'breakp' pour afficher la liste\n");	
 		/*fprintf(stdout, "afficher la liste des breakpoints ? o/[n]\n");
 		char reponse;
 		scanf("%c", &reponse);
@@ -946,9 +944,62 @@ int execute_cmd_bp(unsigned int A)
 	return CMD_OK_RETURN_VALUE;
 }
 
-int parse_and_execute_cmd_breakp() {
+int parse_and_execute_cmd_db() {
 	if (visualiser_liste(liste_bp)==2) {
 		fprintf(stdout, "il n'y a pas de breakpoints enregistrés\n");
 	}
 	return CMD_OK_RETURN_VALUE;
 }
+
+int parse_and_execute_cmd_er(char* paramsStr) {
+	DEBUG_MSG("Parametres : %s", paramsStr);
+
+	char* token;
+	char* separateur = { " " };
+	char* buffer;
+
+	buffer = strdup ( paramsStr );
+
+	//si pas de paramètres, on efface tous les breakpoints
+	token = strtok(buffer, separateur);
+	if (token == NULL) {
+		DEBUG_MSG("effacement de tous les breakpoints");
+		execute_cmd_er(0);
+		return CMD_OK_RETURN_VALUE;
+	}
+
+	else {
+		WORD A=(int)strtol(buffer, NULL, 0);
+		int position;
+		DEBUG_MSG("A = 0x%x", A);
+
+		//vérifier qu'il est dans la liste
+		position=recherche(liste_bp, A);
+		DEBUG_MSG("position dans la liste %d", position);
+		
+		if (position == 0) {
+			fprintf(stdout, "l'adresse 0x%x ne contient pas de point d'arrêt\n", A);
+			return CMD_OK_RETURN_VALUE;
+		}
+		
+		liste_bp=supprime(position, liste_bp);
+		fprintf(stdout, "le point d'arrêt à l'adresse 0x%x a été retiré\n", A);
+	}
+
+	return CMD_OK_RETURN_VALUE;
+}
+
+int execute_cmd_er(int position) {
+
+	if (position==0) {
+		liste_bp=supprime_tout(liste_bp);
+		fprintf(stdout, "tous les points d'arrêt ont été supprimés\n");
+		return CMD_OK_RETURN_VALUE;
+	}
+
+	DEBUG_MSG("numero du bp à supprimer : %d", position);
+
+	return CMD_OK_RETURN_VALUE;
+}
+
+
